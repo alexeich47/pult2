@@ -2,7 +2,10 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Unit;
+use App\Support\PultEnums;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Lang;
 use Inertia\Middleware;
 
 class HandleInertiaRequests extends Middleware
@@ -14,9 +17,6 @@ class HandleInertiaRequests extends Middleware
      */
     protected $rootView = 'app';
 
-    /**
-     * Determine the current asset version.
-     */
     public function version(Request $request): ?string
     {
         return parent::version($request);
@@ -29,10 +29,30 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
+        $user = $request->user();
+        $locale = app()->getLocale();
+
         return [
             ...parent::share($request),
             'auth' => [
-                'user' => $request->user(),
+                'user' => $user ? [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'email' => $user->email,
+                    'roles' => $user->getRoleNames()->all(),
+                ] : null,
+            ],
+            'units' => fn () => $request->user()
+                ? Unit::whereNotNull('unit_type')
+                    ->orderBy('sort_order')
+                    ->get(['id', 'name', 'color', 'unit_type'])
+                : [],
+            'locale' => $locale,
+            'supportedLocales' => PultEnums::supportedLocales(),
+            'translations' => fn () => Lang::get('pult', [], $locale),
+            'flash' => [
+                'success' => fn () => $request->session()->get('flash.success'),
+                'error' => fn () => $request->session()->get('flash.error'),
             ],
         ];
     }
