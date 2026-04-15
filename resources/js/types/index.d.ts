@@ -27,6 +27,40 @@ export interface Employee {
     unit?: Unit;
 }
 
+export type IdeaStatus =
+    | 'new'
+    | 'under_review'
+    | 'approved'
+    | 'rejected'
+    | 'in_progress'
+    | 'done';
+
+export type IdeaPriority = 'high' | 'medium' | 'low';
+
+export type IdeaFilterOperator = 'is' | 'is_not' | 'contains';
+
+export interface Idea {
+    id: number;
+    display_id: string;
+    unit_id: string;
+    author_id: number;
+    priority: IdeaPriority;
+    status: IdeaStatus;
+    title: string;
+    description: string;
+    impact: string;
+    created_at: string;
+    updated_at: string;
+    unit?: Unit;
+    author?: Employee;
+}
+
+export interface IdeaFilterState {
+    col: 'unit_id' | 'status' | 'priority' | 'author_id' | 'title';
+    op: IdeaFilterOperator;
+    value: string;
+}
+
 export type Translations = Record<string, unknown>;
 
 export type PageProps<

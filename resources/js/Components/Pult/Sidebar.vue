@@ -19,7 +19,7 @@ const NAV_ITEMS: NavItem[] = [
     { id: 'dashboard', key: 'nav.dashboard', href: '/dashboard' },
     { id: 'personnel', key: 'nav.personnel', href: '/personnel' },
     { id: 'strategy', key: 'nav.strategy', href: null },
-    { id: 'ideas', key: 'nav.ideas', href: null },
+    { id: 'ideas', key: 'nav.ideas', href: '/ideas' },
     { id: 'agreements', key: 'nav.agreements', href: null },
     { id: 'responsibilities', key: 'nav.responsibilities', href: null },
     { id: 'sla', key: 'nav.sla', href: null },

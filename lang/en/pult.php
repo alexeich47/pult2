@@ -108,4 +108,70 @@ return [
     'placeholder' => [
         'wip' => 'Section under development',
     ],
+
+    'ideas' => [
+        'title' => 'Ideas & Insights',
+        'subtitle' => "Oleksiy's ideas as a visionary — for consideration by company leaders",
+        'empty' => 'No ideas yet',
+        'btn' => [
+            'add' => 'Add idea',
+            'edit' => 'Edit',
+            'delete' => 'Delete idea',
+            'back' => 'Back to list',
+        ],
+        'col' => [
+            'id' => 'ID',
+            'company' => 'Company',
+            'idea' => 'Idea',
+            'status' => 'Status',
+            'author' => 'Author',
+            'priority' => 'Priority',
+            'created' => 'Created',
+        ],
+        'status' => [
+            'new' => 'New',
+            'under_review' => 'Under review',
+            'approved' => 'Approved',
+            'rejected' => 'Rejected',
+            'in_progress' => 'In progress',
+            'done' => 'Done',
+        ],
+        'priority' => [
+            'high' => 'High',
+            'medium' => 'Medium',
+            'low' => 'Low',
+        ],
+        'filter' => [
+            'btn' => 'Filter',
+            'add' => 'Add filter',
+            'clear' => 'Clear all',
+            'op' => [
+                'is' => '=',
+                'is_not' => '≠',
+                'contains' => 'contains',
+            ],
+        ],
+        'detail' => [
+            'desc' => 'Description',
+            'impact' => 'Why is this idea important and what is the expected impact?',
+        ],
+        'form' => [
+            'title' => 'Idea title',
+            'title_ph' => 'Short summary',
+            'description' => 'Description',
+            'description_ph' => 'What exactly is being proposed',
+            'impact' => 'Expected impact',
+            'impact_ph' => 'Why it matters and what is the benefit',
+            'unit' => 'Company',
+            'author' => 'Author',
+            'priority' => 'Priority',
+            'status' => 'Status',
+        ],
+        'flash' => [
+            'created' => 'Idea added',
+            'updated' => 'Idea updated',
+            'deleted' => 'Idea deleted',
+        ],
+        'delete_confirm' => 'Delete this idea?',
+    ],
 ];

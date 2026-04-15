@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\IdeaController;
 use App\Http\Controllers\ProfileController;
 use App\Support\PultEnums;
 use Illuminate\Support\Facades\Route;
@@ -20,6 +21,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/personnel', [EmployeeController::class, 'store'])->name('personnel.store');
     Route::put('/personnel/{employee}', [EmployeeController::class, 'update'])->name('personnel.update');
     Route::delete('/personnel/{employee}', [EmployeeController::class, 'destroy'])->name('personnel.destroy');
+
+    Route::get('/ideas', [IdeaController::class, 'index'])->name('ideas.index');
+    Route::post('/ideas', [IdeaController::class, 'store'])->name('ideas.store');
+    Route::get('/ideas/{idea}', [IdeaController::class, 'show'])->name('ideas.show');
+    Route::put('/ideas/{idea}', [IdeaController::class, 'update'])->name('ideas.update');
+    Route::delete('/ideas/{idea}', [IdeaController::class, 'destroy'])->name('ideas.destroy');
 });
 
 Route::middleware('auth')->group(function () {

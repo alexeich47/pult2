@@ -44,4 +44,30 @@ final class PultEnums
     {
         return ['ru', 'uk', 'en'];
     }
+
+    /**
+     * Ordered set — reflects the legacy IDEAS_STATUS_CONFIG order.
+     *
+     * @return array<int, string>
+     */
+    public static function ideaStatuses(): array
+    {
+        return ['new', 'under_review', 'approved', 'rejected', 'in_progress', 'done'];
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    public static function ideaPriorities(): array
+    {
+        return ['high', 'medium', 'low'];
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    public static function ideaFilterOperators(): array
+    {
+        return ['is', 'is_not', 'contains'];
+    }
 }
