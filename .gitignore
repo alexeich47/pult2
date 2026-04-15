@@ -19,6 +19,8 @@
 /storage/*.key
 /storage/pail
 /vendor
+/composer.phar
+.claude/settings.local.json
 _ide_helper.php
 Homestead.json
 Homestead.yaml
