@@ -112,8 +112,14 @@ function isActive(href: string | null): boolean {
 
         <div class="mx-3 my-2 h-px bg-slate-800" />
 
-        <!-- Footer / user -->
+        <!-- Footer reference links -->
         <div class="mt-auto flex flex-col gap-2 border-t border-slate-800 px-4 py-4">
+            <div class="flex gap-3 text-xs">
+                <Link href="/info" class="text-slate-400 hover:text-white">{{ t('footer.info') }}</Link>
+                <Link href="/codex" class="text-slate-400 hover:text-white">{{ t('footer.codex') }}</Link>
+                <Link href="/dictionary" class="text-slate-400 hover:text-white">{{ t('footer.dictionary') }}</Link>
+            </div>
+            <div class="my-1 h-px bg-slate-800"></div>
             <div v-if="page.props.auth.user" class="text-xs text-slate-400">
                 {{ page.props.auth.user.name }}
             </div>

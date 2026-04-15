@@ -40,6 +40,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/services', [ServiceController::class, 'store'])->name('services.store');
     Route::put('/services/{service}', [ServiceController::class, 'update'])->name('services.update');
     Route::delete('/services/{service}', [ServiceController::class, 'destroy'])->name('services.destroy');
+
+    // Reference content (static, i18n-driven)
+    Route::get('/codex', fn () => Inertia::render('Codex/Index'))->name('codex.index');
+    Route::get('/dictionary', fn () => Inertia::render('Dictionary/Index'))->name('dictionary.index');
+    Route::get('/info', fn () => Inertia::render('Info/Index'))->name('info.index');
 });
 
 Route::middleware('auth')->group(function () {

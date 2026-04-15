@@ -12,7 +12,7 @@ import type { PageProps } from '../types';
 export function useTranslations() {
     const page = usePage<PageProps>();
 
-    const t = (key: string, replacements: Record<string, string | number> = {}): string => {
+    function resolve(key: string): unknown {
         const segments = key.split('.');
         let node: unknown = page.props.translations;
 
@@ -20,10 +20,14 @@ export function useTranslations() {
             if (node && typeof node === 'object' && segment in (node as Record<string, unknown>)) {
                 node = (node as Record<string, unknown>)[segment];
             } else {
-                return key;
+                return undefined;
             }
         }
+        return node;
+    }
 
+    const t = (key: string, replacements: Record<string, string | number> = {}): string => {
+        const node = resolve(key);
         if (typeof node !== 'string') {
             return key;
         }
@@ -34,5 +38,14 @@ export function useTranslations() {
         );
     };
 
-    return { t };
+    /**
+     * Resolves a translation key that points to an array/object — used for
+     * structured content like codex items, dictionary terms, info goals, etc.
+     */
+    const tRaw = <T = unknown>(key: string, fallback: T): T => {
+        const node = resolve(key);
+        return (node === undefined ? fallback : node) as T;
+    };
+
+    return { t, tRaw };
 }

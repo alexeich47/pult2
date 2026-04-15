@@ -273,4 +273,109 @@ return [
             'deleted' => 'Service deleted',
         ],
     ],
+
+    'footer' => [
+        'info' => 'Info',
+        'codex' => 'Codex',
+        'dictionary' => 'Dictionary',
+    ],
+
+    'codex' => [
+        'title' => 'Holding Codex',
+        'subtitle' => 'Principles, standards and rules',
+        'intro' => 'The Codex defines unified standards of work, behavior and decision-making across all holding companies. Compliance is mandatory for all participants.',
+        'section' => [
+            'mission' => 'Mission & Goals',
+            'values' => 'Values',
+            'conduct' => 'Ethics & Conduct',
+            'standards' => 'Work Standards',
+        ],
+        'item' => [
+            'mission' => [
+                'Build products and services that solve real customer problems',
+                'Ensure long-term growth and sustainability of each holding company',
+                'Foster a culture of accountability and continuous improvement',
+            ],
+            'values' => [
+                'Honesty and transparency in all communications and decisions',
+                'Accountability for outcomes, not processes',
+                "Respect for time and resources: your own, your colleagues', and your clients'",
+            ],
+            'conduct' => [
+                'Constructive feedback is the foundation of team growth',
+                'Conflicts are resolved through dialogue, not hierarchy',
+                'Discrimination, pressure and manipulation are not tolerated',
+            ],
+            'standards' => [
+                'Agreements are recorded in writing and delivered on time',
+                'Metrics and decisions are transparent across the holding',
+                'Documentation is maintained on a single platform in real time',
+            ],
+        ],
+    ],
+
+    'dictionary' => [
+        'title' => 'Holding Dictionary',
+        'subtitle' => 'Term base: :count definitions',
+        'search_ph' => 'Search term...',
+        'empty' => 'Term not found',
+        'terms' => [
+            ['term' => 'Holding', 'def' => 'A group of legally independent companies under unified management and strategy.'],
+            ['term' => 'Business Unit (BU)', 'def' => 'A separate company or division of the holding with its own P&L and team.'],
+            ['term' => 'KPI', 'def' => 'Key Performance Indicators — measurable metrics of goal achievement.'],
+            ['term' => 'OKR', 'def' => 'Objectives & Key Results — a methodology for setting and tracking goals.'],
+            ['term' => 'Pipeline', 'def' => 'A funnel of deals or tasks reflecting stages of progress towards a result.'],
+            ['term' => 'Roadmap', 'def' => 'A visual plan for product or project development with time markers.'],
+            ['term' => 'Stakeholder', 'def' => 'An interested party: anyone who affects a project or is affected by it.'],
+            ['term' => 'Sprint', 'def' => 'A fixed work cycle (usually 1-2 weeks) with a clear set of tasks.'],
+            ['term' => 'Retrospective', 'def' => 'A regular team meeting to analyze the past period and find improvements.'],
+            ['term' => 'MRR', 'def' => 'Monthly Recurring Revenue — monthly recurring income of a subscription business.'],
+        ],
+    ],
+
+    'info' => [
+        'title' => 'Info',
+        'hero_sub' => 'Corporate ERM panel for the holding',
+        'intro' => [
+            'Pult is the single control point for the holding: employees, services, agreements, processes and quick requests — all in one interface.',
+            'Navigate via the left sidebar. Switch the interface language in the footer (RU / UK / EN). Click the Pult logo to return to the home page.',
+        ],
+        'goals' => [
+            'label' => 'Pult Goals',
+            'items' => [
+                ['title' => 'Single Operating Contour', 'desc' => 'Work inside Pult, within one space — no switching between systems. Earn from holding companies and manage from one place.'],
+                ['title' => 'Track Everything', 'desc' => 'Employees, services, agreements, risks, expenses and decisions — recorded in Pult. Nothing gets lost.'],
+                ['title' => 'Zero Noise', 'desc' => 'Fewer chats, fewer "where was that?". Everything lives in Pult — not in someone\'s head or a messenger.'],
+                ['title' => 'Control Made Easy', 'desc' => 'No need to keep everything in your head or collect statuses manually. Everything is visible at once.'],
+            ],
+        ],
+        'features' => [
+            'title' => "What's in Pult",
+            'items' => [
+                ['title' => 'Home', 'desc' => 'Quick requests with one click: day-off, server, domain, payment.'],
+                ['title' => 'Personnel', 'desc' => 'List of employees and vacancies across units with filters and CRUD.'],
+                ['title' => 'Ideas & Insights', 'desc' => 'Journal of visionary ideas with Notion-style filters and detail view.'],
+                ['title' => 'Risks', 'desc' => 'Four logs: Risk / Issue / Fuckup / Workaround.'],
+                ['title' => 'Services', 'desc' => 'Subscriptions with monthly spend calculation and filters.'],
+                ['title' => 'Codex & Dictionary', 'desc' => 'Unified principles and terminology of the holding.'],
+                ['title' => 'Three languages', 'desc' => 'RU / UK / EN without page reload.'],
+                ['title' => 'Audit log', 'desc' => 'All entity changes are written to activity_log via Spatie.'],
+            ],
+        ],
+        'changelog' => [
+            'title' => 'Phase history',
+            'latest' => 'NEW',
+            'entries' => [
+                ['version' => 'Phase 3', 'title' => 'Risks & Services', 'items' => ['Risks: 4-log polymorphic table', 'Services: MRR calculator + filters', '18 new tests']],
+                ['version' => 'Phase 2', 'title' => 'Ideas', 'items' => ['Notion-style filters', 'Detail page /ideas/ID-001', '15 tests']],
+                ['version' => 'Phase 1', 'title' => 'Units + Personnel + i18n', 'items' => ['9 units, 11 employees', 'Pult Sidebar, 11 nav items', 'RU/UK/EN switcher']],
+                ['version' => 'Phase 0', 'title' => 'Foundation', 'items' => ['Laravel 13 + Breeze Vue+TS', 'spatie/permission, activitylog, telescope', 'Tailwind 4, Larastan level 6']],
+            ],
+        ],
+        'units' => [
+            'label' => 'Holding Units',
+            'revenue' => '$ — revenue-generating company',
+            'service' => '🛠 — service company',
+        ],
+    ],
 ];
