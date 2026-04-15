@@ -174,4 +174,103 @@ return [
         ],
         'delete_confirm' => 'Delete this idea?',
     ],
+
+    'risks' => [
+        'title' => 'Risks, Issues, Workarounds',
+        'subtitle' => 'Log of risks, incidents, fuck-ups and workarounds',
+        'empty' => 'No entries',
+        'delete_confirm' => 'Delete this entry?',
+        'btn' => [
+            'add' => 'Add',
+            'edit' => 'Edit',
+            'delete' => 'Delete',
+            'back' => 'Back to list',
+        ],
+        'log' => [
+            'risk' => ['title' => 'Risk Log'],
+            'issue' => ['title' => 'Issue Log'],
+            'fuckup' => ['title' => 'Fuck-up Log'],
+            'workaround' => ['title' => 'Workarounds Log'],
+        ],
+        'col' => [
+            'id' => 'ID',
+            'name' => 'Name',
+            'date' => 'Date',
+            'owner' => 'Owner',
+            'status' => 'Status',
+        ],
+        'status' => [
+            'open' => 'Open',
+            'in_progress' => 'In progress',
+            'mitigated' => 'Mitigated',
+            'closed' => 'Closed',
+            'active' => 'Active',
+            'resolved' => 'Resolved',
+        ],
+        'detail' => [
+            'desc' => 'Description',
+        ],
+        'field' => [
+            'type' => 'Entry type',
+        ],
+        'flash' => [
+            'created' => 'Entry added',
+            'updated' => 'Entry updated',
+            'deleted' => 'Entry deleted',
+        ],
+    ],
+
+    'services' => [
+        'title' => 'Holding services',
+        'subtitle' => 'Total: :total · Active: :active · Subscriptions: :subs',
+        'empty' => 'No services found',
+        'free' => 'Free',
+        'monthly_total' => 'Monthly spend',
+        'delete_confirm' => 'Delete this service?',
+        'btn' => [
+            'add' => 'Add service',
+            'edit' => 'Edit service',
+        ],
+        'filter' => [
+            'all' => 'All',
+            'active' => 'Active',
+            'subscription' => 'Subscriptions',
+            'once' => 'One-time',
+        ],
+        'col' => [
+            'name' => 'Service',
+            'category' => 'Category',
+            'company' => 'Company',
+            'cost' => 'Cost',
+            'billing' => 'Period',
+            'next_payment' => 'Next payment',
+            'status' => 'Status',
+        ],
+        'billing' => [
+            'monthly' => 'Monthly',
+            'yearly' => 'Yearly',
+            'once' => 'One-time',
+        ],
+        'status' => [
+            'active' => 'Active',
+            'trial' => 'Trial',
+            'inactive' => 'Inactive',
+        ],
+        'field' => [
+            'name' => 'Name',
+            'url' => 'Website',
+            'category' => 'Category',
+            'company' => 'Company',
+            'cost' => 'Cost',
+            'currency' => 'Currency',
+            'billing' => 'Billing',
+            'next_payment' => 'Next payment',
+            'status' => 'Status',
+        ],
+        'flash' => [
+            'created' => 'Service added',
+            'updated' => 'Service updated',
+            'deleted' => 'Service deleted',
+        ],
+    ],
 ];

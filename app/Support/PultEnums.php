@@ -70,4 +70,55 @@ final class PultEnums
     {
         return ['is', 'is_not', 'contains'];
     }
+
+    /**
+     * @return array<int, string>
+     */
+    public static function riskTypes(): array
+    {
+        return ['risk', 'issue', 'fuckup', 'workaround'];
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    public static function serviceCategories(): array
+    {
+        return [
+            'Хостинг',
+            'Инструменты',
+            'Дизайн',
+            'Безопасность',
+            'Коммуникации',
+            'Аналитика',
+            'Управление',
+            'Маркетинг',
+            'Финансы',
+            'Прочее',
+        ];
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    public static function serviceCurrencies(): array
+    {
+        return ['USD', 'EUR', 'UAH', 'RUB'];
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    public static function serviceBillingCycles(): array
+    {
+        return ['monthly', 'yearly', 'once'];
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    public static function serviceStatuses(): array
+    {
+        return ['active', 'trial', 'inactive'];
+    }
 }

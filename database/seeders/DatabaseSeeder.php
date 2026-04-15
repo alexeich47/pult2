@@ -20,6 +20,8 @@ class DatabaseSeeder extends Seeder
             UnitSeeder::class,
             EmployeeSeeder::class,
             IdeaSeeder::class,
+            RiskEntrySeeder::class,
+            ServiceSeeder::class,
         ]);
 
         $admin = User::factory()->create([

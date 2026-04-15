@@ -3,6 +3,8 @@
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\IdeaController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\RiskEntryController;
+use App\Http\Controllers\ServiceController;
 use App\Support\PultEnums;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -27,6 +29,17 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/ideas/{idea}', [IdeaController::class, 'show'])->name('ideas.show');
     Route::put('/ideas/{idea}', [IdeaController::class, 'update'])->name('ideas.update');
     Route::delete('/ideas/{idea}', [IdeaController::class, 'destroy'])->name('ideas.destroy');
+
+    Route::get('/risks', [RiskEntryController::class, 'index'])->name('risks.index');
+    Route::post('/risks', [RiskEntryController::class, 'store'])->name('risks.store');
+    Route::get('/risks/{risk_entry}', [RiskEntryController::class, 'show'])->name('risks.show');
+    Route::put('/risks/{risk_entry}', [RiskEntryController::class, 'update'])->name('risks.update');
+    Route::delete('/risks/{risk_entry}', [RiskEntryController::class, 'destroy'])->name('risks.destroy');
+
+    Route::get('/services', [ServiceController::class, 'index'])->name('services.index');
+    Route::post('/services', [ServiceController::class, 'store'])->name('services.store');
+    Route::put('/services/{service}', [ServiceController::class, 'update'])->name('services.update');
+    Route::delete('/services/{service}', [ServiceController::class, 'destroy'])->name('services.destroy');
 });
 
 Route::middleware('auth')->group(function () {

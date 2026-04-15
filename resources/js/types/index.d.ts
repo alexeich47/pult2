@@ -61,6 +61,41 @@ export interface IdeaFilterState {
     value: string;
 }
 
+export type RiskType = 'risk' | 'issue' | 'fuckup' | 'workaround';
+
+export interface RiskEntry {
+    id: number;
+    display_id: string;
+    type: RiskType;
+    name: string;
+    description: string;
+    owner_name: string;
+    status: string;
+    entry_date: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export type ServiceBilling = 'monthly' | 'yearly' | 'once';
+export type ServiceStatus = 'active' | 'trial' | 'inactive';
+export type ServiceCurrency = 'USD' | 'EUR' | 'UAH' | 'RUB';
+
+export interface Service {
+    id: number;
+    name: string;
+    url: string | null;
+    category: string;
+    unit_id: string;
+    cost: string; // decimal serialized as string
+    currency: ServiceCurrency;
+    billing: ServiceBilling;
+    next_payment: string | null;
+    status: ServiceStatus;
+    created_at: string;
+    updated_at: string;
+    unit?: Unit;
+}
+
 export type Translations = Record<string, unknown>;
 
 export type PageProps<

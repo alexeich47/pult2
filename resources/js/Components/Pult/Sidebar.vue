@@ -23,9 +23,9 @@ const NAV_ITEMS: NavItem[] = [
     { id: 'agreements', key: 'nav.agreements', href: null },
     { id: 'responsibilities', key: 'nav.responsibilities', href: null },
     { id: 'sla', key: 'nav.sla', href: null },
-    { id: 'services', key: 'nav.services', href: null },
+    { id: 'services', key: 'nav.services', href: '/services' },
     { id: 'reports', key: 'nav.reports', href: null },
-    { id: 'risks', key: 'nav.risks', href: null },
+    { id: 'risks', key: 'nav.risks', href: '/risks' },
     { id: 'processes', key: 'nav.processes', href: null },
 ];
 
