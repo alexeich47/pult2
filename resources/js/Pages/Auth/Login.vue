@@ -1,16 +1,14 @@
 <script setup lang="ts">
-import Checkbox from '@/Components/Checkbox.vue';
 import GuestLayout from '@/Layouts/GuestLayout.vue';
-import InputError from '@/Components/InputError.vue';
-import InputLabel from '@/Components/InputLabel.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
-import TextInput from '@/Components/TextInput.vue';
+import { useTranslations } from '@/Composables/useTranslations';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 
 defineProps<{
     canResetPassword?: boolean;
     status?: string;
 }>();
+
+const { t } = useTranslations();
 
 const form = useForm({
     email: '',
@@ -29,70 +27,84 @@ const submit = () => {
 
 <template>
     <GuestLayout>
-        <Head title="Log in" />
+        <Head :title="t('auth.login.title')" />
 
-        <div v-if="status" class="mb-4 text-sm font-medium text-green-600">
+        <div class="mb-8">
+            <h1 class="text-2xl font-semibold text-slate-900">{{ t('auth.login.title') }}</h1>
+            <p class="mt-1 text-sm text-slate-600">{{ t('auth.login.sub') }}</p>
+        </div>
+
+        <div v-if="status" class="mb-4 rounded-md border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm text-emerald-800">
             {{ status }}
         </div>
 
-        <form @submit.prevent="submit">
+        <form @submit.prevent="submit" class="space-y-5">
             <div>
-                <InputLabel for="email" value="Email" />
-
-                <TextInput
+                <label for="email" class="mb-1 block text-xs font-medium text-slate-700">
+                    {{ t('auth.common.email') }}
+                </label>
+                <input
                     id="email"
-                    type="email"
-                    class="mt-1 block w-full"
                     v-model="form.email"
+                    type="email"
                     required
                     autofocus
                     autocomplete="username"
+                    :placeholder="t('auth.common.email_ph')"
+                    class="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                 />
-
-                <InputError class="mt-2" :message="form.errors.email" />
+                <div v-if="form.errors.email" class="mt-1 text-xs text-rose-600">{{ form.errors.email }}</div>
             </div>
 
-            <div class="mt-4">
-                <InputLabel for="password" value="Password" />
-
-                <TextInput
+            <div>
+                <label for="password" class="mb-1 block text-xs font-medium text-slate-700">
+                    {{ t('auth.common.password') }}
+                </label>
+                <input
                     id="password"
-                    type="password"
-                    class="mt-1 block w-full"
                     v-model="form.password"
+                    type="password"
                     required
                     autocomplete="current-password"
+                    :placeholder="t('auth.common.password_ph')"
+                    class="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                 />
-
-                <InputError class="mt-2" :message="form.errors.password" />
+                <div v-if="form.errors.password" class="mt-1 text-xs text-rose-600">{{ form.errors.password }}</div>
             </div>
 
-            <div class="mt-4 block">
-                <label class="flex items-center">
-                    <Checkbox name="remember" v-model:checked="form.remember" />
-                    <span class="ms-2 text-sm text-gray-600 dark:text-gray-400"
-                        >Remember me</span
-                    >
+            <div class="flex items-center justify-between">
+                <label class="flex items-center gap-2 text-sm text-slate-700">
+                    <input
+                        v-model="form.remember"
+                        type="checkbox"
+                        name="remember"
+                        class="h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                    />
+                    {{ t('auth.common.remember_me') }}
                 </label>
-            </div>
-
-            <div class="mt-4 flex items-center justify-end">
                 <Link
                     v-if="canResetPassword"
                     :href="route('password.request')"
-                    class="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:text-gray-400 dark:hover:text-gray-100 dark:focus:ring-offset-gray-800"
+                    class="text-xs text-indigo-600 hover:text-indigo-800 hover:underline"
                 >
-                    Forgot your password?
+                    {{ t('auth.login.forgot_link') }}
                 </Link>
-
-                <PrimaryButton
-                    class="ms-4"
-                    :class="{ 'opacity-25': form.processing }"
-                    :disabled="form.processing"
-                >
-                    Log in
-                </PrimaryButton>
             </div>
+
+            <button
+                type="submit"
+                :disabled="form.processing"
+                class="w-full rounded-md bg-indigo-600 px-4 py-2.5 text-sm font-medium text-white shadow-sm transition-colors hover:bg-indigo-700 disabled:opacity-50"
+            >
+                {{ t('auth.login.submit') }}
+            </button>
         </form>
+
+        <div class="mt-6 text-center text-sm text-slate-600">
+            {{ t('auth.login.no_account') }}
+            <Link :href="route('register')" class="ml-1 font-medium text-indigo-600 hover:text-indigo-800 hover:underline">
+                {{ t('auth.login.register_link') }}
+            </Link>
+        </div>
     </GuestLayout>
 </template>

@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import GuestLayout from '@/Layouts/GuestLayout.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
+import { useTranslations } from '@/Composables/useTranslations';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 
 const props = defineProps<{
     status?: string;
 }>();
+
+const { t } = useTranslations();
 
 const form = useForm({});
 
@@ -14,46 +16,44 @@ const submit = () => {
     form.post(route('verification.send'));
 };
 
-const verificationLinkSent = computed(
-    () => props.status === 'verification-link-sent',
-);
+const verificationLinkSent = computed(() => props.status === 'verification-link-sent');
 </script>
 
 <template>
     <GuestLayout>
-        <Head title="Email Verification" />
+        <Head :title="t('auth.verify.title')" />
 
-        <div class="mb-4 text-sm text-gray-600 dark:text-gray-400">
-            Thanks for signing up! Before getting started, could you verify your
-            email address by clicking on the link we just emailed to you? If you
-            didn't receive the email, we will gladly send you another.
+        <div class="mb-8">
+            <h1 class="text-2xl font-semibold text-slate-900">{{ t('auth.verify.title') }}</h1>
+            <p class="mt-1 text-sm text-slate-600">{{ t('auth.verify.sub') }}</p>
         </div>
 
         <div
-            class="mb-4 text-sm font-medium text-green-600 dark:text-green-400"
             v-if="verificationLinkSent"
+            class="mb-4 rounded-md border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm text-emerald-800"
         >
-            A new verification link has been sent to the email address you
-            provided during registration.
+            {{ t('auth.verify.sent') }}
         </div>
 
         <form @submit.prevent="submit">
-            <div class="mt-4 flex items-center justify-between">
-                <PrimaryButton
-                    :class="{ 'opacity-25': form.processing }"
-                    :disabled="form.processing"
-                >
-                    Resend Verification Email
-                </PrimaryButton>
-
-                <Link
-                    :href="route('logout')"
-                    method="post"
-                    as="button"
-                    class="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:text-gray-400 dark:hover:text-gray-100 dark:focus:ring-offset-gray-800"
-                    >Log Out</Link
-                >
-            </div>
+            <button
+                type="submit"
+                :disabled="form.processing"
+                class="w-full rounded-md bg-indigo-600 px-4 py-2.5 text-sm font-medium text-white shadow-sm transition-colors hover:bg-indigo-700 disabled:opacity-50"
+            >
+                {{ t('auth.verify.resend') }}
+            </button>
         </form>
+
+        <div class="mt-6 text-center text-sm text-slate-600">
+            <Link
+                :href="route('logout')"
+                method="post"
+                as="button"
+                class="font-medium text-indigo-600 hover:text-indigo-800 hover:underline"
+            >
+                {{ t('auth.verify.logout') }}
+            </Link>
+        </div>
     </GuestLayout>
 </template>

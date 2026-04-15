@@ -4,6 +4,58 @@ return [
     'brand' => [
         'name' => 'Pult',
         'sub' => 'Holding control panel',
+        'tagline' => 'Single control point for the holding: people, ideas, risks, services — all in one interface.',
+    ],
+
+    'auth' => [
+        'common' => [
+            'email' => 'Email',
+            'email_ph' => 'you@company.com',
+            'password' => 'Password',
+            'password_ph' => '••••••••',
+            'confirm_password' => 'Confirm password',
+            'name' => 'Name',
+            'name_ph' => 'John Doe',
+            'remember_me' => 'Remember me',
+        ],
+        'login' => [
+            'title' => 'Sign in to Pult',
+            'sub' => 'Log in to continue managing the holding',
+            'submit' => 'Sign in',
+            'forgot_link' => 'Forgot your password?',
+            'no_account' => "Don't have an account?",
+            'register_link' => 'Create account',
+        ],
+        'register' => [
+            'title' => 'Create account',
+            'sub' => 'Fill out the form to gain access to Pult',
+            'submit' => 'Register',
+            'have_account' => 'Already have an account?',
+            'login_link' => 'Sign in',
+        ],
+        'forgot' => [
+            'title' => 'Reset password',
+            'sub' => "Enter your email — we'll send you a reset link.",
+            'submit' => 'Send reset link',
+            'back_to_login' => 'Back to sign in',
+        ],
+        'reset' => [
+            'title' => 'New password',
+            'sub' => 'Set a new password for your account.',
+            'submit' => 'Save password',
+        ],
+        'confirm' => [
+            'title' => 'Confirm password',
+            'sub' => 'This is a protected area — confirm your password to continue.',
+            'submit' => 'Confirm',
+        ],
+        'verify' => [
+            'title' => 'Verify email',
+            'sub' => 'We sent you a verification link. Please check your inbox.',
+            'sent' => 'A fresh verification link has been sent to your email.',
+            'resend' => 'Resend email',
+            'logout' => 'Log out',
+        ],
     ],
 
     'sidebar' => [

@@ -16,6 +16,14 @@ Route::get('/', function () {
     ]);
 });
 
+// Locale switcher — public so guests can pick their language before login.
+Route::post('/locale/{locale}', function (string $locale) {
+    abort_unless(in_array($locale, PultEnums::supportedLocales(), true), 404);
+    session(['locale' => $locale]);
+
+    return back();
+})->name('locale.switch');
+
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', fn () => Inertia::render('Home'))->name('dashboard');
 
@@ -69,13 +77,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-
-    Route::post('/locale/{locale}', function (string $locale) {
-        abort_unless(in_array($locale, PultEnums::supportedLocales(), true), 404);
-        session(['locale' => $locale]);
-
-        return back();
-    })->name('locale.switch');
 });
 
 require __DIR__.'/auth.php';
