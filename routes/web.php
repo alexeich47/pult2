@@ -45,6 +45,24 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/codex', fn () => Inertia::render('Codex/Index'))->name('codex.index');
     Route::get('/dictionary', fn () => Inertia::render('Dictionary/Index'))->name('dictionary.index');
     Route::get('/info', fn () => Inertia::render('Info/Index'))->name('info.index');
+
+    // Placeholder routes — scaffolded for future phases. Each uses the shared
+    // Placeholder.vue component with per-route i18n keys.
+    $placeholders = [
+        'strategy' => ['icon' => '🎯'],
+        'agreements' => ['icon' => '📜'],
+        'responsibilities' => ['icon' => '🎖'],
+        'sla' => ['icon' => '⏱'],
+        'reports' => ['icon' => '📊'],
+        'processes' => ['icon' => '🔁'],
+    ];
+    foreach ($placeholders as $slug => $config) {
+        Route::get("/{$slug}", fn () => Inertia::render('Placeholder', [
+            'titleKey' => "page.{$slug}.title",
+            'subtitleKey' => "page.{$slug}.sub",
+            'icon' => $config['icon'],
+        ]))->name("{$slug}.index");
+    }
 });
 
 Route::middleware('auth')->group(function () {

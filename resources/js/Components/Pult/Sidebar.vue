@@ -18,15 +18,15 @@ interface NavItem {
 const NAV_ITEMS: NavItem[] = [
     { id: 'dashboard', key: 'nav.dashboard', href: '/dashboard' },
     { id: 'personnel', key: 'nav.personnel', href: '/personnel' },
-    { id: 'strategy', key: 'nav.strategy', href: null },
+    { id: 'strategy', key: 'nav.strategy', href: '/strategy' },
     { id: 'ideas', key: 'nav.ideas', href: '/ideas' },
-    { id: 'agreements', key: 'nav.agreements', href: null },
-    { id: 'responsibilities', key: 'nav.responsibilities', href: null },
-    { id: 'sla', key: 'nav.sla', href: null },
+    { id: 'agreements', key: 'nav.agreements', href: '/agreements' },
+    { id: 'responsibilities', key: 'nav.responsibilities', href: '/responsibilities' },
+    { id: 'sla', key: 'nav.sla', href: '/sla' },
     { id: 'services', key: 'nav.services', href: '/services' },
-    { id: 'reports', key: 'nav.reports', href: null },
+    { id: 'reports', key: 'nav.reports', href: '/reports' },
     { id: 'risks', key: 'nav.risks', href: '/risks' },
-    { id: 'processes', key: 'nav.processes', href: null },
+    { id: 'processes', key: 'nav.processes', href: '/processes' },
 ];
 
 const currentPath = computed(() => {

@@ -106,7 +106,34 @@ return [
     ],
 
     'placeholder' => [
-        'wip' => 'Section under development',
+        'wip' => 'Section under development — coming in a later phase',
+    ],
+
+    'page' => [
+        'strategy' => [
+            'title' => 'Strategy & Vision',
+            'sub' => 'Holding-wide goals and strategic directions',
+        ],
+        'agreements' => [
+            'title' => 'Agreements & Documents',
+            'sub' => 'Internal agreements, regulations and key documents',
+        ],
+        'responsibilities' => [
+            'title' => 'Responsibilities',
+            'sub' => 'Who owns what: expectations, boundaries, escalation',
+        ],
+        'sla' => [
+            'title' => 'SLA',
+            'sub' => 'Service-level agreements between holding companies',
+        ],
+        'reports' => [
+            'title' => 'Reports',
+            'sub' => 'Regular reporting and per-company dashboards',
+        ],
+        'processes' => [
+            'title' => 'Processes & Protocols',
+            'sub' => 'Standard operating procedures and communication protocols',
+        ],
     ],
 
     'ideas' => [
