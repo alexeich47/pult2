@@ -7,6 +7,7 @@ use App\Http\Requests\UpdateEmployeeRequest;
 use App\Models\Employee;
 use App\Models\Unit;
 use App\Support\PultEnums;
+use App\Support\UnitContextScope;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
@@ -22,12 +23,13 @@ class EmployeeController extends Controller
 
         $tab = request()->query('tab', 'employee');
 
-        $queryBuilder = new QueryBuilder(
-            Employee::query()
-                ->with(['unit', 'manager'])
-                ->where('status', 'active')
-                ->where('work_stage', $tab)
-        );
+        $baseQuery = Employee::query()
+            ->with(['unit', 'manager'])
+            ->where('status', 'active')
+            ->where('work_stage', $tab);
+        UnitContextScope::apply($baseQuery);
+
+        $queryBuilder = new QueryBuilder($baseQuery);
         $queryBuilder->allowedFilters(
             'unit_id',
             'department',
@@ -40,15 +42,21 @@ class EmployeeController extends Controller
         $employees = $queryBuilder->paginate(20)->withQueryString();
 
         // Work stage counts for tabs
-        $stageCounts = Employee::query()
-            ->where('status', 'active')
+        $stageQuery = Employee::query()->where('status', 'active');
+        UnitContextScope::apply($stageQuery);
+        $stageCounts = $stageQuery
             ->selectRaw('work_stage, count(*) as count')
             ->groupBy('work_stage')
             ->pluck('count', 'work_stage')
             ->all();
 
-        $totalActive = Employee::where('status', 'active')->count();
-        $firedCount = Employee::where('status', 'fired')->count();
+        $totalActiveQuery = Employee::query()->where('status', 'active');
+        UnitContextScope::apply($totalActiveQuery);
+        $totalActive = $totalActiveQuery->count();
+
+        $firedQuery = Employee::query()->where('status', 'fired');
+        UnitContextScope::apply($firedQuery);
+        $firedCount = $firedQuery->count();
 
         $managers = Employee::query()
             ->where('status', 'active')

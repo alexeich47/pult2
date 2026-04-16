@@ -20,7 +20,7 @@ class ServiceFactory extends Factory
             'name' => fake()->company().' '.fake()->randomElement(['Cloud', 'Pro', 'Suite', 'Hub', 'API']),
             'url' => fake()->domainName(),
             'category' => fake()->randomElement(PultEnums::serviceCategories()),
-            'unit_id' => fake()->randomElement($unitIds ?: ['holding']),
+            'unit_id' => fake()->randomElement($unitIds ?: ['swiftpunk']),
             'cost' => fake()->randomFloat(2, 0, 500),
             'currency' => fake()->randomElement(PultEnums::serviceCurrencies()),
             'billing' => fake()->randomElement(PultEnums::serviceBillingCycles()),

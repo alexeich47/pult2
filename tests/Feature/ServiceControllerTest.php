@@ -37,7 +37,7 @@ class ServiceControllerTest extends TestCase
             'name' => 'TestSvc',
             'url' => 'test.com',
             'category' => 'Инструменты',
-            'unit_id' => 'holding',
+            'unit_id' => 'swiftpunk',
             'cost' => 10.00,
             'currency' => 'USD',
             'billing' => 'monthly',
@@ -102,7 +102,7 @@ class ServiceControllerTest extends TestCase
                 'name' => 'Notion',
                 'url' => 'notion.so',
                 'category' => 'Инструменты',
-                'unit_id' => 'holding',
+                'unit_id' => 'swiftpunk',
                 'cost' => 16.00,
                 'currency' => 'USD',
                 'billing' => 'monthly',
@@ -111,7 +111,7 @@ class ServiceControllerTest extends TestCase
             ])
             ->assertRedirect();
 
-        $this->assertDatabaseHas('services', ['name' => 'Notion', 'unit_id' => 'holding']);
+        $this->assertDatabaseHas('services', ['name' => 'Notion', 'unit_id' => 'swiftpunk']);
     }
 
     public function test_store_validates_enum_fields(): void

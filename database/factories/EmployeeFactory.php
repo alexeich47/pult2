@@ -19,7 +19,7 @@ class EmployeeFactory extends Factory
         $isVacancy = $status === 'vacancy';
 
         return [
-            'unit_id' => fake()->randomElement($unitIds ?: ['holding']),
+            'unit_id' => fake()->randomElement($unitIds ?: ['swiftpunk']),
             'name' => $isVacancy ? null : fake()->name(),
             'position' => fake()->jobTitle(),
             'department' => fake()->randomElement(PultEnums::departments()),

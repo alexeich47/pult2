@@ -19,7 +19,7 @@ class IdeaFactory extends Factory
         $authorIds = Employee::where('status', 'active')->pluck('id')->all();
 
         return [
-            'unit_id' => fake()->randomElement($unitIds ?: ['holding']),
+            'unit_id' => fake()->randomElement($unitIds ?: ['swiftpunk']),
             'author_id' => fake()->randomElement($authorIds ?: [1]),
             'priority' => fake()->randomElement(PultEnums::ideaPriorities()),
             'status' => fake()->randomElement(PultEnums::ideaStatuses()),

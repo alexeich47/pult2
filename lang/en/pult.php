@@ -67,6 +67,7 @@ return [
 
     'nav' => [
         'dashboard' => 'Dashboard',
+        'structure' => 'Structure',
         'personnel' => 'Personnel',
         'hiring' => 'Hiring',
         'strategy' => 'Strategy & Vision',
@@ -93,6 +94,36 @@ return [
         'services_title' => 'Company services',
         'view_all' => 'All →',
         'no_data' => 'No data',
+    ],
+
+    'structure' => [
+        'title' => 'Holding Structure',
+        'sub' => 'Organizational chart of companies',
+        'add' => 'Add company',
+        'edit' => 'Edit',
+        'delete' => 'Delete company',
+        'delete_confirm' => 'Delete this company?',
+        'delete_blocked' => 'Cannot delete: company has related data',
+        'field' => [
+            'name' => 'Name',
+            'unit_type' => 'Type',
+            'parent' => 'Parent company',
+            'color' => 'Color',
+        ],
+        'type' => [
+            'revenue' => 'Business',
+            'service' => 'Service',
+        ],
+        'flash' => [
+            'created' => 'Company added',
+            'updated' => 'Company updated',
+            'deleted' => 'Company deleted',
+        ],
+    ],
+
+    'context' => [
+        'all' => 'All companies',
+        'label' => 'Context',
     ],
 
     'dashboard' => [

@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { Link, usePage } from '@inertiajs/vue3';
-import { computed } from 'vue';
+import { Link, usePage, router } from '@inertiajs/vue3';
+import { computed, ref } from 'vue';
 import type { PageProps } from '../../types';
 import { useDarkMode } from '../../Composables/useDarkMode';
 import { useTranslations } from '../../Composables/useTranslations';
@@ -10,6 +10,7 @@ const { isDark, toggle: toggleDark } = useDarkMode();
 const page = usePage<PageProps>();
 
 const units = computed(() => page.props.units ?? []);
+const activeUnitId = computed(() => page.props.activeUnitId);
 
 interface NavItem {
     id: string;
@@ -19,6 +20,7 @@ interface NavItem {
 
 const NAV_ITEMS: NavItem[] = [
     { id: 'dashboard', key: 'nav.dashboard', href: '/dashboard' },
+    { id: 'structure', key: 'nav.structure', href: '/structure' },
     { id: 'personnel', key: 'nav.personnel', href: '/personnel' },
     { id: 'hiring', key: 'nav.hiring', href: '/hiring' },
     { id: 'strategy', key: 'nav.strategy', href: '/strategy' },
@@ -41,6 +43,25 @@ function isActive(href: string | null): boolean {
     if (!href) return false;
     return currentPath.value === href || currentPath.value.startsWith(href + '/');
 }
+
+/** Root unit (swiftpunk) — the holding itself */
+const holdingUnit = computed(() => units.value.find((u) => u.unit_type === null));
+
+/** Top-level companies (direct children of holding) */
+const topLevelUnits = computed(() =>
+    units.value.filter((u) => u.parent_id === holdingUnit.value?.id),
+);
+
+/** Get children of a given unit */
+function childrenOf(parentId: string) {
+    return units.value.filter((u) => u.parent_id === parentId);
+}
+
+function switchContext(event: Event) {
+    const target = event.target as HTMLSelectElement;
+    const value = target.value;
+    router.post(`/context/${value}`, {}, { preserveScroll: true });
+}
 </script>
 
 <template>
@@ -58,6 +79,34 @@ function isActive(href: string | null): boolean {
                 <div class="text-xs text-slate-400">{{ t('brand.sub') }}</div>
             </div>
         </Link>
+
+        <!-- Company context selector -->
+        <div class="border-b border-slate-800 px-3 py-3">
+            <label class="px-2 pb-1.5 text-[11px] font-semibold uppercase tracking-wider text-slate-500">
+                {{ t('context.label') }}
+            </label>
+            <select
+                class="mt-1 w-full rounded-md border border-slate-700 bg-slate-800 px-2.5 py-1.5 text-sm text-slate-200 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                :value="activeUnitId ?? 'all'"
+                @change="switchContext"
+            >
+                <option value="all">
+                    {{ holdingUnit?.name ?? 'Swift Punk' }} ({{ t('context.all') }})
+                </option>
+                <template v-for="unit in topLevelUnits" :key="unit.id">
+                    <option :value="unit.id">
+                        {{ unit.name }}
+                    </option>
+                    <option
+                        v-for="child in childrenOf(unit.id)"
+                        :key="child.id"
+                        :value="child.id"
+                    >
+                        &nbsp;&nbsp;&nbsp;&nbsp;{{ child.name }}
+                    </option>
+                </template>
+            </select>
+        </div>
 
         <!-- Data section -->
         <div class="flex flex-col gap-0.5 px-3 py-3">
@@ -88,34 +137,6 @@ function isActive(href: string | null): boolean {
                     <span class="ml-auto text-[10px] uppercase text-slate-600">wip</span>
                 </div>
             </template>
-        </div>
-
-        <div class="mx-3 my-2 h-px bg-slate-800" />
-
-        <!-- Units section -->
-        <div class="flex flex-col gap-0.5 px-3 py-3">
-            <div class="px-2 pb-2 pt-1 text-[11px] font-semibold uppercase tracking-wider text-slate-500">
-                {{ t('sidebar.section.companies') }}
-            </div>
-            <Link
-                v-for="unit in units"
-                :key="unit.id"
-                :href="`/units/${unit.id}`"
-                :class="[
-                    'flex items-center gap-2 rounded-md px-2.5 py-1.5 text-sm transition-colors',
-                    isActive(`/units/${unit.id}`)
-                        ? 'bg-indigo-500/15 text-indigo-200'
-                        : 'text-slate-300 hover:bg-slate-800/60 hover:text-white',
-                ]"
-            >
-                <span
-                    class="flex h-5 w-5 items-center justify-center rounded text-xs font-bold"
-                    :style="{ backgroundColor: unit.color + '33', color: unit.color }"
-                >
-                    {{ unit.unit_type === 'revenue' ? '$' : '🛠' }}
-                </span>
-                {{ unit.name }}
-            </Link>
         </div>
 
         <div class="mx-3 my-2 h-px bg-slate-800" />

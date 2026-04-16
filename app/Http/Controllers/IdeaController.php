@@ -8,6 +8,7 @@ use App\Models\Employee;
 use App\Models\Idea;
 use App\Models\Unit;
 use App\Support\PultEnums;
+use App\Support\UnitContextScope;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
@@ -23,7 +24,10 @@ class IdeaController extends Controller
     {
         Gate::authorize('viewAny', Idea::class);
 
-        $queryBuilder = new QueryBuilder(Idea::query()->with(['unit', 'author']));
+        $baseQuery = Idea::query()->with(['unit', 'author']);
+        UnitContextScope::apply($baseQuery);
+
+        $queryBuilder = new QueryBuilder($baseQuery);
         $queryBuilder->allowedFilters(
             AllowedFilter::exact('unit_id'),
             AllowedFilter::exact('author_id'),

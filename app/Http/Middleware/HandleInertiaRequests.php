@@ -43,10 +43,10 @@ class HandleInertiaRequests extends Middleware
                 ] : null,
             ],
             'units' => fn () => $request->user()
-                ? Unit::whereNotNull('unit_type')
-                    ->orderBy('sort_order')
-                    ->get(['id', 'name', 'color', 'unit_type'])
+                ? Unit::orderBy('sort_order')
+                    ->get(['id', 'name', 'color', 'unit_type', 'parent_id'])
                 : [],
+            'activeUnitId' => fn () => session('active_unit_id'),
             'locale' => $locale,
             'supportedLocales' => PultEnums::supportedLocales(),
             'translations' => fn () => Lang::get('pult', [], $locale),

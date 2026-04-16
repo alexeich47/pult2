@@ -6,6 +6,7 @@ use App\Models\Employee;
 use App\Models\Idea;
 use App\Models\RiskEntry;
 use App\Models\Service;
+use App\Support\UnitContextScope;
 use Inertia\Inertia;
 use Inertia\Response;
 use Spatie\Activitylog\Models\Activity;
@@ -14,39 +15,61 @@ class DashboardController extends Controller
 {
     public function __invoke(): Response
     {
+        $personnelTotal = Employee::query()->tap(fn ($q) => UnitContextScope::apply($q))->count();
+        $personnelActive = Employee::query()->where('status', 'active')->tap(fn ($q) => UnitContextScope::apply($q))->count();
+        $personnelVacancies = Employee::query()->where('status', 'vacancy')->tap(fn ($q) => UnitContextScope::apply($q))->count();
+
+        $ideasTotal = Idea::query()->tap(fn ($q) => UnitContextScope::apply($q))->count();
+        $ideasByStatus = Idea::query()
+            ->tap(fn ($q) => UnitContextScope::apply($q))
+            ->selectRaw('status, count(*) as count')
+            ->groupBy('status')
+            ->pluck('count', 'status')
+            ->all();
+        $ideasByPriority = Idea::query()
+            ->tap(fn ($q) => UnitContextScope::apply($q))
+            ->selectRaw('priority, count(*) as count')
+            ->groupBy('priority')
+            ->pluck('count', 'priority')
+            ->all();
+
+        // Risks are always global (no unit_id)
+        $risksTotal = RiskEntry::count();
+        $risksByType = RiskEntry::query()
+            ->selectRaw('type, count(*) as count')
+            ->groupBy('type')
+            ->pluck('count', 'type')
+            ->all();
+        $risksOpen = RiskEntry::whereIn('status', ['open', 'in_progress', 'active'])->count();
+
+        $servicesTotal = Service::query()->tap(fn ($q) => UnitContextScope::apply($q))->count();
+        $servicesActive = Service::query()->where('status', 'active')->tap(fn ($q) => UnitContextScope::apply($q))->count();
+        $servicesMrr = round(
+            Service::query()->tap(fn ($q) => UnitContextScope::apply($q))->get()->sum(fn (Service $s) => $s->monthlyCost()),
+            2,
+        );
+
         return Inertia::render('Dashboard', [
             'stats' => [
                 'personnel' => [
-                    'total' => Employee::count(),
-                    'active' => Employee::where('status', 'active')->count(),
-                    'vacancies' => Employee::where('status', 'vacancy')->count(),
+                    'total' => $personnelTotal,
+                    'active' => $personnelActive,
+                    'vacancies' => $personnelVacancies,
                 ],
                 'ideas' => [
-                    'total' => Idea::count(),
-                    'by_status' => Idea::query()
-                        ->selectRaw('status, count(*) as count')
-                        ->groupBy('status')
-                        ->pluck('count', 'status')
-                        ->all(),
-                    'by_priority' => Idea::query()
-                        ->selectRaw('priority, count(*) as count')
-                        ->groupBy('priority')
-                        ->pluck('count', 'priority')
-                        ->all(),
+                    'total' => $ideasTotal,
+                    'by_status' => $ideasByStatus,
+                    'by_priority' => $ideasByPriority,
                 ],
                 'risks' => [
-                    'total' => RiskEntry::count(),
-                    'by_type' => RiskEntry::query()
-                        ->selectRaw('type, count(*) as count')
-                        ->groupBy('type')
-                        ->pluck('count', 'type')
-                        ->all(),
-                    'open' => RiskEntry::whereIn('status', ['open', 'in_progress', 'active'])->count(),
+                    'total' => $risksTotal,
+                    'by_type' => $risksByType,
+                    'open' => $risksOpen,
                 ],
                 'services' => [
-                    'total' => Service::count(),
-                    'active' => Service::where('status', 'active')->count(),
-                    'mrr' => round(Service::all()->sum(fn (Service $s) => $s->monthlyCost()), 2),
+                    'total' => $servicesTotal,
+                    'active' => $servicesActive,
+                    'mrr' => $servicesMrr,
                 ],
             ],
             'recentActivity' => Activity::query()

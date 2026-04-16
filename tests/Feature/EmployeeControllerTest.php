@@ -40,7 +40,7 @@ class EmployeeControllerTest extends TestCase
     public function test_admin_can_list_employees(): void
     {
         Employee::create([
-            'unit_id' => 'holding',
+            'unit_id' => 'swiftpunk',
             'name' => 'Test Person',
             'position' => 'CTO',
             'department' => 'Технологии',
@@ -144,7 +144,7 @@ class EmployeeControllerTest extends TestCase
     {
         $this->actingAs($this->userWithRole('viewer'))
             ->post('/personnel', [
-                'unit_id' => 'holding',
+                'unit_id' => 'swiftpunk',
                 'name' => 'Should Fail',
                 'position' => 'Dev',
                 'department' => 'Технологии',
@@ -156,7 +156,7 @@ class EmployeeControllerTest extends TestCase
     public function test_admin_can_update(): void
     {
         $employee = Employee::create([
-            'unit_id' => 'holding',
+            'unit_id' => 'swiftpunk',
             'name' => 'Old Name',
             'position' => 'Dev',
             'department' => 'Технологии',
@@ -165,7 +165,7 @@ class EmployeeControllerTest extends TestCase
 
         $this->actingAs($this->userWithRole('admin'))
             ->put("/personnel/{$employee->id}", [
-                'unit_id' => 'holding',
+                'unit_id' => 'swiftpunk',
                 'name' => 'New Name',
                 'position' => 'Dev',
                 'department' => 'Технологии',
@@ -182,7 +182,7 @@ class EmployeeControllerTest extends TestCase
     public function test_admin_can_delete(): void
     {
         $employee = Employee::create([
-            'unit_id' => 'holding',
+            'unit_id' => 'swiftpunk',
             'name' => 'To Delete',
             'position' => 'Dev',
             'department' => 'Технологии',
@@ -199,7 +199,7 @@ class EmployeeControllerTest extends TestCase
     public function test_operator_cannot_delete(): void
     {
         $employee = Employee::create([
-            'unit_id' => 'holding',
+            'unit_id' => 'swiftpunk',
             'name' => 'Protected',
             'position' => 'Dev',
             'department' => 'Технологии',
@@ -216,7 +216,7 @@ class EmployeeControllerTest extends TestCase
     public function test_employee_changes_are_written_to_activity_log(): void
     {
         $employee = Employee::create([
-            'unit_id' => 'holding',
+            'unit_id' => 'swiftpunk',
             'name' => 'Activity Test',
             'position' => 'Dev',
             'department' => 'Технологии',
@@ -235,7 +235,7 @@ class EmployeeControllerTest extends TestCase
 
     public function test_unit_filter_narrows_results(): void
     {
-        Employee::create(['unit_id' => 'holding', 'name' => 'A', 'position' => 'X', 'department' => 'HR', 'status' => 'active']);
+        Employee::create(['unit_id' => 'swiftpunk', 'name' => 'A', 'position' => 'X', 'department' => 'HR', 'status' => 'active']);
         Employee::create(['unit_id' => 'playduck', 'name' => 'B', 'position' => 'X', 'department' => 'HR', 'status' => 'active']);
 
         $this->actingAs($this->userWithRole('admin'))

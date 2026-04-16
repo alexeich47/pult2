@@ -37,7 +37,7 @@ class IdeaControllerTest extends TestCase
     private function makeIdea(array $attrs = []): Idea
     {
         return Idea::create(array_merge([
-            'unit_id' => 'holding',
+            'unit_id' => 'swiftpunk',
             'author_id' => 1,
             'priority' => 'high',
             'status' => 'new',
@@ -118,7 +118,7 @@ class IdeaControllerTest extends TestCase
     {
         $this->actingAs($this->userWithRole('viewer'))
             ->post('/ideas', [
-                'unit_id' => 'holding',
+                'unit_id' => 'swiftpunk',
                 'author_id' => 1,
                 'priority' => 'high',
                 'status' => 'new',
@@ -151,7 +151,7 @@ class IdeaControllerTest extends TestCase
 
         $this->actingAs($this->userWithRole('admin'))
             ->put("/ideas/{$idea->display_id}", [
-                'unit_id' => 'holding',
+                'unit_id' => 'swiftpunk',
                 'author_id' => 1,
                 'priority' => 'high',
                 'status' => 'approved',

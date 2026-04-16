@@ -7,6 +7,7 @@ use App\Http\Controllers\IdeaController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RiskEntryController;
 use App\Http\Controllers\ServiceController;
+use App\Http\Controllers\StructureController;
 use App\Http\Controllers\UnitDashboardController;
 use App\Models\Employee;
 use App\Models\Unit;
@@ -29,8 +30,25 @@ Route::post('/locale/{locale}', function (string $locale) {
     return back();
 })->name('locale.switch');
 
+Route::post('/context/{unitId}', function (string $unitId) {
+    if ($unitId === 'all') {
+        session()->forget('active_unit_id');
+    } else {
+        abort_unless(Unit::where('id', $unitId)->exists(), 404);
+        session(['active_unit_id' => $unitId]);
+    }
+
+    return back();
+})->middleware('auth')->name('context.switch');
+
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', DashboardController::class)->name('dashboard');
+
+    Route::get('/structure', [StructureController::class, 'index'])->name('structure.index');
+    Route::post('/structure', [StructureController::class, 'store'])->name('structure.store');
+    Route::put('/structure/{unit}', [StructureController::class, 'update'])->name('structure.update');
+    Route::delete('/structure/{unit}', [StructureController::class, 'destroy'])->name('structure.destroy');
+
     Route::get('/units/{unit}', UnitDashboardController::class)->name('units.show');
 
     Route::get('/personnel', [EmployeeController::class, 'index'])->name('personnel.index');

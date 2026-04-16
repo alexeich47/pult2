@@ -7,6 +7,7 @@ use App\Http\Requests\UpdateServiceRequest;
 use App\Models\Service;
 use App\Models\Unit;
 use App\Support\PultEnums;
+use App\Support\UnitContextScope;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
@@ -20,7 +21,10 @@ class ServiceController extends Controller
     {
         Gate::authorize('viewAny', Service::class);
 
-        $queryBuilder = new QueryBuilder(Service::query()->with('unit'));
+        $baseQuery = Service::query()->with('unit');
+        UnitContextScope::apply($baseQuery);
+
+        $queryBuilder = new QueryBuilder($baseQuery);
         $queryBuilder->allowedFilters(
             AllowedFilter::exact('status'),
             AllowedFilter::exact('billing'),

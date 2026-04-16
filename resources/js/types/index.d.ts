@@ -11,6 +11,7 @@ export interface Unit {
     name: string;
     color: string;
     unit_type: 'revenue' | 'service' | null;
+    parent_id: string | null;
 }
 
 export type WorkStage = 'onboarding' | 'probation' | 'employee' | 'offboarding';
@@ -129,6 +130,7 @@ export type PageProps<
         user: User;
     };
     units: Unit[];
+    activeUnitId: string | null;
     locale: string;
     supportedLocales: string[];
     translations: Translations;
