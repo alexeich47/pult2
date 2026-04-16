@@ -148,6 +148,7 @@ function switchContext(event: Event) {
                 <Link href="/codex" class="text-slate-400 hover:text-white">{{ t('footer.codex') }}</Link>
                 <Link href="/dictionary" class="text-slate-400 hover:text-white">{{ t('footer.dictionary') }}</Link>
                 <Link href="/archive" class="text-slate-400 hover:text-white">{{ t('footer.archive') }}</Link>
+                <Link href="/activity-log" class="text-slate-400 hover:text-white">{{ t('footer.log') }}</Link>
             </div>
             <div class="my-1 h-px bg-slate-800"></div>
             <div v-if="page.props.auth.user" class="text-xs text-slate-400">

@@ -478,6 +478,31 @@ return [
         'codex' => 'Codex',
         'dictionary' => 'Dictionary',
         'archive' => 'Archive',
+        'log' => 'Log',
+    ],
+
+    'activity_log' => [
+        'title' => 'Activity Log',
+        'sub' => 'All user actions in the system',
+        'col' => [
+            'date' => 'Date / time',
+            'user' => 'User',
+            'action' => 'Action',
+            'entity' => 'Entity',
+            'changes' => 'Changes',
+        ],
+        'filter' => [
+            'date_from' => 'From',
+            'date_to' => 'To',
+            'user' => 'User',
+            'entity_type' => 'Type',
+            'apply' => 'Apply',
+            'clear' => 'Clear',
+            'all_users' => 'All users',
+            'all_types' => 'All types',
+        ],
+        'empty' => 'No activity yet',
+        'system' => 'System',
     ],
 
     'archive' => [

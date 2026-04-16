@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\ArchiveController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EmployeeController;
@@ -93,6 +94,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Reference content (static, i18n-driven)
     Route::get('/archive', ArchiveController::class)->name('archive.index');
+    Route::get('/activity-log', ActivityLogController::class)->name('activity-log.index');
     Route::get('/codex', fn () => Inertia::render('Codex/Index'))->name('codex.index');
     Route::get('/dictionary', fn () => Inertia::render('Dictionary/Index'))->name('dictionary.index');
     Route::get('/info', fn () => Inertia::render('Info/Index'))->name('info.index');
