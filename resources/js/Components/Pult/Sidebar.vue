@@ -65,11 +65,11 @@ function switchContext(event: Event) {
 </script>
 
 <template>
-    <aside class="flex h-screen w-64 shrink-0 flex-col overflow-y-auto border-r border-slate-800 bg-slate-900 text-slate-200">
-        <!-- Logo -->
+    <aside class="flex h-screen w-64 shrink-0 flex-col border-r border-slate-800 bg-slate-900 text-slate-200">
+        <!-- Logo (fixed top) -->
         <Link
             href="/dashboard"
-            class="flex items-center gap-3 border-b border-slate-800 px-5 py-4 hover:bg-slate-800/50"
+            class="flex shrink-0 items-center gap-3 border-b border-slate-800 px-5 py-4 hover:bg-slate-800/50"
         >
             <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-indigo-500 font-bold text-white">
                 P
@@ -79,6 +79,9 @@ function switchContext(event: Event) {
                 <div class="text-xs text-slate-400">{{ t('brand.sub') }}</div>
             </div>
         </Link>
+
+        <!-- Scrollable middle section -->
+        <div class="flex-1 overflow-y-auto">
 
         <!-- Company context selector -->
         <div class="border-b border-slate-800 px-3 py-3">
@@ -141,8 +144,10 @@ function switchContext(event: Event) {
 
         <div class="mx-3 my-2 h-px bg-slate-800" />
 
-        <!-- Footer reference links -->
-        <div class="mt-auto flex flex-col gap-2 border-t border-slate-800 px-4 py-4">
+        </div><!-- end scrollable middle -->
+
+        <!-- Footer (pinned to bottom, never scrolls) -->
+        <div class="shrink-0 flex flex-col gap-2 border-t border-slate-800 px-4 py-3">
             <div class="flex gap-3 text-xs">
                 <Link href="/info" class="text-slate-400 hover:text-white">{{ t('footer.info') }}</Link>
                 <Link href="/codex" class="text-slate-400 hover:text-white">{{ t('footer.codex') }}</Link>
