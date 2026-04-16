@@ -13,7 +13,7 @@ interface FieldDef {
 
 interface Props {
     show: boolean;
-    ticketId: 'dayoff' | 'server' | 'domain' | 'payment' | null;
+    ticketId: 'dayoff' | 'server' | 'domain' | 'payment' | 'contractor' | 'raise' | null;
     ticketColor: string;
 }
 
@@ -51,6 +51,21 @@ const FIELDS: Record<string, FieldDef[]> = {
         { id: 'recipient', type: 'text', labelKey: 'ticket.field.recipient', phKey: 'ticket.field.recipient_ph', required: true },
         { id: 'purpose', type: 'textarea', labelKey: 'ticket.field.purpose', phKey: 'ticket.field.purpose_ph', required: true },
         { id: 'invoice', type: 'text', labelKey: 'ticket.field.invoice', phKey: 'ticket.field.invoice_ph' },
+    ],
+    contractor: [
+        { id: 'position', type: 'text', labelKey: 'ticket.field.con_position', phKey: 'ticket.field.con_position_ph', required: true },
+        { id: 'company', type: 'text', labelKey: 'ticket.field.con_company', phKey: 'ticket.field.con_company_ph', required: true },
+        { id: 'period', type: 'select', labelKey: 'ticket.field.con_period', options: ['ticket.period.1m', 'ticket.period.3m', 'ticket.period.6m', 'ticket.period.12m'] },
+        { id: 'rate', type: 'number', labelKey: 'ticket.field.con_rate', phKey: 'ticket.field.con_rate_ph', required: true },
+        { id: 'currency', type: 'select', labelKey: 'ticket.field.currency', options: ['USD', 'EUR', 'UAH', 'RUB'], required: true },
+        { id: 'scope', type: 'textarea', labelKey: 'ticket.field.con_scope', phKey: 'ticket.field.con_scope_ph', required: true },
+    ],
+    raise: [
+        { id: 'employee_name', type: 'text', labelKey: 'ticket.field.raise_employee', phKey: 'ticket.field.raise_employee_ph', required: true },
+        { id: 'current_salary', type: 'number', labelKey: 'ticket.field.raise_current', phKey: 'ticket.field.raise_current_ph', required: true },
+        { id: 'proposed_salary', type: 'number', labelKey: 'ticket.field.raise_proposed', phKey: 'ticket.field.raise_proposed_ph', required: true },
+        { id: 'currency', type: 'select', labelKey: 'ticket.field.currency', options: ['USD', 'EUR', 'UAH', 'RUB'], required: true },
+        { id: 'justification', type: 'textarea', labelKey: 'ticket.field.raise_justification', phKey: 'ticket.field.raise_justification_ph', required: true },
     ],
 };
 

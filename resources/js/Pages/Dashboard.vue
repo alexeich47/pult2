@@ -5,7 +5,7 @@ import AppLayout from '../Layouts/AppLayout.vue';
 import TicketFormModal from '../Components/Pult/TicketFormModal.vue';
 import { useTranslations } from '../Composables/useTranslations';
 
-type TicketId = 'dayoff' | 'server' | 'domain' | 'payment';
+type TicketId = 'dayoff' | 'server' | 'domain' | 'payment' | 'contractor' | 'raise';
 
 interface Stats {
     personnel: { total: number; active: number; vacancies: number };
@@ -46,6 +46,8 @@ const TICKETS: { id: TicketId; color: string }[] = [
     { id: 'server', color: '#3b82f6' },
     { id: 'domain', color: '#f59e0b' },
     { id: 'payment', color: '#ec4899' },
+    { id: 'contractor', color: '#8b5cf6' },
+    { id: 'raise', color: '#06b6d4' },
 ];
 
 const showTicketModal = ref(false);
