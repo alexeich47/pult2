@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\IdeaController;
 use App\Http\Controllers\ProfileController;
@@ -25,7 +26,7 @@ Route::post('/locale/{locale}', function (string $locale) {
 })->name('locale.switch');
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('/dashboard', fn () => Inertia::render('Home'))->name('dashboard');
+    Route::get('/dashboard', DashboardController::class)->name('dashboard');
 
     Route::get('/personnel', [EmployeeController::class, 'index'])->name('personnel.index');
     Route::post('/personnel', [EmployeeController::class, 'store'])->name('personnel.store');

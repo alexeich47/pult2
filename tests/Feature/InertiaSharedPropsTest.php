@@ -30,7 +30,7 @@ class InertiaSharedPropsTest extends TestCase
         $this->actingAs($user)
             ->get('/dashboard')
             ->assertInertia(fn ($page) => $page
-                ->component('Home')
+                ->component('Dashboard')
                 ->has('units', 8) // 9 total - holding (unit_type null)
                 ->where('locale', 'en')
                 ->has('supportedLocales', 3)

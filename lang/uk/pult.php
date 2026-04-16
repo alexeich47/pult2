@@ -85,6 +85,21 @@ return [
         'tickets_label' => 'Швидкі запити',
     ],
 
+    'dashboard' => [
+        'title' => 'Дашборд',
+        'sub' => 'Ключові метрики та стан холдингу',
+        'section' => [
+            'overview' => 'Огляд',
+            'activity' => 'Останні дії',
+            'tickets' => 'Швидкі запити',
+        ],
+        'personnel' => ['title' => 'Персонал', 'active' => 'Активних', 'vacancies' => 'Вакансій'],
+        'ideas' => ['title' => 'Ідеї', 'new' => 'Нових', 'in_progress' => 'В роботі', 'approved' => 'Схвалених'],
+        'risks' => ['title' => 'Ризики', 'open' => 'Відкритих', 'total' => 'Всього записів'],
+        'services' => ['title' => 'Сервіси', 'active' => 'Активних', 'mrr' => 'MRR'],
+        'activity_empty' => 'Поки немає дій',
+    ],
+
     'ticket' => [
         'cta' => 'Створити запит',
         'submit' => 'Надіслати запит',

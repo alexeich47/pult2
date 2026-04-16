@@ -85,6 +85,21 @@ return [
         'tickets_label' => 'Quick requests',
     ],
 
+    'dashboard' => [
+        'title' => 'Dashboard',
+        'sub' => 'Key metrics and holding status at a glance',
+        'section' => [
+            'overview' => 'Overview',
+            'activity' => 'Recent activity',
+            'tickets' => 'Quick requests',
+        ],
+        'personnel' => ['title' => 'Personnel', 'active' => 'Active', 'vacancies' => 'Vacancies'],
+        'ideas' => ['title' => 'Ideas', 'new' => 'New', 'in_progress' => 'In progress', 'approved' => 'Approved'],
+        'risks' => ['title' => 'Risks', 'open' => 'Open', 'total' => 'Total entries'],
+        'services' => ['title' => 'Services', 'active' => 'Active', 'mrr' => 'MRR'],
+        'activity_empty' => 'No activity yet',
+    ],
+
     'ticket' => [
         'cta' => 'Create request',
         'submit' => 'Submit request',

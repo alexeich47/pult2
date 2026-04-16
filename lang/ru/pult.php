@@ -85,6 +85,21 @@ return [
         'tickets_label' => 'Быстрые запросы',
     ],
 
+    'dashboard' => [
+        'title' => 'Дашборд',
+        'sub' => 'Ключевые метрики и состояние холдинга',
+        'section' => [
+            'overview' => 'Обзор',
+            'activity' => 'Последние действия',
+            'tickets' => 'Быстрые запросы',
+        ],
+        'personnel' => ['title' => 'Персонал', 'active' => 'Активных', 'vacancies' => 'Вакансий'],
+        'ideas' => ['title' => 'Идеи', 'new' => 'Новых', 'in_progress' => 'В работе', 'approved' => 'Одобренных'],
+        'risks' => ['title' => 'Риски', 'open' => 'Открытых', 'total' => 'Всего записей'],
+        'services' => ['title' => 'Сервисы', 'active' => 'Активных', 'mrr' => 'MRR'],
+        'activity_empty' => 'Пока нет действий',
+    ],
+
     'ticket' => [
         'cta' => 'Создать запрос',
         'submit' => 'Отправить запрос',
