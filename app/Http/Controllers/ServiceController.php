@@ -31,7 +31,7 @@ class ServiceController extends Controller
         $queryBuilder->allowedSorts('name', 'cost', 'next_payment', 'status', 'billing', 'created_at');
         $queryBuilder->defaultSort('name');
 
-        $services = $queryBuilder->get();
+        $services = $queryBuilder->paginate(20)->withQueryString();
 
         // Totals across *all* services (ignoring query filter) — to match the legacy
         // header which always shows aggregate stats.

@@ -53,7 +53,7 @@ class EmployeeControllerTest extends TestCase
             ->get('/personnel')
             ->assertInertia(fn ($page) => $page
                 ->component('Personnel/Index')
-                ->has('employees', 1)
+                ->has('employees.data', 1)
                 ->has('allUnits', 9)
                 ->has('departments', 9)
                 ->where('can.create', true)
@@ -241,8 +241,8 @@ class EmployeeControllerTest extends TestCase
         $this->actingAs($this->userWithRole('admin'))
             ->get('/personnel?filter[unit_id]=playduck')
             ->assertInertia(fn ($page) => $page
-                ->has('employees', 1)
-                ->where('employees.0.name', 'B')
+                ->has('employees.data', 1)
+                ->where('employees.data.0.name', 'B')
             );
     }
 }

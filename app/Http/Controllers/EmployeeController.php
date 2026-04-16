@@ -31,7 +31,7 @@ class EmployeeController extends Controller
         $queryBuilder->allowedSorts('name', 'position', 'department', 'status', 'created_at');
         $queryBuilder->defaultSort('id');
 
-        $employees = $queryBuilder->get();
+        $employees = $queryBuilder->paginate(20)->withQueryString();
 
         return Inertia::render('Personnel/Index', [
             'employees' => $employees,

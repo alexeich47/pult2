@@ -4,13 +4,14 @@ import { computed, ref } from 'vue';
 import AppLayout from '../../Layouts/AppLayout.vue';
 import Badge from '../../Components/Pult/Badge.vue';
 import IdeaFormModal from '../../Components/Pult/IdeaFormModal.vue';
+import Pagination from '../../Components/Pult/Pagination.vue';
 import { useTranslations } from '../../Composables/useTranslations';
-import type { Employee, Idea, IdeaPriority, IdeaStatus, Unit } from '../../types';
+import type { Employee, Idea, IdeaPriority, IdeaStatus, Paginated, Unit } from '../../types';
 
 type FilterCol = 'unit_id' | 'status' | 'priority' | 'author_id' | 'title';
 
 interface Props {
-    ideas: Idea[];
+    ideas: Paginated<Idea>;
     allUnits: Unit[];
     authors: Employee[];
     statuses: IdeaStatus[];
@@ -324,14 +325,14 @@ function formatDate(iso: string): string {
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-200">
-                        <tr v-if="ideas.length === 0">
+                        <tr v-if="ideas.data.length === 0">
                             <td colspan="7" class="px-4 py-12 text-center">
                                 <div class="text-4xl">💡</div>
                                 <div class="mt-2 text-sm text-slate-500">{{ t('ideas.empty') }}</div>
                             </td>
                         </tr>
                         <tr
-                            v-for="idea in ideas"
+                            v-for="idea in ideas.data"
                             :key="idea.id"
                             class="cursor-pointer hover:bg-slate-50"
                         >
@@ -365,6 +366,12 @@ function formatDate(iso: string): string {
                         </tr>
                     </tbody>
                 </table>
+                <Pagination
+                    :links="ideas.links"
+                    :from="ideas.from"
+                    :to="ideas.to"
+                    :total="ideas.total"
+                />
             </div>
         </div>
 

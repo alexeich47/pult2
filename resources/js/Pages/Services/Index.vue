@@ -3,9 +3,10 @@ import { Head, router } from '@inertiajs/vue3';
 import { computed, ref } from 'vue';
 import AppLayout from '../../Layouts/AppLayout.vue';
 import Badge from '../../Components/Pult/Badge.vue';
+import Pagination from '../../Components/Pult/Pagination.vue';
 import ServiceFormModal from '../../Components/Pult/ServiceFormModal.vue';
 import { useTranslations } from '../../Composables/useTranslations';
-import type { Service, ServiceBilling, ServiceCurrency, ServiceStatus, Unit } from '../../types';
+import type { Paginated, Service, ServiceBilling, ServiceCurrency, ServiceStatus, Unit } from '../../types';
 
 interface Totals {
     total: number;
@@ -15,7 +16,7 @@ interface Totals {
 }
 
 interface Props {
-    services: Service[];
+    services: Paginated<Service>;
     allUnits: Unit[];
     categories: string[];
     currencies: ServiceCurrency[];
@@ -168,14 +169,14 @@ const CHIPS: { id: FilterChip; key: string }[] = [
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-200">
-                        <tr v-if="services.length === 0">
+                        <tr v-if="services.data.length === 0">
                             <td colspan="8" class="px-4 py-12 text-center">
                                 <div class="text-4xl">📦</div>
                                 <div class="mt-2 text-sm text-slate-500">{{ t('services.empty') }}</div>
                             </td>
                         </tr>
                         <tr
-                            v-for="svc in services"
+                            v-for="svc in services.data"
                             :key="svc.id"
                             class="cursor-pointer hover:bg-slate-50"
                             @click="openEdit(svc)"
@@ -209,6 +210,12 @@ const CHIPS: { id: FilterChip; key: string }[] = [
                         </tr>
                     </tbody>
                 </table>
+                <Pagination
+                    :links="services.links"
+                    :from="services.from"
+                    :to="services.to"
+                    :total="services.total"
+                />
             </div>
         </div>
 

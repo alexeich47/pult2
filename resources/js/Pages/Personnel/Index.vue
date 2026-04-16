@@ -4,11 +4,12 @@ import { computed, ref } from 'vue';
 import AppLayout from '../../Layouts/AppLayout.vue';
 import Badge from '../../Components/Pult/Badge.vue';
 import EmployeeFormModal from '../../Components/Pult/EmployeeFormModal.vue';
+import Pagination from '../../Components/Pult/Pagination.vue';
 import { useTranslations } from '../../Composables/useTranslations';
-import type { Employee, Unit } from '../../types';
+import type { Employee, Paginated, Unit } from '../../types';
 
 interface Props {
-    employees: Employee[];
+    employees: Paginated<Employee>;
     allUnits: Unit[];
     departments: string[];
     statuses: string[];
@@ -49,7 +50,8 @@ function unitFor(employee: Employee): Unit | undefined {
     return employee.unit ?? props.allUnits.find((u) => u.id === employee.unit_id);
 }
 
-const count = computed(() => props.employees.length);
+const count = computed(() => props.employees.total);
+const rows = computed(() => props.employees.data);
 </script>
 
 <template>
@@ -107,14 +109,14 @@ const count = computed(() => props.employees.length);
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-200">
-                        <tr v-if="employees.length === 0">
+                        <tr v-if="rows.length === 0">
                             <td colspan="8" class="px-4 py-12 text-center">
                                 <div class="text-4xl">👤</div>
                                 <div class="mt-2 text-sm text-slate-500">{{ t('table.empty') }}</div>
                             </td>
                         </tr>
                         <tr
-                            v-for="emp in employees"
+                            v-for="emp in rows"
                             :key="emp.id"
                             class="cursor-pointer hover:bg-slate-50"
                             @click="openEdit(emp)"
@@ -158,6 +160,12 @@ const count = computed(() => props.employees.length);
                         </tr>
                     </tbody>
                 </table>
+                <Pagination
+                    :links="employees.links"
+                    :from="employees.from"
+                    :to="employees.to"
+                    :total="employees.total"
+                />
             </div>
         </div>
 

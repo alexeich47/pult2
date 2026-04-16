@@ -57,7 +57,7 @@ class ServiceControllerTest extends TestCase
             ->get('/services')
             ->assertInertia(fn ($page) => $page
                 ->component('Services/Index')
-                ->has('services', 4)
+                ->has('services.data', 4)
                 ->where('totals.total', 4)
                 ->where('totals.active', 2)
                 ->where('totals.subs', 4)
@@ -77,8 +77,8 @@ class ServiceControllerTest extends TestCase
         $this->actingAs($this->userWithRole('viewer'))
             ->get('/services?filter[status]=active')
             ->assertInertia(fn ($page) => $page
-                ->has('services', 1)
-                ->where('services.0.name', 'A')
+                ->has('services.data', 1)
+                ->where('services.data.0.name', 'A')
                 // totals still reflect all services (unfiltered aggregate)
                 ->where('totals.total', 3)
             );
@@ -92,7 +92,7 @@ class ServiceControllerTest extends TestCase
 
         $this->actingAs($this->userWithRole('viewer'))
             ->get('/services?filter[billing]=once')
-            ->assertInertia(fn ($page) => $page->has('services', 1));
+            ->assertInertia(fn ($page) => $page->has('services.data', 1));
     }
 
     public function test_admin_can_create_with_full_validation(): void

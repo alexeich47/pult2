@@ -43,7 +43,7 @@ class IdeaController extends Controller
         $queryBuilder->defaultSort('-created_at');
 
         return Inertia::render('Ideas/Index', [
-            'ideas' => $queryBuilder->get(),
+            'ideas' => $queryBuilder->paginate(20)->withQueryString(),
             'allUnits' => Unit::orderBy('sort_order')->get(['id', 'name', 'color', 'unit_type']),
             'authors' => Employee::query()
                 ->where('status', 'active')

@@ -61,7 +61,7 @@ class IdeaControllerTest extends TestCase
             ->get('/ideas')
             ->assertInertia(fn ($page) => $page
                 ->component('Ideas/Index')
-                ->has('ideas', 2)
+                ->has('ideas.data', 2)
                 ->has('allUnits', 9)
                 ->has('statuses', 6)
                 ->has('priorities', 3)
@@ -197,7 +197,7 @@ class IdeaControllerTest extends TestCase
         $this->actingAs($this->userWithRole('admin'))
             ->get('/ideas?filter[status]=approved')
             ->assertInertia(fn ($page) => $page
-                ->has('ideas', 2)
+                ->has('ideas.data', 2)
             );
     }
 
@@ -209,8 +209,8 @@ class IdeaControllerTest extends TestCase
         $this->actingAs($this->userWithRole('admin'))
             ->get('/ideas?filter[title]=auto')
             ->assertInertia(fn ($page) => $page
-                ->has('ideas', 1)
-                ->where('ideas.0.title', 'Automated parsing')
+                ->has('ideas.data', 1)
+                ->where('ideas.data.0.title', 'Automated parsing')
             );
     }
 
@@ -227,8 +227,8 @@ class IdeaControllerTest extends TestCase
         $this->actingAs($this->userWithRole('admin'))
             ->get('/ideas')
             ->assertInertia(fn ($page) => $page
-                ->where('ideas.0.title', 'New')
-                ->where('ideas.1.title', 'Old')
+                ->where('ideas.data.0.title', 'New')
+                ->where('ideas.data.1.title', 'Old')
             );
     }
 
