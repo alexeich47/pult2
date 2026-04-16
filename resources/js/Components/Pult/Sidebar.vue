@@ -96,11 +96,16 @@ function isActive(href: string | null): boolean {
             <div class="px-2 pb-2 pt-1 text-[11px] font-semibold uppercase tracking-wider text-slate-500">
                 {{ t('sidebar.section.companies') }}
             </div>
-            <div
+            <Link
                 v-for="unit in units"
                 :key="unit.id"
-                class="flex cursor-not-allowed items-center gap-2 rounded-md px-2.5 py-1.5 text-sm text-slate-300 hover:bg-slate-800/60"
-                :title="t('placeholder.wip')"
+                :href="`/units/${unit.id}`"
+                :class="[
+                    'flex items-center gap-2 rounded-md px-2.5 py-1.5 text-sm transition-colors',
+                    isActive(`/units/${unit.id}`)
+                        ? 'bg-indigo-500/15 text-indigo-200'
+                        : 'text-slate-300 hover:bg-slate-800/60 hover:text-white',
+                ]"
             >
                 <span
                     class="flex h-5 w-5 items-center justify-center rounded text-xs font-bold"
@@ -109,7 +114,7 @@ function isActive(href: string | null): boolean {
                     {{ unit.unit_type === 'revenue' ? '$' : '🛠' }}
                 </span>
                 {{ unit.name }}
-            </div>
+            </Link>
         </div>
 
         <div class="mx-3 my-2 h-px bg-slate-800" />

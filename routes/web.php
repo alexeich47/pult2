@@ -6,6 +6,7 @@ use App\Http\Controllers\IdeaController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RiskEntryController;
 use App\Http\Controllers\ServiceController;
+use App\Http\Controllers\UnitDashboardController;
 use App\Support\PultEnums;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -27,6 +28,7 @@ Route::post('/locale/{locale}', function (string $locale) {
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', DashboardController::class)->name('dashboard');
+    Route::get('/units/{unit}', UnitDashboardController::class)->name('units.show');
 
     Route::get('/personnel', [EmployeeController::class, 'index'])->name('personnel.index');
     Route::post('/personnel', [EmployeeController::class, 'store'])->name('personnel.store');

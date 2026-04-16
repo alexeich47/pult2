@@ -85,6 +85,15 @@ return [
         'tickets_label' => 'Quick requests',
     ],
 
+    'unit_dashboard' => [
+        'sub' => 'Company data and metrics',
+        'employees_title' => 'Employees',
+        'ideas_title' => 'Recent ideas',
+        'services_title' => 'Company services',
+        'view_all' => 'All →',
+        'no_data' => 'No data',
+    ],
+
     'dashboard' => [
         'title' => 'Dashboard',
         'sub' => 'Key metrics and holding status at a glance',

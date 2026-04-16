@@ -85,6 +85,15 @@ return [
         'tickets_label' => 'Швидкі запити',
     ],
 
+    'unit_dashboard' => [
+        'sub' => 'Дані та метрики компанії',
+        'employees_title' => 'Співробітники',
+        'ideas_title' => 'Останні ідеї',
+        'services_title' => 'Сервіси компанії',
+        'view_all' => 'Усі →',
+        'no_data' => 'Немає даних',
+    ],
+
     'dashboard' => [
         'title' => 'Дашборд',
         'sub' => 'Ключові метрики та стан холдингу',
