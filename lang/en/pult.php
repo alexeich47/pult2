@@ -207,6 +207,14 @@ return [
         'fired' => 'Former employees',
     ],
 
+    'work_stage' => [
+        'onboarding' => 'Onboarding',
+        'probation' => 'Probation',
+        'employee' => 'Employee',
+        'offboarding' => 'Offboarding',
+        'label' => 'Stage',
+    ],
+
     'modal' => [
         'field' => [
             'name' => 'Name',

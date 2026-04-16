@@ -26,6 +26,9 @@ class EmployeeFactory extends Factory
             'email' => $isVacancy ? null : fake()->companyEmail(),
             'telegram' => $isVacancy ? null : '@'.fake()->userName(),
             'status' => $status,
+            'work_stage' => $status === 'active'
+                ? fake()->randomElement(PultEnums::workStages())
+                : 'employee',
         ];
     }
 

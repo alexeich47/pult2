@@ -11,6 +11,7 @@ interface Props {
     managers: Employee[];
     departments: string[];
     statuses: string[];
+    workStages?: string[];
 }
 
 const props = defineProps<Props>();
@@ -27,6 +28,7 @@ const form = useForm({
     email: '',
     telegram: '',
     status: 'active',
+    work_stage: 'employee',
 });
 
 const isEdit = computed(() => props.employee !== null);
@@ -47,12 +49,14 @@ watch(
             form.email = employee.email ?? '';
             form.telegram = employee.telegram ?? '';
             form.status = employee.status;
+            form.work_stage = employee.work_stage ?? 'employee';
         } else {
             form.reset();
             form.unit_id = props.units[0]?.id ?? '';
             form.manager_id = null;
             form.department = props.departments[0] ?? '';
             form.status = 'active';
+            form.work_stage = 'employee';
         }
         form.clearErrors();
     },
@@ -178,7 +182,37 @@ const isVacancy = computed(() => form.status === 'vacancy');
                         </div>
                     </div>
 
-                    <div>
+                    <div v-if="workStages?.length" class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="mb-1 block text-xs font-medium text-slate-700">
+                                {{ t('table.manager') }}
+                            </label>
+                            <select
+                                v-model="form.manager_id"
+                                class="w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                            >
+                                <option :value="null">—</option>
+                                <option v-for="mgr in managers" :key="mgr.id" :value="mgr.id">
+                                    {{ mgr.name }} — {{ mgr.position }}
+                                </option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="mb-1 block text-xs font-medium text-slate-700">
+                                {{ t('work_stage.label') }}
+                            </label>
+                            <select
+                                v-model="form.work_stage"
+                                class="w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                            >
+                                <option v-for="ws in workStages" :key="ws" :value="ws">
+                                    {{ t(`work_stage.${ws}`) }}
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div v-else>
                         <label class="mb-1 block text-xs font-medium text-slate-700">
                             {{ t('table.manager') }}
                         </label>

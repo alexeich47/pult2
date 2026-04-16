@@ -21,12 +21,18 @@ class EmployeeController extends Controller
         Gate::authorize('viewAny', Employee::class);
 
         $tab = request()->query('tab', 'active');
+        $workStageFilter = request()->query('work_stage');
 
-        $queryBuilder = new QueryBuilder(
-            Employee::query()
-                ->with(['unit', 'manager'])
-                ->where('status', $tab)
-        );
+        $baseQuery = Employee::query()
+            ->with(['unit', 'manager'])
+            ->where('status', $tab);
+
+        // If filtering by work_stage on the active tab
+        if ($tab === 'active' && $workStageFilter) {
+            $baseQuery->where('work_stage', $workStageFilter);
+        }
+
+        $queryBuilder = new QueryBuilder($baseQuery);
         $queryBuilder->allowedFilters(
             'unit_id',
             'department',
@@ -45,7 +51,15 @@ class EmployeeController extends Controller
             ->pluck('count', 'status')
             ->all();
 
-        // Active employees for the manager select (excluding vacancies and fired)
+        // Work stage counts (only for active employees)
+        $stageCounts = Employee::query()
+            ->where('status', 'active')
+            ->selectRaw('work_stage, count(*) as count')
+            ->groupBy('work_stage')
+            ->pluck('count', 'work_stage')
+            ->all();
+
+        // Active employees for the manager select
         $managers = Employee::query()
             ->where('status', 'active')
             ->whereNotNull('name')
@@ -59,11 +73,19 @@ class EmployeeController extends Controller
                 'vacancy' => $counts['vacancy'] ?? 0,
                 'fired' => $counts['fired'] ?? 0,
             ],
+            'stageCounts' => [
+                'onboarding' => $stageCounts['onboarding'] ?? 0,
+                'probation' => $stageCounts['probation'] ?? 0,
+                'employee' => $stageCounts['employee'] ?? 0,
+                'offboarding' => $stageCounts['offboarding'] ?? 0,
+            ],
             'tab' => $tab,
+            'workStageFilter' => $workStageFilter,
             'allUnits' => Unit::orderBy('sort_order')->get(),
             'managers' => $managers,
             'departments' => PultEnums::departments(),
             'statuses' => PultEnums::employeeStatuses(),
+            'workStages' => PultEnums::workStages(),
             'filters' => request()->query('filter', []),
             'can' => [
                 'create' => request()->user()?->can('create', Employee::class),

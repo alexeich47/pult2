@@ -207,6 +207,14 @@ return [
         'fired' => 'Звільнені',
     ],
 
+    'work_stage' => [
+        'onboarding' => 'Онбординг',
+        'probation' => 'Випробувальний термін',
+        'employee' => 'Співробітник',
+        'offboarding' => 'Оффбординг',
+        'label' => 'Етап',
+    ],
+
     'modal' => [
         'field' => [
             'name' => 'ПІБ',

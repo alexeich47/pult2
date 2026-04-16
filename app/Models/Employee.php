@@ -19,6 +19,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
     'email',
     'telegram',
     'status',
+    'work_stage',
 ])]
 class Employee extends Model
 {
@@ -28,7 +29,7 @@ class Employee extends Model
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
-            ->logOnly(['unit_id', 'manager_id', 'name', 'position', 'department', 'email', 'telegram', 'status'])
+            ->logOnly(['unit_id', 'manager_id', 'name', 'position', 'department', 'email', 'telegram', 'status', 'work_stage'])
             ->logOnlyDirty()
             ->dontSubmitEmptyLogs()
             ->useLogName('employee');

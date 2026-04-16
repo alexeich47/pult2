@@ -46,7 +46,7 @@ class EmployeeControllerTest extends TestCase
             'department' => 'Технологии',
             'email' => 'test@example.com',
             'telegram' => '@test',
-            'status' => 'active',
+            'status' => 'active', 'work_stage' => 'employee',
         ]);
 
         $this->actingAs($this->userWithRole('admin'))
@@ -93,7 +93,7 @@ class EmployeeControllerTest extends TestCase
                 'department' => 'Технологии',
                 'email' => 'nina@playduck.com',
                 'telegram' => '@nina',
-                'status' => 'active',
+                'status' => 'active', 'work_stage' => 'employee',
             ])
             ->assertRedirect();
 
@@ -115,13 +115,13 @@ class EmployeeControllerTest extends TestCase
                 'department' => 'Маркетинг',
                 'email' => 'ignored@example.com',
                 'telegram' => '@ignored',
-                'status' => 'vacancy',
+                'status' => 'vacancy', 'work_stage' => 'employee',
             ])
             ->assertRedirect();
 
         $this->assertDatabaseHas('employees', [
             'position' => 'CMO',
-            'status' => 'vacancy',
+            'status' => 'vacancy', 'work_stage' => 'employee',
             'name' => null,
             'email' => null,
             'telegram' => null,
@@ -135,7 +135,7 @@ class EmployeeControllerTest extends TestCase
                 'unit_id' => 'nonexistent',
                 'position' => '',
                 'department' => 'NotADepartment',
-                'status' => 'active',
+                'status' => 'active', 'work_stage' => 'employee',
             ])
             ->assertSessionHasErrors(['unit_id', 'position', 'department', 'name']);
     }
@@ -148,7 +148,7 @@ class EmployeeControllerTest extends TestCase
                 'name' => 'Should Fail',
                 'position' => 'Dev',
                 'department' => 'Технологии',
-                'status' => 'active',
+                'status' => 'active', 'work_stage' => 'employee',
             ])
             ->assertForbidden();
     }
@@ -160,7 +160,7 @@ class EmployeeControllerTest extends TestCase
             'name' => 'Old Name',
             'position' => 'Dev',
             'department' => 'Технологии',
-            'status' => 'active',
+            'status' => 'active', 'work_stage' => 'employee',
         ]);
 
         $this->actingAs($this->userWithRole('admin'))
@@ -169,7 +169,7 @@ class EmployeeControllerTest extends TestCase
                 'name' => 'New Name',
                 'position' => 'Dev',
                 'department' => 'Технологии',
-                'status' => 'active',
+                'status' => 'active', 'work_stage' => 'employee',
             ])
             ->assertRedirect();
 
@@ -186,7 +186,7 @@ class EmployeeControllerTest extends TestCase
             'name' => 'To Delete',
             'position' => 'Dev',
             'department' => 'Технологии',
-            'status' => 'active',
+            'status' => 'active', 'work_stage' => 'employee',
         ]);
 
         $this->actingAs($this->userWithRole('admin'))
@@ -203,7 +203,7 @@ class EmployeeControllerTest extends TestCase
             'name' => 'Protected',
             'position' => 'Dev',
             'department' => 'Технологии',
-            'status' => 'active',
+            'status' => 'active', 'work_stage' => 'employee',
         ]);
 
         $this->actingAs($this->userWithRole('operator'))
@@ -220,7 +220,7 @@ class EmployeeControllerTest extends TestCase
             'name' => 'Activity Test',
             'position' => 'Dev',
             'department' => 'Технологии',
-            'status' => 'active',
+            'status' => 'active', 'work_stage' => 'employee',
         ]);
 
         $employee->update(['position' => 'Senior Dev']);

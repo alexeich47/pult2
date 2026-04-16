@@ -29,6 +29,7 @@ class UpdateEmployeeRequest extends FormRequest
             'email' => ['nullable', 'email', 'max:255'],
             'telegram' => ['nullable', 'string', 'max:64', 'regex:/^@?[A-Za-z0-9_]{3,}$/'],
             'status' => ['required', Rule::in(PultEnums::employeeStatuses())],
+            'work_stage' => ['required', Rule::in(PultEnums::workStages())],
         ];
     }
 

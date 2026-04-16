@@ -40,6 +40,14 @@ final class PultEnums
     /**
      * @return array<int, string>
      */
+    public static function workStages(): array
+    {
+        return ['onboarding', 'probation', 'employee', 'offboarding'];
+    }
+
+    /**
+     * @return array<int, string>
+     */
     public static function supportedLocales(): array
     {
         return ['ru', 'uk', 'en'];

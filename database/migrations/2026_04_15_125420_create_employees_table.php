@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('email')->nullable();
             $table->string('telegram')->nullable();
             $table->enum('status', ['active', 'vacancy', 'fired'])->default('active');
+            $table->enum('work_stage', ['onboarding', 'probation', 'employee', 'offboarding'])->default('employee');
             $table->timestamps();
 
             $table->foreign('unit_id')

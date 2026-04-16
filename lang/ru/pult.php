@@ -207,6 +207,14 @@ return [
         'fired' => 'Уволенные',
     ],
 
+    'work_stage' => [
+        'onboarding' => 'Онбординг',
+        'probation' => 'Испытательный срок',
+        'employee' => 'Сотрудник',
+        'offboarding' => 'Оффбординг',
+        'label' => 'Этап',
+    ],
+
     'modal' => [
         'field' => [
             'name' => 'ФИО',

@@ -13,6 +13,8 @@ export interface Unit {
     unit_type: 'revenue' | 'service' | null;
 }
 
+export type WorkStage = 'onboarding' | 'probation' | 'employee' | 'offboarding';
+
 export interface Employee {
     id: number;
     unit_id: string;
@@ -23,6 +25,7 @@ export interface Employee {
     email: string | null;
     telegram: string | null;
     status: 'active' | 'vacancy' | 'fired';
+    work_stage: WorkStage;
     created_at: string;
     updated_at: string;
     unit?: Unit;
