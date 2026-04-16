@@ -121,18 +121,20 @@ function formatDate(iso: string): string {
                     <button
                         v-if="can.delete"
                         type="button"
-                        class="rounded-md border border-rose-300 bg-white px-3 py-1.5 text-sm text-rose-600 hover:bg-rose-50"
+                        class="rounded-md border border-rose-300 bg-white p-2 text-rose-500 hover:bg-rose-50 hover:text-rose-700"
                         @click="destroy"
+                        :title="t('ideas.btn.delete')"
                     >
-                        {{ t('ideas.btn.delete') }}
+                        <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
                     </button>
                     <button
                         v-if="can.update"
                         type="button"
-                        class="rounded-md bg-indigo-600 px-4 py-1.5 text-sm font-medium text-white hover:bg-indigo-700"
+                        class="rounded-md bg-indigo-600 p-2 text-white hover:bg-indigo-700"
                         @click="openEdit"
+                        :title="t('ideas.btn.edit')"
                     >
-                        {{ t('ideas.btn.edit') }}
+                        <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>
                     </button>
                 </div>
             </div>
