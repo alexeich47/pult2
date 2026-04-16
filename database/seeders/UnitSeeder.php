@@ -28,6 +28,9 @@ class UnitSeeder extends Seeder
             ['id' => 'findep',         'name' => 'Фин. деп',       'color' => '#c084fc', 'unit_type' => 'service', 'parent_id' => 'ironduck',   'sort_order' => 60],
             ['id' => 'techdep',        'name' => 'Тех. деп',       'color' => '#fb923c', 'unit_type' => 'service', 'parent_id' => 'ironduck',   'sort_order' => 70],
             ['id' => 'unityservices',  'name' => 'Unity Services',  'color' => '#22d3ee', 'unit_type' => 'service', 'parent_id' => 'swiftpunk',  'sort_order' => 80],
+            ['id' => 'us-hr',          'name' => 'HR',              'color' => '#a78bfa', 'unit_type' => 'service', 'parent_id' => 'unityservices', 'sort_order' => 81],
+            ['id' => 'us-recruiting',  'name' => 'Рекрутинг',       'color' => '#f472b6', 'unit_type' => 'service', 'parent_id' => 'unityservices', 'sort_order' => 82],
+            ['id' => 'us-it',          'name' => 'IT',              'color' => '#38bdf8', 'unit_type' => 'service', 'parent_id' => 'unityservices', 'sort_order' => 83],
         ];
 
         foreach ($units as $attrs) {

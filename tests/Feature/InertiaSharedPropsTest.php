@@ -31,7 +31,7 @@ class InertiaSharedPropsTest extends TestCase
             ->get('/dashboard')
             ->assertInertia(fn ($page) => $page
                 ->component('Dashboard')
-                ->has('units', 9) // all units including swiftpunk root
+                ->has('units', 12) // all units including swiftpunk root
                 ->where('locale', 'en')
                 ->has('supportedLocales', 3)
                 ->has('translations.nav.personnel')

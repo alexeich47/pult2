@@ -62,7 +62,7 @@ class IdeaControllerTest extends TestCase
             ->assertInertia(fn ($page) => $page
                 ->component('Ideas/Index')
                 ->has('ideas.data', 2)
-                ->has('allUnits', 9)
+                ->has('allUnits', 12)
                 ->has('statuses', 6)
                 ->has('priorities', 3)
                 ->where('can.create', true)
@@ -141,7 +141,7 @@ class IdeaControllerTest extends TestCase
                 ->where('idea.title', 'Detail test')
                 ->has('idea.unit')
                 ->has('idea.author')
-                ->has('allUnits', 9)
+                ->has('allUnits', 12)
             );
     }
 

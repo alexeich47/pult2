@@ -54,7 +54,7 @@ class EmployeeControllerTest extends TestCase
             ->assertInertia(fn ($page) => $page
                 ->component('Personnel/Index')
                 ->has('employees.data', 1)
-                ->has('allUnits', 9)
+                ->has('allUnits', 12)
                 ->has('departments', 9)
                 ->where('can.create', true)
                 ->where('can.delete', true)
