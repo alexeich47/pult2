@@ -7,6 +7,8 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RiskEntryController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\UnitDashboardController;
+use App\Models\Employee;
+use App\Models\Unit;
 use App\Support\PultEnums;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -34,6 +36,18 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/personnel', [EmployeeController::class, 'store'])->name('personnel.store');
     Route::put('/personnel/{employee}', [EmployeeController::class, 'update'])->name('personnel.update');
     Route::delete('/personnel/{employee}', [EmployeeController::class, 'destroy'])->name('personnel.destroy');
+
+    Route::get('/hiring', fn () => Inertia::render('Hiring/Index', [
+        'vacancies' => Employee::query()->with('unit')->where('status', 'vacancy')->orderBy('unit_id')->paginate(20),
+        'allUnits' => Unit::orderBy('sort_order')->get(),
+        'departments' => PultEnums::departments(),
+        'can' => ['create' => request()->user()?->can('create', Employee::class)],
+    ]))->name('hiring.index');
+
+    Route::get('/former', fn () => Inertia::render('Former/Index', [
+        'employees' => Employee::query()->with(['unit', 'manager'])->where('status', 'fired')->orderByDesc('updated_at')->paginate(20),
+        'allUnits' => Unit::orderBy('sort_order')->get(),
+    ]))->name('former.index');
 
     Route::get('/ideas', [IdeaController::class, 'index'])->name('ideas.index');
     Route::post('/ideas', [IdeaController::class, 'store'])->name('ideas.store');

@@ -68,6 +68,7 @@ return [
     'nav' => [
         'dashboard' => 'Dashboard',
         'personnel' => 'Personnel',
+        'hiring' => 'Hiring',
         'strategy' => 'Strategy & Vision',
         'ideas' => 'Ideas & Insights',
         'agreements' => 'Agreements & Docs',

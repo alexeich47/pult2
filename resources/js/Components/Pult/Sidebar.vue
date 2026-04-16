@@ -20,6 +20,7 @@ interface NavItem {
 const NAV_ITEMS: NavItem[] = [
     { id: 'dashboard', key: 'nav.dashboard', href: '/dashboard' },
     { id: 'personnel', key: 'nav.personnel', href: '/personnel' },
+    { id: 'hiring', key: 'nav.hiring', href: '/hiring' },
     { id: 'strategy', key: 'nav.strategy', href: '/strategy' },
     { id: 'ideas', key: 'nav.ideas', href: '/ideas' },
     { id: 'agreements', key: 'nav.agreements', href: '/agreements' },

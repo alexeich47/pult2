@@ -68,6 +68,7 @@ return [
     'nav' => [
         'dashboard' => 'Дашборд',
         'personnel' => 'Персонал холдинга',
+        'hiring' => 'Найм',
         'strategy' => 'Стратегия и Vision',
         'ideas' => 'Идеи и инсайты',
         'agreements' => 'Договорённости и документы',

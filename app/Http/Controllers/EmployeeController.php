@@ -20,19 +20,14 @@ class EmployeeController extends Controller
     {
         Gate::authorize('viewAny', Employee::class);
 
-        $tab = request()->query('tab', 'active');
-        $workStageFilter = request()->query('work_stage');
+        $tab = request()->query('tab', 'employee');
 
-        $baseQuery = Employee::query()
-            ->with(['unit', 'manager'])
-            ->where('status', $tab);
-
-        // If filtering by work_stage on the active tab
-        if ($tab === 'active' && $workStageFilter) {
-            $baseQuery->where('work_stage', $workStageFilter);
-        }
-
-        $queryBuilder = new QueryBuilder($baseQuery);
+        $queryBuilder = new QueryBuilder(
+            Employee::query()
+                ->with(['unit', 'manager'])
+                ->where('status', 'active')
+                ->where('work_stage', $tab)
+        );
         $queryBuilder->allowedFilters(
             'unit_id',
             'department',
@@ -44,14 +39,7 @@ class EmployeeController extends Controller
 
         $employees = $queryBuilder->paginate(20)->withQueryString();
 
-        // Counts per tab (unfiltered)
-        $counts = Employee::query()
-            ->selectRaw('status, count(*) as count')
-            ->groupBy('status')
-            ->pluck('count', 'status')
-            ->all();
-
-        // Work stage counts (only for active employees)
+        // Work stage counts for tabs
         $stageCounts = Employee::query()
             ->where('status', 'active')
             ->selectRaw('work_stage, count(*) as count')
@@ -59,7 +47,9 @@ class EmployeeController extends Controller
             ->pluck('count', 'work_stage')
             ->all();
 
-        // Active employees for the manager select
+        $totalActive = Employee::where('status', 'active')->count();
+        $firedCount = Employee::where('status', 'fired')->count();
+
         $managers = Employee::query()
             ->where('status', 'active')
             ->whereNotNull('name')
@@ -68,19 +58,15 @@ class EmployeeController extends Controller
 
         return Inertia::render('Personnel/Index', [
             'employees' => $employees,
-            'counts' => [
-                'active' => $counts['active'] ?? 0,
-                'vacancy' => $counts['vacancy'] ?? 0,
-                'fired' => $counts['fired'] ?? 0,
-            ],
             'stageCounts' => [
+                'employee' => $stageCounts['employee'] ?? 0,
                 'onboarding' => $stageCounts['onboarding'] ?? 0,
                 'probation' => $stageCounts['probation'] ?? 0,
-                'employee' => $stageCounts['employee'] ?? 0,
                 'offboarding' => $stageCounts['offboarding'] ?? 0,
             ],
+            'totalActive' => $totalActive,
+            'firedCount' => $firedCount,
             'tab' => $tab,
-            'workStageFilter' => $workStageFilter,
             'allUnits' => Unit::orderBy('sort_order')->get(),
             'managers' => $managers,
             'departments' => PultEnums::departments(),

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Head, router } from '@inertiajs/vue3';
+import { Head, Link, router } from '@inertiajs/vue3';
 import { computed, ref } from 'vue';
 import AppLayout from '../../Layouts/AppLayout.vue';
 import Badge from '../../Components/Pult/Badge.vue';
@@ -8,14 +8,12 @@ import Pagination from '../../Components/Pult/Pagination.vue';
 import { useTranslations } from '../../Composables/useTranslations';
 import type { Employee, Paginated, Unit, WorkStage } from '../../types';
 
-type Tab = 'active' | 'vacancy' | 'fired';
-
 interface Props {
     employees: Paginated<Employee>;
-    counts: Record<Tab, number>;
     stageCounts: Record<WorkStage, number>;
-    tab: Tab;
-    workStageFilter: WorkStage | null;
+    totalActive: number;
+    firedCount: number;
+    tab: WorkStage;
     allUnits: Unit[];
     managers: Employee[];
     departments: string[];
@@ -31,39 +29,17 @@ interface Props {
 const props = defineProps<Props>();
 const { t } = useTranslations();
 
-const TABS: { id: Tab; color: string }[] = [
-    { id: 'active', color: '#22c55e' },
-    { id: 'vacancy', color: '#f59e0b' },
-    { id: 'fired', color: '#94a3b8' },
+const TABS: { id: WorkStage; color: string }[] = [
+    { id: 'employee', color: '#3b82f6' },
+    { id: 'onboarding', color: '#22c55e' },
+    { id: 'probation', color: '#f59e0b' },
+    { id: 'offboarding', color: '#ef4444' },
 ];
-
-const STAGE_CARDS: { stage: WorkStage; icon: string; color: string }[] = [
-    { stage: 'onboarding', icon: '🟢', color: '#22c55e' },
-    { stage: 'probation', icon: '🟡', color: '#f59e0b' },
-    { stage: 'offboarding', icon: '🔴', color: '#ef4444' },
-];
-
-const STAGE_COLORS: Record<WorkStage, string> = {
-    onboarding: '#22c55e',
-    probation: '#f59e0b',
-    employee: '#3b82f6',
-    offboarding: '#ef4444',
-};
 
 const rows = computed(() => props.employees.data);
-const total = computed(() => props.counts.active + props.counts.vacancy + props.counts.fired);
 
-function switchTab(tab: Tab) {
-    router.get('/personnel', { tab }, { preserveState: true, preserveScroll: true });
-}
-
-function filterByStage(stage: WorkStage) {
-    if (props.workStageFilter === stage) {
-        // Toggle off
-        router.get('/personnel', { tab: 'active' }, { preserveState: true, preserveScroll: true });
-    } else {
-        router.get('/personnel', { tab: 'active', work_stage: stage }, { preserveState: true, preserveScroll: true });
-    }
+function switchTab(stage: WorkStage) {
+    router.get('/personnel', { tab: stage }, { preserveState: true, preserveScroll: true });
 }
 
 const showModal = ref(false);
@@ -94,8 +70,7 @@ function unitFor(employee: Employee): Unit | undefined {
 }
 
 function managerName(employee: Employee): string {
-    const mgr = (employee as Employee & { manager?: Employee }).manager;
-    return mgr?.name ?? '—';
+    return (employee as Employee & { manager?: Employee }).manager?.name ?? '—';
 }
 </script>
 
@@ -107,7 +82,9 @@ function managerName(employee: Employee): string {
             <div class="mb-6 flex items-start justify-between">
                 <div>
                     <h1 class="text-2xl font-semibold text-slate-900">{{ t('personnel.title') }}</h1>
-                    <p class="mt-1 text-sm text-slate-600">{{ t('personnel.subtitle', { count: total }) }}</p>
+                    <p class="mt-1 text-sm text-slate-600">
+                        {{ t('personnel.subtitle', { count: totalActive }) }}
+                    </p>
                 </div>
                 <button
                     v-if="can.create"
@@ -119,35 +96,8 @@ function managerName(employee: Employee): string {
                 </button>
             </div>
 
-            <!-- Stage stat blocks (only on active tab) -->
-            <div v-if="tab === 'active'" class="mb-6 grid gap-4 sm:grid-cols-3">
-                <button
-                    v-for="card in STAGE_CARDS"
-                    :key="card.stage"
-                    type="button"
-                    :class="[
-                        'flex items-center gap-4 rounded-xl border bg-white p-4 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md',
-                        workStageFilter === card.stage
-                            ? 'border-indigo-500 ring-1 ring-indigo-500'
-                            : 'border-slate-200',
-                    ]"
-                    @click="filterByStage(card.stage)"
-                >
-                    <div
-                        class="flex h-10 w-10 items-center justify-center rounded-lg text-lg"
-                        :style="{ backgroundColor: card.color + '15', color: card.color }"
-                    >
-                        {{ card.icon }}
-                    </div>
-                    <div class="text-left">
-                        <div class="text-2xl font-bold text-slate-900">{{ stageCounts[card.stage] }}</div>
-                        <div class="text-xs text-slate-500">{{ t(`work_stage.${card.stage}`) }}</div>
-                    </div>
-                </button>
-            </div>
-
             <div class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
-                <!-- Tab bar -->
+                <!-- 4 work_stage tabs -->
                 <div class="flex border-b border-slate-200">
                     <button
                         v-for="tb in TABS"
@@ -160,11 +110,8 @@ function managerName(employee: Employee): string {
                         }"
                         @click="switchTab(tb.id)"
                     >
-                        <span
-                            class="inline-block h-2.5 w-2.5 rounded-full"
-                            :style="{ backgroundColor: tb.color }"
-                        ></span>
-                        {{ t(`personnel_tabs.${tb.id}`) }}
+                        <span class="inline-block h-2.5 w-2.5 rounded-full" :style="{ backgroundColor: tb.color }"></span>
+                        {{ t(`work_stage.${tb.id}`) }}
                         <span
                             class="rounded-full px-1.5 py-0.5 text-[10px] font-semibold"
                             :style="{
@@ -172,13 +119,9 @@ function managerName(employee: Employee): string {
                                 color: tab === tb.id ? tb.color : '#94a3b8',
                             }"
                         >
-                            {{ counts[tb.id] }}
+                            {{ stageCounts[tb.id] }}
                         </span>
-                        <span
-                            v-if="tab === tb.id"
-                            class="absolute bottom-0 left-0 right-0 h-0.5"
-                            :style="{ backgroundColor: tb.color }"
-                        ></span>
+                        <span v-if="tab === tb.id" class="absolute bottom-0 left-0 right-0 h-0.5" :style="{ backgroundColor: tb.color }"></span>
                     </button>
                 </div>
 
@@ -193,13 +136,12 @@ function managerName(employee: Employee): string {
                             <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-600">{{ t('table.manager') }}</th>
                             <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-600">{{ t('table.telegram') }}</th>
                             <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-600">{{ t('table.email') }}</th>
-                            <th v-if="tab === 'active'" class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-600">{{ t('work_stage.label') }}</th>
                             <th class="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-slate-600">{{ t('table.actions') }}</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-200">
                         <tr v-if="rows.length === 0">
-                            <td :colspan="tab === 'active' ? 9 : 8" class="px-4 py-12 text-center">
+                            <td colspan="8" class="px-4 py-12 text-center">
                                 <div class="text-4xl">👤</div>
                                 <div class="mt-2 text-sm text-slate-500">{{ t('table.empty') }}</div>
                             </td>
@@ -210,10 +152,7 @@ function managerName(employee: Employee): string {
                             class="cursor-pointer hover:bg-slate-50"
                             @click="openEdit(emp)"
                         >
-                            <td class="px-4 py-3 text-sm">
-                                <span v-if="emp.status === 'vacancy'" class="italic text-slate-400">{{ t('table.vacancy') }}</span>
-                                <span v-else class="font-medium text-slate-900">{{ emp.name }}</span>
-                            </td>
+                            <td class="px-4 py-3 text-sm font-medium text-slate-900">{{ emp.name }}</td>
                             <td class="px-4 py-3 text-sm text-slate-700">{{ emp.position }}</td>
                             <td class="px-4 py-3 text-sm">
                                 <Badge v-if="unitFor(emp)" :color="unitFor(emp)!.color">{{ unitFor(emp)!.name }}</Badge>
@@ -228,11 +167,6 @@ function managerName(employee: Employee): string {
                                 <span v-if="emp.email">{{ emp.email }}</span>
                                 <span v-else class="text-slate-300">—</span>
                             </td>
-                            <td v-if="tab === 'active'" class="px-4 py-3 text-sm">
-                                <Badge :color="STAGE_COLORS[emp.work_stage]">
-                                    {{ t(`work_stage.${emp.work_stage}`) }}
-                                </Badge>
-                            </td>
                             <td class="px-4 py-3 text-right">
                                 <button
                                     v-if="can.delete"
@@ -246,12 +180,17 @@ function managerName(employee: Employee): string {
                         </tr>
                     </tbody>
                 </table>
-                <Pagination
-                    :links="employees.links"
-                    :from="employees.from"
-                    :to="employees.to"
-                    :total="employees.total"
-                />
+                <Pagination :links="employees.links" :from="employees.from" :to="employees.to" :total="employees.total" />
+            </div>
+
+            <!-- Former employees button -->
+            <div v-if="firedCount > 0" class="mt-6 text-center">
+                <Link
+                    href="/former"
+                    class="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-5 py-2.5 text-sm text-slate-600 shadow-sm transition-colors hover:bg-slate-50"
+                >
+                    👤 {{ t('personnel_tabs.fired') }} ({{ firedCount }})
+                </Link>
             </div>
         </div>
 
