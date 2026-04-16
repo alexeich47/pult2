@@ -131,6 +131,19 @@ class IdeaController extends Controller
         return back();
     }
 
+    public function bulkDestroy(): RedirectResponse
+    {
+        Gate::authorize('delete', new Idea);
+
+        /** @var array<int, int> $ids */
+        $ids = request()->input('ids', []);
+        abort_if(empty($ids), 422);
+
+        Idea::whereIn('id', $ids)->delete();
+
+        return back()->with('flash.success', __('pult.ideas.flash.deleted'));
+    }
+
     public function destroy(Idea $idea): RedirectResponse
     {
         Gate::authorize('delete', $idea);

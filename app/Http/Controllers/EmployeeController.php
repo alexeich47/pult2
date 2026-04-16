@@ -94,6 +94,19 @@ class EmployeeController extends Controller
         return back()->with('flash.success', __('pult.personnel.flash.updated'));
     }
 
+    public function bulkDestroy(): RedirectResponse
+    {
+        Gate::authorize('delete', new Employee);
+
+        /** @var array<int, int> $ids */
+        $ids = request()->input('ids', []);
+        abort_if(empty($ids), 422);
+
+        Employee::whereIn('id', $ids)->update(['status' => 'fired']);
+
+        return back()->with('flash.success', __('pult.personnel.flash.deleted'));
+    }
+
     public function destroy(Employee $employee): RedirectResponse
     {
         Gate::authorize('delete', $employee);

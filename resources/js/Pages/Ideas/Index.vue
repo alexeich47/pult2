@@ -3,6 +3,7 @@ import { Head, Link, router } from '@inertiajs/vue3';
 import { computed, ref } from 'vue';
 import AppLayout from '../../Layouts/AppLayout.vue';
 import Badge from '../../Components/Pult/Badge.vue';
+import ConfirmDialog from '../../Components/Pult/ConfirmDialog.vue';
 import IdeaFormModal from '../../Components/Pult/IdeaFormModal.vue';
 import InlineSelect from '../../Components/Pult/InlineSelect.vue';
 import Pagination from '../../Components/Pult/Pagination.vue';
@@ -131,6 +132,45 @@ function toggleSort(colId: string) {
     const current = sortDir(colId);
     const next = current === 'asc' ? `-${colId}` : colId;
     navigate(props.filters, next);
+}
+
+// ── Bulk selection ────────────────────────────────────────────────
+const selected = ref(new Set<number>());
+const showBulkConfirm = ref(false);
+
+const allOnPageSelected = computed(() => {
+    const items = props.ideas.data;
+    return items.length > 0 && items.every((i) => selected.value.has(i.id));
+});
+
+function toggleSelectAll() {
+    if (allOnPageSelected.value) {
+        props.ideas.data.forEach((i) => selected.value.delete(i.id));
+    } else {
+        props.ideas.data.forEach((i) => selected.value.add(i.id));
+    }
+}
+
+function toggleSelect(id: number) {
+    if (selected.value.has(id)) {
+        selected.value.delete(id);
+    } else {
+        selected.value.add(id);
+    }
+}
+
+function clearSelection() {
+    selected.value = new Set();
+}
+
+function confirmBulkDelete() {
+    router.post('/ideas/bulk-delete', { ids: [...selected.value] }, {
+        preserveScroll: true,
+        onSuccess: () => {
+            selected.value = new Set();
+            showBulkConfirm.value = false;
+        },
+    });
 }
 
 // ── Form modal ─────────────────────────────────────────────────────
@@ -316,11 +356,41 @@ function formatDate(iso: string): string {
                 </button>
             </div>
 
+            <!-- Bulk action bar -->
+            <div
+                v-if="selected.size > 0"
+                class="mb-3 flex items-center gap-3 rounded-lg border border-red-200 bg-red-50 px-4 py-2"
+            >
+                <span class="text-sm font-medium text-red-800">{{ t('bulk.selected', { count: selected.size }) }}</span>
+                <button
+                    type="button"
+                    class="rounded-md bg-red-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-red-700"
+                    @click="showBulkConfirm = true"
+                >
+                    {{ t('bulk.delete') }}
+                </button>
+                <button
+                    type="button"
+                    class="text-xs text-slate-600 underline hover:text-slate-900"
+                    @click="clearSelection"
+                >
+                    {{ t('bulk.clear') }}
+                </button>
+            </div>
+
             <!-- Table -->
             <div class="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
                 <table class="min-w-full divide-y divide-slate-200">
                     <thead class="bg-slate-50">
                         <tr>
+                            <th v-if="can.delete" class="w-10 px-3 py-3">
+                                <input
+                                    type="checkbox"
+                                    class="rounded border-slate-300"
+                                    :checked="allOnPageSelected"
+                                    @change="toggleSelectAll"
+                                />
+                            </th>
                             <th
                                 v-for="col in SORTABLE_COLS"
                                 :key="col.id"
@@ -336,7 +406,7 @@ function formatDate(iso: string): string {
                     </thead>
                     <tbody class="divide-y divide-slate-200">
                         <tr v-if="ideas.data.length === 0">
-                            <td colspan="7" class="px-4 py-12 text-center">
+                            <td :colspan="can.delete ? 8 : 7" class="px-4 py-12 text-center">
                                 <div class="text-4xl">💡</div>
                                 <div class="mt-2 text-sm text-slate-500">{{ t('ideas.empty') }}</div>
                             </td>
@@ -346,6 +416,14 @@ function formatDate(iso: string): string {
                             :key="idea.id"
                             class="cursor-pointer hover:bg-slate-50"
                         >
+                            <td v-if="can.delete" class="w-10 px-3 py-3" @click.stop>
+                                <input
+                                    type="checkbox"
+                                    class="rounded border-slate-300"
+                                    :checked="selected.has(idea.id)"
+                                    @change="toggleSelect(idea.id)"
+                                />
+                            </td>
                             <td class="px-4 py-3 text-sm">
                                 <Link :href="`/ideas/${idea.display_id}`" class="font-mono text-xs text-indigo-600 hover:text-indigo-800">
                                     {{ idea.display_id }}
@@ -405,6 +483,16 @@ function formatDate(iso: string): string {
             :statuses="statuses"
             :priorities="priorities"
             @close="closeModal"
+        />
+
+        <ConfirmDialog
+            :show="showBulkConfirm"
+            :title="t('bulk.confirm_title')"
+            :message="t('bulk.confirm_message', { count: selected.size })"
+            :confirm-label="t('bulk.confirm_btn')"
+            variant="danger"
+            @confirm="confirmBulkDelete"
+            @cancel="showBulkConfirm = false"
         />
     </AppLayout>
 </template>

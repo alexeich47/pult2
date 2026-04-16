@@ -78,6 +78,19 @@ class RiskEntryController extends Controller
         return back()->with('flash.success', __('pult.risks.flash.updated'));
     }
 
+    public function bulkDestroy(): RedirectResponse
+    {
+        Gate::authorize('delete', new RiskEntry);
+
+        /** @var array<int, int> $ids */
+        $ids = request()->input('ids', []);
+        abort_if(empty($ids), 422);
+
+        RiskEntry::whereIn('id', $ids)->delete();
+
+        return back()->with('flash.success', __('pult.risks.flash.deleted'));
+    }
+
     public function destroy(RiskEntry $riskEntry): RedirectResponse
     {
         Gate::authorize('delete', $riskEntry);

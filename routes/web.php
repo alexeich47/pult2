@@ -52,19 +52,24 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('/ideas', [IdeaController::class, 'index'])->name('ideas.index');
     Route::post('/ideas', [IdeaController::class, 'store'])->name('ideas.store');
+    Route::post('/ideas/bulk-delete', [IdeaController::class, 'bulkDestroy'])->name('ideas.bulkDestroy');
     Route::get('/ideas/{idea}', [IdeaController::class, 'show'])->name('ideas.show');
     Route::put('/ideas/{idea}', [IdeaController::class, 'update'])->name('ideas.update');
     Route::patch('/ideas/{idea}', [IdeaController::class, 'patch'])->name('ideas.patch');
     Route::delete('/ideas/{idea}', [IdeaController::class, 'destroy'])->name('ideas.destroy');
 
+    Route::post('/personnel/bulk-delete', [EmployeeController::class, 'bulkDestroy'])->name('personnel.bulkDestroy');
+
     Route::get('/risks', [RiskEntryController::class, 'index'])->name('risks.index');
     Route::post('/risks', [RiskEntryController::class, 'store'])->name('risks.store');
+    Route::post('/risks/bulk-delete', [RiskEntryController::class, 'bulkDestroy'])->name('risks.bulkDestroy');
     Route::get('/risks/{risk_entry}', [RiskEntryController::class, 'show'])->name('risks.show');
     Route::put('/risks/{risk_entry}', [RiskEntryController::class, 'update'])->name('risks.update');
     Route::delete('/risks/{risk_entry}', [RiskEntryController::class, 'destroy'])->name('risks.destroy');
 
     Route::get('/services', [ServiceController::class, 'index'])->name('services.index');
     Route::post('/services', [ServiceController::class, 'store'])->name('services.store');
+    Route::post('/services/bulk-delete', [ServiceController::class, 'bulkDestroy'])->name('services.bulkDestroy');
     Route::put('/services/{service}', [ServiceController::class, 'update'])->name('services.update');
     Route::delete('/services/{service}', [ServiceController::class, 'destroy'])->name('services.destroy');
 

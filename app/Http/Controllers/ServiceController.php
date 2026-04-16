@@ -73,6 +73,19 @@ class ServiceController extends Controller
         return back()->with('flash.success', __('pult.services.flash.updated'));
     }
 
+    public function bulkDestroy(): RedirectResponse
+    {
+        Gate::authorize('delete', new Service);
+
+        /** @var array<int, int> $ids */
+        $ids = request()->input('ids', []);
+        abort_if(empty($ids), 422);
+
+        Service::whereIn('id', $ids)->delete();
+
+        return back()->with('flash.success', __('pult.services.flash.deleted'));
+    }
+
     public function destroy(Service $service): RedirectResponse
     {
         Gate::authorize('delete', $service);

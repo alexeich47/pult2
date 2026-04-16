@@ -3,6 +3,7 @@ import { Head, router } from '@inertiajs/vue3';
 import { computed, ref } from 'vue';
 import AppLayout from '../../Layouts/AppLayout.vue';
 import Badge from '../../Components/Pult/Badge.vue';
+import ConfirmDialog from '../../Components/Pult/ConfirmDialog.vue';
 import Pagination from '../../Components/Pult/Pagination.vue';
 import ServiceFormModal from '../../Components/Pult/ServiceFormModal.vue';
 import { useTranslations } from '../../Composables/useTranslations';
@@ -85,6 +86,45 @@ function destroy(service: Service) {
     router.delete(`/services/${service.id}`, { preserveScroll: true });
 }
 
+// ── Bulk selection ────────────────────────────────────────────────
+const selected = ref(new Set<number>());
+const showBulkConfirm = ref(false);
+
+const allOnPageSelected = computed(() => {
+    const items = props.services.data;
+    return items.length > 0 && items.every((s) => selected.value.has(s.id));
+});
+
+function toggleSelectAll() {
+    if (allOnPageSelected.value) {
+        props.services.data.forEach((s) => selected.value.delete(s.id));
+    } else {
+        props.services.data.forEach((s) => selected.value.add(s.id));
+    }
+}
+
+function toggleSelect(id: number) {
+    if (selected.value.has(id)) {
+        selected.value.delete(id);
+    } else {
+        selected.value.add(id);
+    }
+}
+
+function clearSelection() {
+    selected.value = new Set();
+}
+
+function confirmBulkDelete() {
+    router.post('/services/bulk-delete', { ids: [...selected.value] }, {
+        preserveScroll: true,
+        onSuccess: () => {
+            selected.value = new Set();
+            showBulkConfirm.value = false;
+        },
+    });
+}
+
 function unitFor(service: Service): Unit | undefined {
     return service.unit ?? props.allUnits.find((u) => u.id === service.unit_id);
 }
@@ -154,10 +194,40 @@ const CHIPS: { id: FilterChip; key: string }[] = [
                 </div>
             </div>
 
+            <!-- Bulk action bar -->
+            <div
+                v-if="selected.size > 0"
+                class="mb-3 flex items-center gap-3 rounded-lg border border-red-200 bg-red-50 px-4 py-2"
+            >
+                <span class="text-sm font-medium text-red-800">{{ t('bulk.selected', { count: selected.size }) }}</span>
+                <button
+                    type="button"
+                    class="rounded-md bg-red-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-red-700"
+                    @click="showBulkConfirm = true"
+                >
+                    {{ t('bulk.delete') }}
+                </button>
+                <button
+                    type="button"
+                    class="text-xs text-slate-600 underline hover:text-slate-900"
+                    @click="clearSelection"
+                >
+                    {{ t('bulk.clear') }}
+                </button>
+            </div>
+
             <div class="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
                 <table class="min-w-full divide-y divide-slate-200">
                     <thead class="bg-slate-50">
                         <tr>
+                            <th v-if="can.delete" class="w-10 px-3 py-3">
+                                <input
+                                    type="checkbox"
+                                    class="rounded border-slate-300"
+                                    :checked="allOnPageSelected"
+                                    @change="toggleSelectAll"
+                                />
+                            </th>
                             <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-600">{{ t('services.col.name') }}</th>
                             <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-600">{{ t('services.col.category') }}</th>
                             <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-600">{{ t('services.col.company') }}</th>
@@ -170,7 +240,7 @@ const CHIPS: { id: FilterChip; key: string }[] = [
                     </thead>
                     <tbody class="divide-y divide-slate-200">
                         <tr v-if="services.data.length === 0">
-                            <td colspan="8" class="px-4 py-12 text-center">
+                            <td :colspan="can.delete ? 9 : 8" class="px-4 py-12 text-center">
                                 <div class="text-4xl">📦</div>
                                 <div class="mt-2 text-sm text-slate-500">{{ t('services.empty') }}</div>
                             </td>
@@ -181,6 +251,14 @@ const CHIPS: { id: FilterChip; key: string }[] = [
                             class="cursor-pointer hover:bg-slate-50"
                             @click="openEdit(svc)"
                         >
+                            <td v-if="can.delete" class="w-10 px-3 py-3" @click.stop>
+                                <input
+                                    type="checkbox"
+                                    class="rounded border-slate-300"
+                                    :checked="selected.has(svc.id)"
+                                    @change="toggleSelect(svc.id)"
+                                />
+                            </td>
                             <td class="px-4 py-3 text-sm">
                                 <div class="font-medium text-slate-900">{{ svc.name }}</div>
                                 <div v-if="svc.url" class="text-xs text-slate-500">{{ svc.url }}</div>
@@ -228,6 +306,16 @@ const CHIPS: { id: FilterChip; key: string }[] = [
             :billing-cycles="billingCycles"
             :statuses="statuses"
             @close="closeModal"
+        />
+
+        <ConfirmDialog
+            :show="showBulkConfirm"
+            :title="t('bulk.confirm_title')"
+            :message="t('bulk.confirm_message', { count: selected.size })"
+            :confirm-label="t('bulk.confirm_btn')"
+            variant="danger"
+            @confirm="confirmBulkDelete"
+            @cancel="showBulkConfirm = false"
         />
     </AppLayout>
 </template>

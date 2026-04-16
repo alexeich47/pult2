@@ -433,6 +433,15 @@ return [
         ],
     ],
 
+    'bulk' => [
+        'selected' => ':count selected',
+        'delete' => 'Delete selected',
+        'clear' => 'Clear selection',
+        'confirm_title' => 'Confirm deletion',
+        'confirm_message' => 'Are you sure you want to delete :count entries? This action cannot be undone.',
+        'confirm_btn' => 'Delete',
+    ],
+
     'footer' => [
         'info' => 'Info',
         'codex' => 'Codex',
