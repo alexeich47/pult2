@@ -183,15 +183,6 @@ function managerName(employee: Employee): string {
                 <Pagination :links="employees.links" :from="employees.from" :to="employees.to" :total="employees.total" />
             </div>
 
-            <!-- Former employees button -->
-            <div v-if="firedCount > 0" class="mt-6 text-center">
-                <Link
-                    href="/former"
-                    class="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-5 py-2.5 text-sm text-slate-600 shadow-sm transition-colors hover:bg-slate-50"
-                >
-                    👤 {{ t('personnel_tabs.fired') }} ({{ firedCount }})
-                </Link>
-            </div>
         </div>
 
         <EmployeeFormModal

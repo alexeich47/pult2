@@ -126,6 +126,7 @@ function isActive(href: string | null): boolean {
                 <Link href="/info" class="text-slate-400 hover:text-white">{{ t('footer.info') }}</Link>
                 <Link href="/codex" class="text-slate-400 hover:text-white">{{ t('footer.codex') }}</Link>
                 <Link href="/dictionary" class="text-slate-400 hover:text-white">{{ t('footer.dictionary') }}</Link>
+                <Link href="/archive" class="text-slate-400 hover:text-white">{{ t('footer.archive') }}</Link>
             </div>
             <div class="my-1 h-px bg-slate-800"></div>
             <div v-if="page.props.auth.user" class="text-xs text-slate-400">

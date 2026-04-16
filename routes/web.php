@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ArchiveController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\IdeaController;
@@ -53,6 +54,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/ideas', [IdeaController::class, 'store'])->name('ideas.store');
     Route::get('/ideas/{idea}', [IdeaController::class, 'show'])->name('ideas.show');
     Route::put('/ideas/{idea}', [IdeaController::class, 'update'])->name('ideas.update');
+    Route::patch('/ideas/{idea}', [IdeaController::class, 'patch'])->name('ideas.patch');
     Route::delete('/ideas/{idea}', [IdeaController::class, 'destroy'])->name('ideas.destroy');
 
     Route::get('/risks', [RiskEntryController::class, 'index'])->name('risks.index');
@@ -67,6 +69,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('/services/{service}', [ServiceController::class, 'destroy'])->name('services.destroy');
 
     // Reference content (static, i18n-driven)
+    Route::get('/archive', ArchiveController::class)->name('archive.index');
     Route::get('/codex', fn () => Inertia::render('Codex/Index'))->name('codex.index');
     Route::get('/dictionary', fn () => Inertia::render('Dictionary/Index'))->name('dictionary.index');
     Route::get('/info', fn () => Inertia::render('Info/Index'))->name('info.index');

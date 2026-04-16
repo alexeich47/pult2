@@ -176,7 +176,7 @@ class IdeaControllerTest extends TestCase
             ->delete("/ideas/{$idea->display_id}")
             ->assertRedirect('/ideas');
 
-        $this->assertDatabaseMissing('ideas', ['id' => $idea->id]);
+        $this->assertSoftDeleted('ideas', ['id' => $idea->id]);
     }
 
     public function test_operator_cannot_delete(): void

@@ -437,6 +437,15 @@ return [
         'info' => 'Info',
         'codex' => 'Codex',
         'dictionary' => 'Dictionary',
+        'archive' => 'Archive',
+    ],
+
+    'archive' => [
+        'title' => 'Archive',
+        'sub' => 'Deleted ideas, risk entries and former employees',
+        'tab' => ['ideas' => 'Ideas', 'risks' => 'Risks', 'employees' => 'Employees'],
+        'deleted_at' => 'Deleted',
+        'empty' => 'Archive is empty',
     ],
 
     'codex' => [

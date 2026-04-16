@@ -10,6 +10,7 @@ use App\Models\Unit;
 use App\Support\PultEnums;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use Inertia\Response;
 use Spatie\QueryBuilder\AllowedFilter;
@@ -92,11 +93,42 @@ class IdeaController extends Controller
             ->with('flash.success', __('pult.ideas.flash.created'));
     }
 
+    /**
+     * Full update from form modal.
+     */
     public function update(UpdateIdeaRequest $request, Idea $idea): RedirectResponse
     {
         $idea->update($request->validated());
 
         return back()->with('flash.success', __('pult.ideas.flash.updated'));
+    }
+
+    /**
+     * Inline single-field patch from table cell click.
+     */
+    public function patch(Idea $idea): RedirectResponse
+    {
+        Gate::authorize('update', $idea);
+
+        $field = request()->input('field');
+        $value = request()->input('value');
+
+        $allowed = ['unit_id', 'author_id', 'status', 'priority'];
+        abort_unless(in_array($field, $allowed, true), 422, 'Field not patchable');
+
+        // Validate the value per field
+        $rules = match ($field) {
+            'unit_id' => ['exists:units,id'],
+            'author_id' => ['integer', 'exists:employees,id'],
+            'status' => [Rule::in(PultEnums::ideaStatuses())],
+            'priority' => [Rule::in(PultEnums::ideaPriorities())],
+        };
+
+        request()->validate(['value' => ['required', ...$rules]]);
+
+        $idea->update([$field => $value]);
+
+        return back();
     }
 
     public function destroy(Idea $idea): RedirectResponse

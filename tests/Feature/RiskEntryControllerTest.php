@@ -135,7 +135,7 @@ class RiskEntryControllerTest extends TestCase
             ->delete("/risks/{$entry->display_id}")
             ->assertRedirect('/risks');
 
-        $this->assertDatabaseMissing('risk_entries', ['id' => $entry->id]);
+        $this->assertSoftDeleted('risk_entries', ['id' => $entry->id]);
     }
 
     public function test_operator_cannot_delete(): void

@@ -4,6 +4,7 @@ import { computed, ref } from 'vue';
 import AppLayout from '../../Layouts/AppLayout.vue';
 import Badge from '../../Components/Pult/Badge.vue';
 import IdeaFormModal from '../../Components/Pult/IdeaFormModal.vue';
+import InlineSelect from '../../Components/Pult/InlineSelect.vue';
 import Pagination from '../../Components/Pult/Pagination.vue';
 import { useTranslations } from '../../Composables/useTranslations';
 import type { Employee, Idea, IdeaPriority, IdeaStatus, Paginated, Unit } from '../../types';
@@ -142,6 +143,15 @@ function openCreate() {
 function closeModal() {
     showModal.value = false;
 }
+
+function inlinePatch(idea: Idea, field: string, value: string | number) {
+    router.patch(`/ideas/${idea.display_id}`, { field, value }, { preserveScroll: true, preserveState: true });
+}
+
+const unitOptions = computed(() => props.allUnits.map((u) => ({ value: u.id, label: u.name, color: u.color })));
+const statusOptions = computed(() => props.statuses.map((s) => ({ value: s, label: t(`ideas.status.${s}`), color: STATUS_COLORS[s] })));
+const priorityOptions = computed(() => props.priorities.map((p) => ({ value: p, label: t(`ideas.priority.${p}`), color: PRIORITY_COLORS[p] })));
+const authorOptions = computed(() => props.authors.map((a) => ({ value: a.id, label: a.name ?? a.position })));
 
 function unitFor(idea: Idea): Unit | undefined {
     return idea.unit ?? props.allUnits.find((u) => u.id === idea.unit_id);
@@ -341,26 +351,38 @@ function formatDate(iso: string): string {
                                     {{ idea.display_id }}
                                 </Link>
                             </td>
-                            <td class="px-4 py-3 text-sm">
-                                <Badge v-if="unitFor(idea)" :color="unitFor(idea)!.color">
-                                    {{ unitFor(idea)!.name }}
-                                </Badge>
+                            <td class="px-4 py-3 text-sm" @click.stop>
+                                <InlineSelect
+                                    :model-value="idea.unit_id"
+                                    :options="unitOptions"
+                                    @update:model-value="(v: string | number) => inlinePatch(idea, 'unit_id', v)"
+                                />
                             </td>
                             <td class="px-4 py-3 text-sm text-slate-900">
                                 <Link :href="`/ideas/${idea.display_id}`" class="font-medium hover:text-indigo-700">
                                     {{ idea.title }}
                                 </Link>
                             </td>
-                            <td class="px-4 py-3 text-sm">
-                                <Badge :color="STATUS_COLORS[idea.status]">
-                                    {{ t(`ideas.status.${idea.status}`) }}
-                                </Badge>
+                            <td class="px-4 py-3 text-sm" @click.stop>
+                                <InlineSelect
+                                    :model-value="idea.status"
+                                    :options="statusOptions"
+                                    @update:model-value="(v: string | number) => inlinePatch(idea, 'status', v)"
+                                />
                             </td>
-                            <td class="px-4 py-3 text-sm text-slate-700">{{ authorLabel(idea) }}</td>
-                            <td class="px-4 py-3 text-sm">
-                                <Badge :color="PRIORITY_COLORS[idea.priority]">
-                                    {{ t(`ideas.priority.${idea.priority}`) }}
-                                </Badge>
+                            <td class="px-4 py-3 text-sm" @click.stop>
+                                <InlineSelect
+                                    :model-value="idea.author_id"
+                                    :options="authorOptions"
+                                    @update:model-value="(v: string | number) => inlinePatch(idea, 'author_id', v)"
+                                />
+                            </td>
+                            <td class="px-4 py-3 text-sm" @click.stop>
+                                <InlineSelect
+                                    :model-value="idea.priority"
+                                    :options="priorityOptions"
+                                    @update:model-value="(v: string | number) => inlinePatch(idea, 'priority', v)"
+                                />
                             </td>
                             <td class="px-4 py-3 text-xs text-slate-500">{{ formatDate(idea.created_at) }}</td>
                         </tr>

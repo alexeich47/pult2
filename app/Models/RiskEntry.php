@@ -6,6 +6,7 @@ use Database\Factories\RiskEntryFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 
@@ -20,7 +21,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
 class RiskEntry extends Model
 {
     /** @use HasFactory<RiskEntryFactory> */
-    use HasFactory, LogsActivity;
+    use HasFactory, LogsActivity, SoftDeletes;
 
     /**
      * Prefix letter used in display_id per type.
