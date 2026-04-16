@@ -2,9 +2,11 @@
 import { Link, usePage } from '@inertiajs/vue3';
 import { computed } from 'vue';
 import type { PageProps } from '../../types';
+import { useDarkMode } from '../../Composables/useDarkMode';
 import { useTranslations } from '../../Composables/useTranslations';
 
 const { t } = useTranslations();
+const { isDark, toggle: toggleDark } = useDarkMode();
 const page = usePage<PageProps>();
 
 const units = computed(() => page.props.units ?? []);
@@ -123,23 +125,33 @@ function isActive(href: string | null): boolean {
             <div v-if="page.props.auth.user" class="text-xs text-slate-400">
                 {{ page.props.auth.user.name }}
             </div>
-            <!-- Locale switcher -->
-            <div class="flex gap-1">
-                <Link
-                    v-for="code in page.props.supportedLocales"
-                    :key="code"
-                    :href="`/locale/${code}`"
-                    method="post"
-                    as="button"
-                    :class="[
-                        'rounded px-2 py-0.5 text-[11px] uppercase transition-colors',
-                        page.props.locale === code
-                            ? 'bg-indigo-500 text-white'
-                            : 'bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white',
-                    ]"
+            <!-- Controls row: locale + dark toggle -->
+            <div class="flex items-center gap-2">
+                <div class="flex gap-1">
+                    <Link
+                        v-for="code in page.props.supportedLocales"
+                        :key="code"
+                        :href="`/locale/${code}`"
+                        method="post"
+                        as="button"
+                        :class="[
+                            'rounded px-2 py-0.5 text-[11px] uppercase transition-colors',
+                            page.props.locale === code
+                                ? 'bg-indigo-500 text-white'
+                                : 'bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white',
+                        ]"
+                    >
+                        {{ code }}
+                    </Link>
+                </div>
+                <button
+                    type="button"
+                    class="ml-auto rounded bg-slate-800 px-2 py-0.5 text-[11px] text-slate-400 transition-colors hover:bg-slate-700 hover:text-white"
+                    @click="toggleDark"
+                    :title="isDark ? 'Light mode' : 'Dark mode'"
                 >
-                    {{ code }}
-                </Link>
+                    {{ isDark ? '☀️' : '🌙' }}
+                </button>
             </div>
             <Link
                 href="/profile"

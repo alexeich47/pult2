@@ -4,7 +4,86 @@
 @source "../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php";
 @source "../../storage/framework/views/*.php";
 
+/* Class-based dark mode instead of prefers-color-scheme */
+@variant dark (&:where(.dark, .dark *));
+
 @theme {
     --font-sans: "Figtree", ui-sans-serif, system-ui, -apple-system, "Segoe UI",
         Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+/*
+ * Pult dark-mode surface overrides.
+ * These MUST be un-layered (outside @layer) to beat Tailwind 4's
+ * utility layer specificity. The `.dark` parent selector ensures
+ * they only apply when dark mode is active.
+ */
+:root.dark {
+    color-scheme: dark;
+}
+
+/* Surface backgrounds */
+.dark .bg-white {
+    background-color: var(--color-slate-900);
+}
+.dark .bg-slate-50 {
+    background-color: var(--color-slate-950);
+}
+
+/* Table headers */
+.dark thead.bg-slate-50,
+.dark .bg-slate-50:where(thead) {
+    background-color: var(--color-slate-800);
+}
+
+/* Borders */
+.dark .border-slate-200 {
+    border-color: var(--color-slate-700);
+}
+.dark .divide-slate-200 > :not(:last-child) {
+    border-color: var(--color-slate-700);
+}
+
+/* Text tone shifts — only for base content text, not for
+   intentional accent colors (badges, links, etc.) */
+.dark .text-slate-900:not([class*="badge"]) {
+    color: var(--color-slate-100);
+}
+.dark .text-slate-800 {
+    color: var(--color-slate-200);
+}
+.dark .text-slate-700:not(a):not(button) {
+    color: var(--color-slate-300);
+}
+.dark .text-slate-600:not(a):not(button) {
+    color: var(--color-slate-400);
+}
+
+/* Form inputs */
+.dark input:not([type="checkbox"]):not([type="radio"]),
+.dark select,
+.dark textarea {
+    background-color: var(--color-slate-800);
+    border-color: var(--color-slate-600);
+    color: var(--color-slate-100);
+}
+.dark input::placeholder,
+.dark textarea::placeholder {
+    color: var(--color-slate-500);
+}
+
+/* Dashed border cards (placeholders, empty states) */
+.dark .border-dashed {
+    border-color: var(--color-slate-600);
+}
+
+/* Indigo intro/highlight panels */
+.dark .bg-indigo-50 {
+    background-color: color-mix(in oklch, var(--color-indigo-500) 15%, var(--color-slate-900));
+}
+.dark .border-indigo-100 {
+    border-color: var(--color-indigo-800);
+}
+.dark .text-indigo-900 {
+    color: var(--color-indigo-200);
 }
