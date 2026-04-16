@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreUnitRequest;
 use App\Http\Requests\UpdateUnitRequest;
+use App\Models\Employee;
 use App\Models\Idea;
 use App\Models\Service;
 use App\Models\Unit;
+use App\Support\PultEnums;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
@@ -18,12 +20,17 @@ class StructureController extends Controller
     {
         $units = Unit::query()
             ->withCount('employees')
-            ->with('children')
+            ->with(['children', 'head', 'deputy'])
             ->orderBy('sort_order')
             ->get();
 
         return Inertia::render('Structure/Index', [
             'units' => $units,
+            'employees' => Employee::where('status', 'active')
+                ->whereNotNull('name')
+                ->orderBy('name')
+                ->get(['id', 'name', 'position', 'unit_id']),
+            'stages' => PultEnums::unitStages(),
         ]);
     }
 

@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-#[Fillable(['id', 'name', 'color', 'unit_type', 'parent_id', 'sort_order'])]
+#[Fillable(['id', 'name', 'color', 'unit_type', 'parent_id', 'sort_order', 'head_id', 'deputy_id', 'founded_at', 'website', 'stage', 'description', 'legal_name', 'inn'])]
 class Unit extends Model
 {
     public $incrementing = false;
@@ -18,7 +18,24 @@ class Unit extends Model
     {
         return [
             'sort_order' => 'integer',
+            'founded_at' => 'date',
         ];
+    }
+
+    /**
+     * @return BelongsTo<Employee, $this>
+     */
+    public function head(): BelongsTo
+    {
+        return $this->belongsTo(Employee::class, 'head_id');
+    }
+
+    /**
+     * @return BelongsTo<Employee, $this>
+     */
+    public function deputy(): BelongsTo
+    {
+        return $this->belongsTo(Employee::class, 'deputy_id');
     }
 
     /**

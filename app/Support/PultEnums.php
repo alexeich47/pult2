@@ -197,6 +197,14 @@ final class PultEnums
     /**
      * @return array<int, string>
      */
+    public static function unitStages(): array
+    {
+        return ['startup', 'growth', 'maturity', 'restructuring'];
+    }
+
+    /**
+     * @return array<int, string>
+     */
     public static function processMaturityLevels(): array
     {
         return ['not_documented', 'documented_testing', 'documented_digitized', 'fully_automated'];

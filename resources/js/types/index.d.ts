@@ -12,6 +12,18 @@ export interface Unit {
     color: string;
     unit_type: 'revenue' | 'service' | null;
     parent_id: string | null;
+    head_id: number | null;
+    deputy_id: number | null;
+    founded_at: string | null;
+    website: string | null;
+    stage: string | null;
+    description: string | null;
+    legal_name: string | null;
+    inn: string | null;
+    employees_count?: number;
+    head?: Employee;
+    deputy?: Employee;
+    children?: Unit[];
 }
 
 export type WorkStage = 'onboarding' | 'probation' | 'employee' | 'offboarding';

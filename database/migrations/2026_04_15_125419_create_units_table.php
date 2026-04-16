@@ -15,6 +15,14 @@ return new class extends Migration
             $table->enum('unit_type', ['revenue', 'service'])->nullable();
             $table->string('parent_id')->nullable();
             $table->unsignedInteger('sort_order')->default(0);
+            $table->unsignedBigInteger('head_id')->nullable();
+            $table->unsignedBigInteger('deputy_id')->nullable();
+            $table->date('founded_at')->nullable();
+            $table->string('website')->nullable();
+            $table->string('stage')->nullable();
+            $table->text('description')->nullable();
+            $table->string('legal_name')->nullable();
+            $table->string('inn')->nullable();
             $table->timestamps();
 
             $table->foreign('parent_id')->references('id')->on('units')->nullOnDelete();
