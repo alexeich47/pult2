@@ -21,10 +21,7 @@ class PlaceholderRoutesTest extends TestCase
     {
         return [
             ['/strategy', 'page.strategy.title', '🎯'],
-            ['/agreements', 'page.agreements.title', '📜'],
-            ['/responsibilities', 'page.responsibilities.title', '🎖'],
             ['/sla', 'page.sla.title', '⏱'],
-            ['/reports', 'page.reports.title', '📊'],
             ['/processes', 'page.processes.title', '🔁'],
         ];
     }
@@ -66,7 +63,7 @@ class PlaceholderRoutesTest extends TestCase
 
     public function test_placeholder_routes_require_auth(): void
     {
-        foreach (['strategy', 'agreements', 'responsibilities', 'sla', 'reports', 'processes'] as $slug) {
+        foreach (['strategy', 'sla', 'processes'] as $slug) {
             $this->get("/{$slug}")->assertRedirect('/login');
         }
     }

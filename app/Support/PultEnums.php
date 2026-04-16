@@ -129,4 +129,44 @@ final class PultEnums
     {
         return ['active', 'trial', 'inactive'];
     }
+
+    /**
+     * @return array<int, string>
+     */
+    public static function instructionTypes(): array
+    {
+        return ['instruction', 'checklist'];
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    public static function okrTypes(): array
+    {
+        return ['north_star', 'objective', 'key_result'];
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    public static function okrStatuses(): array
+    {
+        return ['active', 'completed', 'cancelled'];
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    public static function meetingTypes(): array
+    {
+        return ['standup', 'weekly', 'monthly', 'one_on_one', 'retro', 'planning', 'other'];
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    public static function meetingStatuses(): array
+    {
+        return ['scheduled', 'completed', 'cancelled'];
+    }
 }

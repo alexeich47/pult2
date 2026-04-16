@@ -102,6 +102,68 @@ export interface Service {
     unit?: Unit;
 }
 
+export type InstructionType = 'instruction' | 'checklist';
+
+export interface ChecklistItem {
+    text: string;
+    checked: boolean;
+}
+
+export interface Instruction {
+    id: number;
+    unit_id: string | null;
+    title: string;
+    type: InstructionType;
+    content: string | null;
+    checklist_items: ChecklistItem[] | null;
+    created_by: number | null;
+    created_at: string;
+    updated_at: string;
+    unit?: Unit;
+    creator?: User;
+}
+
+export type OkrType = 'north_star' | 'objective' | 'key_result';
+export type OkrStatus = 'active' | 'completed' | 'cancelled';
+
+export interface OkrEntry {
+    id: number;
+    unit_id: string | null;
+    type: OkrType;
+    title: string;
+    description: string | null;
+    period: string;
+    progress: number;
+    status: OkrStatus;
+    parent_id: number | null;
+    sort_order: number;
+    created_at: string;
+    updated_at: string;
+    unit?: Unit;
+    children?: OkrEntry[];
+}
+
+export type MeetingType = 'standup' | 'weekly' | 'monthly' | 'one_on_one' | 'retro' | 'planning' | 'other';
+export type MeetingStatus = 'scheduled' | 'completed' | 'cancelled';
+
+export interface Meeting {
+    id: number;
+    unit_id: string | null;
+    title: string;
+    type: MeetingType;
+    scheduled_at: string;
+    duration_minutes: number;
+    location: string | null;
+    agenda: string | null;
+    notes: string | null;
+    status: MeetingStatus;
+    created_by: number | null;
+    created_at: string;
+    updated_at: string;
+    unit?: Unit;
+    creator?: User;
+}
+
 export type Translations = Record<string, unknown>;
 
 export interface PaginationLink {

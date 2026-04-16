@@ -5,6 +5,9 @@ use App\Http\Controllers\ArchiveController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\IdeaController;
+use App\Http\Controllers\InstructionController;
+use App\Http\Controllers\MeetingController;
+use App\Http\Controllers\OkrController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RiskEntryController;
 use App\Http\Controllers\ServiceController;
@@ -92,6 +95,21 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::put('/services/{service}', [ServiceController::class, 'update'])->name('services.update');
     Route::delete('/services/{service}', [ServiceController::class, 'destroy'])->name('services.destroy');
 
+    Route::get('/instructions', [InstructionController::class, 'index'])->name('instructions.index');
+    Route::post('/instructions', [InstructionController::class, 'store'])->name('instructions.store');
+    Route::put('/instructions/{instruction}', [InstructionController::class, 'update'])->name('instructions.update');
+    Route::delete('/instructions/{instruction}', [InstructionController::class, 'destroy'])->name('instructions.destroy');
+
+    Route::get('/okr', [OkrController::class, 'index'])->name('okr.index');
+    Route::post('/okr', [OkrController::class, 'store'])->name('okr.store');
+    Route::put('/okr/{okr}', [OkrController::class, 'update'])->name('okr.update');
+    Route::delete('/okr/{okr}', [OkrController::class, 'destroy'])->name('okr.destroy');
+
+    Route::get('/meetings', [MeetingController::class, 'index'])->name('meetings.index');
+    Route::post('/meetings', [MeetingController::class, 'store'])->name('meetings.store');
+    Route::put('/meetings/{meeting}', [MeetingController::class, 'update'])->name('meetings.update');
+    Route::delete('/meetings/{meeting}', [MeetingController::class, 'destroy'])->name('meetings.destroy');
+
     // Reference content (static, i18n-driven)
     Route::get('/archive', ArchiveController::class)->name('archive.index');
     Route::get('/activity-log', ActivityLogController::class)->name('activity-log.index');
@@ -103,10 +121,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Placeholder.vue component with per-route i18n keys.
     $placeholders = [
         'strategy' => ['icon' => '🎯'],
-        'agreements' => ['icon' => '📜'],
-        'responsibilities' => ['icon' => '🎖'],
         'sla' => ['icon' => '⏱'],
-        'reports' => ['icon' => '📊'],
         'processes' => ['icon' => '🔁'],
     ];
     foreach ($placeholders as $slug => $config) {
