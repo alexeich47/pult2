@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreRiskEntryRequest;
 use App\Http\Requests\UpdateRiskEntryRequest;
+use App\Models\Employee;
 use App\Models\RiskEntry;
 use App\Support\PultEnums;
 use Illuminate\Http\RedirectResponse;
@@ -32,6 +33,10 @@ class RiskEntryController extends Controller
             'entriesByType' => $grouped,
             'types' => PultEnums::riskTypes(),
             'statusesByType' => RiskEntry::STATUSES_BY_TYPE,
+            'employees' => Employee::query()
+                ->where('status', 'active')
+                ->orderBy('name')
+                ->get(['id', 'name', 'position', 'unit_id']),
             'can' => [
                 'create' => request()->user()?->can('create', RiskEntry::class),
                 'delete' => request()->user()?->can('delete', new RiskEntry),
@@ -46,6 +51,10 @@ class RiskEntryController extends Controller
         return Inertia::render('Risks/Show', [
             'entry' => $riskEntry,
             'statuses' => RiskEntry::STATUSES_BY_TYPE[$riskEntry->type],
+            'employees' => Employee::query()
+                ->where('status', 'active')
+                ->orderBy('name')
+                ->get(['id', 'name', 'position', 'unit_id']),
             'can' => [
                 'update' => request()->user()?->can('update', $riskEntry),
                 'delete' => request()->user()?->can('delete', $riskEntry),

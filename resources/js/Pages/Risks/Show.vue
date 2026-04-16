@@ -5,11 +5,12 @@ import AppLayout from '../../Layouts/AppLayout.vue';
 import Badge from '../../Components/Pult/Badge.vue';
 import RiskEntryFormModal from '../../Components/Pult/RiskEntryFormModal.vue';
 import { useTranslations } from '../../Composables/useTranslations';
-import type { RiskEntry, RiskType } from '../../types';
+import type { Employee, RiskEntry, RiskType } from '../../types';
 
 interface Props {
     entry: RiskEntry;
     statuses: string[];
+    employees: Employee[];
     can: {
         update: boolean | null;
         delete: boolean | null;
@@ -113,6 +114,7 @@ function formatDate(iso: string): string {
             :entry="entry"
             :types="['risk', 'issue', 'fuckup', 'workaround']"
             :statuses-by-type="statusesByType"
+            :employees="employees"
             @close="showModal = false"
         />
     </AppLayout>

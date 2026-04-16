@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useForm } from '@inertiajs/vue3';
 import { computed, watch } from 'vue';
-import type { RiskEntry, RiskType } from '../../types';
+import type { Employee, RiskEntry, RiskType } from '../../types';
 import { useTranslations } from '../../Composables/useTranslations';
 
 interface Props {
@@ -10,6 +10,7 @@ interface Props {
     defaultType?: RiskType;
     types: RiskType[];
     statusesByType: Record<RiskType, string[]>;
+    employees: Employee[];
 }
 
 const props = defineProps<Props>();
@@ -130,12 +131,19 @@ function submit() {
                     <div class="grid grid-cols-2 gap-3">
                         <div>
                             <label class="mb-1 block text-xs font-medium text-slate-700">{{ t('risks.col.owner') }} <span class="text-rose-500">*</span></label>
-                            <input
+                            <select
                                 v-model="form.owner_name"
-                                type="text"
-                                placeholder="Иванов И."
                                 class="w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-                            />
+                            >
+                                <option value="">—</option>
+                                <option
+                                    v-for="emp in employees"
+                                    :key="emp.id"
+                                    :value="emp.name ?? emp.position"
+                                >
+                                    {{ emp.name ?? emp.position }} — {{ emp.position }}
+                                </option>
+                            </select>
                             <div v-if="form.errors.owner_name" class="mt-1 text-xs text-rose-600">{{ form.errors.owner_name }}</div>
                         </div>
                         <div>

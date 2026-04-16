@@ -5,12 +5,13 @@ import AppLayout from '../../Layouts/AppLayout.vue';
 import Badge from '../../Components/Pult/Badge.vue';
 import RiskEntryFormModal from '../../Components/Pult/RiskEntryFormModal.vue';
 import { useTranslations } from '../../Composables/useTranslations';
-import type { RiskEntry, RiskType } from '../../types';
+import type { Employee, RiskEntry, RiskType } from '../../types';
 
 interface Props {
     entriesByType: Record<RiskType, RiskEntry[]>;
     types: RiskType[];
     statusesByType: Record<RiskType, string[]>;
+    employees: Employee[];
     can: {
         create: boolean | null;
         delete: boolean | null;
@@ -168,6 +169,7 @@ function formatDate(iso: string): string {
             :default-type="activeTab"
             :types="types"
             :statuses-by-type="statusesByType"
+            :employees="employees"
             @close="closeModal"
         />
     </AppLayout>
