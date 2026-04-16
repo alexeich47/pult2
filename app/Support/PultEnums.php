@@ -185,4 +185,20 @@ final class PultEnums
     {
         return ['critical', 'high', 'medium', 'low'];
     }
+
+    /**
+     * @return array<int, string>
+     */
+    public static function processCategories(): array
+    {
+        return ['HR', 'Финансы', 'Продажи', 'Разработка', 'Операции', 'Маркетинг', 'Юридический', 'Прочее'];
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    public static function processMaturityLevels(): array
+    {
+        return ['not_documented', 'documented_testing', 'documented_digitized', 'fully_automated'];
+    }
 }

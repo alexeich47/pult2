@@ -166,6 +166,25 @@ export interface RndProject {
     owner?: Employee;
 }
 
+export type ProcessMaturity = 'not_documented' | 'documented_testing' | 'documented_digitized' | 'fully_automated';
+
+export interface Process {
+    id: number;
+    unit_id: string | null;
+    title: string;
+    description: string | null;
+    owner_id: number | null;
+    category: string;
+    maturity: ProcessMaturity;
+    document_url: string | null;
+    tool: string | null;
+    sort_order: number;
+    created_at: string;
+    updated_at: string;
+    unit?: Unit;
+    owner?: Employee;
+}
+
 export type MeetingType = 'standup' | 'weekly' | 'monthly' | 'one_on_one' | 'retro' | 'planning' | 'other';
 export type MeetingStatus = 'scheduled' | 'completed' | 'cancelled';
 

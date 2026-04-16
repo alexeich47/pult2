@@ -26,6 +26,7 @@ class DatabaseSeeder extends Seeder
             OkrEntrySeeder::class,
             MeetingSeeder::class,
             RndProjectSeeder::class,
+            ProcessSeeder::class,
         ]);
 
         $admin = User::factory()->create([

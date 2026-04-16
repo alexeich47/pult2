@@ -8,6 +8,7 @@ use App\Http\Controllers\IdeaController;
 use App\Http\Controllers\InstructionController;
 use App\Http\Controllers\MeetingController;
 use App\Http\Controllers\OkrController;
+use App\Http\Controllers\ProcessController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RiskEntryController;
 use App\Http\Controllers\RndProjectController;
@@ -111,6 +112,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::put('/meetings/{meeting}', [MeetingController::class, 'update'])->name('meetings.update');
     Route::delete('/meetings/{meeting}', [MeetingController::class, 'destroy'])->name('meetings.destroy');
 
+    Route::get('/processes', [ProcessController::class, 'index'])->name('processes.index');
+    Route::post('/processes', [ProcessController::class, 'store'])->name('processes.store');
+    Route::put('/processes/{process}', [ProcessController::class, 'update'])->name('processes.update');
+    Route::delete('/processes/{process}', [ProcessController::class, 'destroy'])->name('processes.destroy');
+    Route::post('/processes/bulk-delete', [ProcessController::class, 'bulkDestroy'])->name('processes.bulkDestroy');
+
     Route::post('/rnd/bulk-delete', [RndProjectController::class, 'bulkDestroy'])->name('rnd.bulkDestroy');
     Route::get('/rnd', [RndProjectController::class, 'index'])->name('rnd.index');
     Route::post('/rnd', [RndProjectController::class, 'store'])->name('rnd.store');
@@ -129,7 +136,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     $placeholders = [
         'strategy' => ['icon' => '🎯'],
         'sla' => ['icon' => '⏱'],
-        'processes' => ['icon' => '🔁'],
     ];
     foreach ($placeholders as $slug => $config) {
         Route::get("/{$slug}", fn () => Inertia::render('Placeholder', [
