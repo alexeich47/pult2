@@ -80,8 +80,8 @@ function switchContext(event: Event) {
             </div>
         </Link>
 
-        <!-- Scrollable middle section -->
-        <div class="flex-1 overflow-y-auto">
+        <!-- Scrollable middle section (hidden scrollbar) -->
+        <div class="flex-1 overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
 
         <!-- Company context selector -->
         <div class="border-b border-slate-800 px-3 py-3">
@@ -121,7 +121,7 @@ function switchContext(event: Event) {
                     v-if="item.href"
                     :href="item.href"
                     :class="[
-                        'flex items-center gap-2 rounded-md px-2.5 py-1.5 text-sm transition-colors',
+                        'flex items-center gap-2 rounded-md px-2.5 py-1 text-[13px] transition-colors',
                         isActive(item.href)
                             ? 'bg-indigo-500/15 text-indigo-200'
                             : 'text-slate-300 hover:bg-slate-800/60 hover:text-white',
@@ -132,7 +132,7 @@ function switchContext(event: Event) {
                 </Link>
                 <div
                     v-else
-                    class="flex cursor-not-allowed items-center gap-2 rounded-md px-2.5 py-1.5 text-sm text-slate-500"
+                    class="flex cursor-not-allowed items-center gap-2 rounded-md px-2.5 py-1 text-[13px] text-slate-500"
                     :title="t('placeholder.wip')"
                 >
                     <span class="inline-block h-1.5 w-1.5 rounded-full bg-current opacity-40" />
@@ -146,22 +146,17 @@ function switchContext(event: Event) {
 
         </div><!-- end scrollable middle -->
 
-        <!-- Footer (pinned to bottom, never scrolls) -->
-        <div class="shrink-0 flex flex-col gap-2 border-t border-slate-800 px-4 py-3">
-            <div class="flex gap-3 text-xs">
-                <Link href="/info" class="text-slate-400 hover:text-white">{{ t('footer.info') }}</Link>
-                <Link href="/codex" class="text-slate-400 hover:text-white">{{ t('footer.codex') }}</Link>
-                <Link href="/dictionary" class="text-slate-400 hover:text-white">{{ t('footer.dictionary') }}</Link>
-                <Link href="/archive" class="text-slate-400 hover:text-white">{{ t('footer.archive') }}</Link>
-                <Link href="/activity-log" class="text-slate-400 hover:text-white">{{ t('footer.log') }}</Link>
+        <!-- Footer (pinned to bottom, compact) -->
+        <div class="shrink-0 border-t border-slate-800 px-4 py-2">
+            <div class="flex flex-wrap gap-x-3 gap-y-1 text-[11px]">
+                <Link href="/info" class="text-slate-500 hover:text-white">{{ t('footer.info') }}</Link>
+                <Link href="/codex" class="text-slate-500 hover:text-white">{{ t('footer.codex') }}</Link>
+                <Link href="/dictionary" class="text-slate-500 hover:text-white">{{ t('footer.dictionary') }}</Link>
+                <Link href="/archive" class="text-slate-500 hover:text-white">{{ t('footer.archive') }}</Link>
+                <Link href="/activity-log" class="text-slate-500 hover:text-white">{{ t('footer.log') }}</Link>
             </div>
-            <div class="my-1 h-px bg-slate-800"></div>
-            <div v-if="page.props.auth.user" class="text-xs text-slate-400">
-                {{ page.props.auth.user.name }}
-            </div>
-            <!-- Controls row: locale + dark toggle -->
-            <div class="flex items-center gap-2">
-                <div class="flex gap-1">
+            <div class="mt-2 flex items-center justify-between">
+                <div class="flex items-center gap-1">
                     <Link
                         v-for="code in page.props.supportedLocales"
                         :key="code"
@@ -169,38 +164,28 @@ function switchContext(event: Event) {
                         method="post"
                         as="button"
                         :class="[
-                            'rounded px-2 py-0.5 text-[11px] uppercase transition-colors',
+                            'rounded px-1.5 py-0.5 text-[10px] uppercase transition-colors',
                             page.props.locale === code
                                 ? 'bg-indigo-500 text-white'
-                                : 'bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white',
+                                : 'bg-slate-800 text-slate-500 hover:text-white',
                         ]"
                     >
                         {{ code }}
                     </Link>
+                    <button
+                        type="button"
+                        class="ml-1 rounded bg-slate-800 px-1.5 py-0.5 text-[10px] text-slate-500 hover:text-white"
+                        @click="toggleDark"
+                    >
+                        {{ isDark ? '☀️' : '🌙' }}
+                    </button>
                 </div>
-                <button
-                    type="button"
-                    class="ml-auto rounded bg-slate-800 px-2 py-0.5 text-[11px] text-slate-400 transition-colors hover:bg-slate-700 hover:text-white"
-                    @click="toggleDark"
-                    :title="isDark ? 'Light mode' : 'Dark mode'"
-                >
-                    {{ isDark ? '☀️' : '🌙' }}
-                </button>
+                <div class="flex items-center gap-2 text-[11px]">
+                    <span v-if="page.props.auth.user" class="text-slate-500">{{ page.props.auth.user.name }}</span>
+                    <Link href="/profile" class="text-slate-500 hover:text-white">⚙</Link>
+                    <Link href="/logout" method="post" as="button" class="text-slate-500 hover:text-white">↗</Link>
+                </div>
             </div>
-            <Link
-                href="/profile"
-                class="text-xs text-slate-400 hover:text-white"
-            >
-                Profile
-            </Link>
-            <Link
-                href="/logout"
-                method="post"
-                as="button"
-                class="text-left text-xs text-slate-400 hover:text-white"
-            >
-                Log out
-            </Link>
         </div>
     </aside>
 </template>
