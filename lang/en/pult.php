@@ -177,6 +177,7 @@ return [
         'position' => 'Position',
         'company' => 'Company',
         'department' => 'Department',
+        'manager' => 'Manager',
         'email' => 'Email',
         'telegram' => 'Telegram',
         'status' => 'Status',
@@ -188,6 +189,13 @@ return [
     'status' => [
         'active' => 'Active',
         'vacancy' => 'Vacancy',
+        'fired' => 'Fired',
+    ],
+
+    'personnel_tabs' => [
+        'active' => 'Current staff',
+        'vacancy' => 'Vacancies',
+        'fired' => 'Former employees',
     ],
 
     'modal' => [

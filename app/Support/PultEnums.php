@@ -34,7 +34,7 @@ final class PultEnums
      */
     public static function employeeStatuses(): array
     {
-        return ['active', 'vacancy'];
+        return ['active', 'vacancy', 'fired'];
     }
 
     /**

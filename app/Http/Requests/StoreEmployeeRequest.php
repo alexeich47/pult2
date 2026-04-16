@@ -23,12 +23,13 @@ class StoreEmployeeRequest extends FormRequest
 
         return [
             'unit_id' => ['required', 'string', 'exists:units,id'],
+            'manager_id' => ['nullable', 'integer', 'exists:employees,id'],
             'name' => [$isVacancy ? 'nullable' : 'required', 'string', 'max:255'],
             'position' => ['required', 'string', 'max:255'],
             'department' => ['required', 'string', Rule::in(PultEnums::departments())],
             'email' => ['nullable', 'email', 'max:255'],
             'telegram' => ['nullable', 'string', 'max:64', 'regex:/^@?[A-Za-z0-9_]{3,}$/'],
-            'status' => ['required', Rule::in(['active', 'vacancy'])],
+            'status' => ['required', Rule::in(PultEnums::employeeStatuses())],
         ];
     }
 

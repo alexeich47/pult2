@@ -177,6 +177,7 @@ return [
         'position' => 'Посада',
         'company' => 'Компанія',
         'department' => 'Відділ',
+        'manager' => 'Керівник',
         'email' => 'Email',
         'telegram' => 'Телеграм',
         'status' => 'Статус',
@@ -188,6 +189,13 @@ return [
     'status' => [
         'active' => 'Активний',
         'vacancy' => 'Вакансія',
+        'fired' => 'Звільнений',
+    ],
+
+    'personnel_tabs' => [
+        'active' => 'Поточний персонал',
+        'vacancy' => 'Вакансії',
+        'fired' => 'Звільнені',
     ],
 
     'modal' => [

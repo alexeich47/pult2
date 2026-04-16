@@ -12,6 +12,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
 
 #[Fillable([
     'unit_id',
+    'manager_id',
     'name',
     'position',
     'department',
@@ -27,7 +28,7 @@ class Employee extends Model
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
-            ->logOnly(['unit_id', 'name', 'position', 'department', 'email', 'telegram', 'status'])
+            ->logOnly(['unit_id', 'manager_id', 'name', 'position', 'department', 'email', 'telegram', 'status'])
             ->logOnlyDirty()
             ->dontSubmitEmptyLogs()
             ->useLogName('employee');
@@ -44,6 +45,14 @@ class Employee extends Model
     public function unit(): BelongsTo
     {
         return $this->belongsTo(Unit::class);
+    }
+
+    /**
+     * @return BelongsTo<Employee, $this>
+     */
+    public function manager(): BelongsTo
+    {
+        return $this->belongsTo(self::class, 'manager_id');
     }
 
     public function isVacancy(): bool

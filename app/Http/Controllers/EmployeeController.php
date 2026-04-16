@@ -20,22 +20,48 @@ class EmployeeController extends Controller
     {
         Gate::authorize('viewAny', Employee::class);
 
-        $queryBuilder = new QueryBuilder(Employee::query()->with('unit'));
+        $tab = request()->query('tab', 'active');
+
+        $queryBuilder = new QueryBuilder(
+            Employee::query()
+                ->with(['unit', 'manager'])
+                ->where('status', $tab)
+        );
         $queryBuilder->allowedFilters(
             'unit_id',
-            'status',
             'department',
             AllowedFilter::partial('name'),
             AllowedFilter::partial('position'),
         );
-        $queryBuilder->allowedSorts('name', 'position', 'department', 'status', 'created_at');
+        $queryBuilder->allowedSorts('name', 'position', 'department', 'created_at');
         $queryBuilder->defaultSort('id');
 
         $employees = $queryBuilder->paginate(20)->withQueryString();
 
+        // Counts per tab (unfiltered)
+        $counts = Employee::query()
+            ->selectRaw('status, count(*) as count')
+            ->groupBy('status')
+            ->pluck('count', 'status')
+            ->all();
+
+        // Active employees for the manager select (excluding vacancies and fired)
+        $managers = Employee::query()
+            ->where('status', 'active')
+            ->whereNotNull('name')
+            ->orderBy('name')
+            ->get(['id', 'name', 'position', 'unit_id']);
+
         return Inertia::render('Personnel/Index', [
             'employees' => $employees,
+            'counts' => [
+                'active' => $counts['active'] ?? 0,
+                'vacancy' => $counts['vacancy'] ?? 0,
+                'fired' => $counts['fired'] ?? 0,
+            ],
+            'tab' => $tab,
             'allUnits' => Unit::orderBy('sort_order')->get(),
+            'managers' => $managers,
             'departments' => PultEnums::departments(),
             'statuses' => PultEnums::employeeStatuses(),
             'filters' => request()->query('filter', []),

@@ -11,12 +11,13 @@ return new class extends Migration
         Schema::create('employees', function (Blueprint $table) {
             $table->id();
             $table->string('unit_id');
+            $table->unsignedBigInteger('manager_id')->nullable();
             $table->string('name')->nullable(); // null => vacancy
             $table->string('position');
             $table->string('department');
             $table->string('email')->nullable();
             $table->string('telegram')->nullable();
-            $table->enum('status', ['active', 'vacancy'])->default('active');
+            $table->enum('status', ['active', 'vacancy', 'fired'])->default('active');
             $table->timestamps();
 
             $table->foreign('unit_id')
@@ -24,6 +25,11 @@ return new class extends Migration
                 ->on('units')
                 ->cascadeOnUpdate()
                 ->restrictOnDelete();
+
+            $table->foreign('manager_id')
+                ->references('id')
+                ->on('employees')
+                ->nullOnDelete();
 
             $table->index(['unit_id', 'status']);
         });

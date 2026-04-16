@@ -8,6 +8,7 @@ interface Props {
     show: boolean;
     employee: Employee | null;
     units: Unit[];
+    managers: Employee[];
     departments: string[];
     statuses: string[];
 }
@@ -19,6 +20,7 @@ const { t } = useTranslations();
 
 const form = useForm({
     unit_id: '',
+    manager_id: null as number | null,
     name: '',
     position: '',
     department: '',
@@ -38,6 +40,7 @@ watch(
         if (!show) return;
         if (employee) {
             form.unit_id = employee.unit_id;
+            form.manager_id = (employee as Employee & { manager_id?: number | null }).manager_id ?? null;
             form.name = employee.name ?? '';
             form.position = employee.position;
             form.department = employee.department;
@@ -47,6 +50,7 @@ watch(
         } else {
             form.reset();
             form.unit_id = props.units[0]?.id ?? '';
+            form.manager_id = null;
             form.department = props.departments[0] ?? '';
             form.status = 'active';
         }
@@ -172,6 +176,25 @@ const isVacancy = computed(() => form.status === 'vacancy');
                                 {{ form.errors.department }}
                             </div>
                         </div>
+                    </div>
+
+                    <div>
+                        <label class="mb-1 block text-xs font-medium text-slate-700">
+                            {{ t('table.manager') }}
+                        </label>
+                        <select
+                            v-model="form.manager_id"
+                            class="w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                        >
+                            <option :value="null">—</option>
+                            <option
+                                v-for="mgr in managers"
+                                :key="mgr.id"
+                                :value="mgr.id"
+                            >
+                                {{ mgr.name }} — {{ mgr.position }}
+                            </option>
+                        </select>
                     </div>
 
                     <div>

@@ -8,9 +8,14 @@ import Pagination from '../../Components/Pult/Pagination.vue';
 import { useTranslations } from '../../Composables/useTranslations';
 import type { Employee, Paginated, Unit } from '../../types';
 
+type Tab = 'active' | 'vacancy' | 'fired';
+
 interface Props {
     employees: Paginated<Employee>;
+    counts: Record<Tab, number>;
+    tab: Tab;
     allUnits: Unit[];
+    managers: Employee[];
     departments: string[];
     statuses: string[];
     filters: Record<string, string>;
@@ -22,6 +27,19 @@ interface Props {
 
 const props = defineProps<Props>();
 const { t } = useTranslations();
+
+const TABS: { id: Tab; color: string }[] = [
+    { id: 'active', color: '#22c55e' },
+    { id: 'vacancy', color: '#f59e0b' },
+    { id: 'fired', color: '#94a3b8' },
+];
+
+const rows = computed(() => props.employees.data);
+const total = computed(() => props.counts.active + props.counts.vacancy + props.counts.fired);
+
+function switchTab(tab: Tab) {
+    router.get('/personnel', { tab }, { preserveState: true, preserveScroll: true });
+}
 
 const showModal = ref(false);
 const editing = ref<Employee | null>(null);
@@ -50,8 +68,10 @@ function unitFor(employee: Employee): Unit | undefined {
     return employee.unit ?? props.allUnits.find((u) => u.id === employee.unit_id);
 }
 
-const count = computed(() => props.employees.total);
-const rows = computed(() => props.employees.data);
+function managerName(employee: Employee): string {
+    const mgr = (employee as Employee & { manager?: Employee }).manager;
+    return mgr?.name ?? '—';
+}
 </script>
 
 <template>
@@ -65,7 +85,7 @@ const rows = computed(() => props.employees.data);
                         {{ t('personnel.title') }}
                     </h1>
                     <p class="mt-1 text-sm text-slate-600">
-                        {{ t('personnel.subtitle', { count }) }}
+                        {{ t('personnel.subtitle', { count: total }) }}
                     </p>
                 </div>
                 <button
@@ -78,34 +98,56 @@ const rows = computed(() => props.employees.data);
                 </button>
             </div>
 
-            <div class="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
+            <div class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+                <!-- Tab bar -->
+                <div class="flex border-b border-slate-200">
+                    <button
+                        v-for="tb in TABS"
+                        :key="tb.id"
+                        type="button"
+                        :class="[
+                            'relative flex items-center gap-2 px-5 py-3 text-sm font-medium transition-colors',
+                            tab === tb.id
+                                ? 'bg-white text-slate-900'
+                                : 'bg-slate-50 text-slate-500 hover:bg-slate-100 hover:text-slate-700',
+                        ]"
+                        @click="switchTab(tb.id)"
+                    >
+                        <span
+                            class="inline-block h-2.5 w-2.5 rounded-full"
+                            :style="{ backgroundColor: tb.color }"
+                        ></span>
+                        {{ t(`personnel_tabs.${tb.id}`) }}
+                        <span
+                            :class="[
+                                'rounded-full px-1.5 py-0.5 text-[10px] font-semibold',
+                                tab === tb.id
+                                    ? 'bg-slate-200 text-slate-700'
+                                    : 'bg-slate-200/60 text-slate-500',
+                            ]"
+                        >
+                            {{ counts[tb.id] }}
+                        </span>
+                        <span
+                            v-if="tab === tb.id"
+                            class="absolute bottom-0 left-0 right-0 h-0.5"
+                            :style="{ backgroundColor: tb.color }"
+                        ></span>
+                    </button>
+                </div>
+
+                <!-- Table -->
                 <table class="min-w-full divide-y divide-slate-200">
                     <thead class="bg-slate-50">
                         <tr>
-                            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-600">
-                                {{ t('table.name') }}
-                            </th>
-                            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-600">
-                                {{ t('table.position') }}
-                            </th>
-                            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-600">
-                                {{ t('table.company') }}
-                            </th>
-                            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-600">
-                                {{ t('table.department') }}
-                            </th>
-                            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-600">
-                                {{ t('table.email') }}
-                            </th>
-                            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-600">
-                                {{ t('table.telegram') }}
-                            </th>
-                            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-600">
-                                {{ t('table.status') }}
-                            </th>
-                            <th class="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-slate-600">
-                                {{ t('table.actions') }}
-                            </th>
+                            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-600">{{ t('table.name') }}</th>
+                            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-600">{{ t('table.position') }}</th>
+                            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-600">{{ t('table.company') }}</th>
+                            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-600">{{ t('table.department') }}</th>
+                            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-600">{{ t('table.manager') }}</th>
+                            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-600">{{ t('table.telegram') }}</th>
+                            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-600">{{ t('table.email') }}</th>
+                            <th class="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-slate-600">{{ t('table.actions') }}</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-200">
@@ -122,30 +164,22 @@ const rows = computed(() => props.employees.data);
                             @click="openEdit(emp)"
                         >
                             <td class="px-4 py-3 text-sm">
-                                <span v-if="emp.status === 'vacancy'" class="italic text-slate-400">
-                                    {{ t('table.vacancy') }}
-                                </span>
+                                <span v-if="emp.status === 'vacancy'" class="italic text-slate-400">{{ t('table.vacancy') }}</span>
                                 <span v-else class="font-medium text-slate-900">{{ emp.name }}</span>
                             </td>
                             <td class="px-4 py-3 text-sm text-slate-700">{{ emp.position }}</td>
                             <td class="px-4 py-3 text-sm">
-                                <Badge v-if="unitFor(emp)" :color="unitFor(emp)!.color">
-                                    {{ unitFor(emp)!.name }}
-                                </Badge>
+                                <Badge v-if="unitFor(emp)" :color="unitFor(emp)!.color">{{ unitFor(emp)!.name }}</Badge>
                             </td>
                             <td class="px-4 py-3 text-sm text-slate-700">{{ emp.department }}</td>
-                            <td class="px-4 py-3 text-sm text-slate-600">
-                                <span v-if="emp.email">{{ emp.email }}</span>
-                                <span v-else class="text-slate-300">—</span>
-                            </td>
+                            <td class="px-4 py-3 text-sm text-slate-600">{{ managerName(emp) }}</td>
                             <td class="px-4 py-3 text-sm text-slate-600">
                                 <span v-if="emp.telegram">{{ emp.telegram }}</span>
                                 <span v-else class="text-slate-300">—</span>
                             </td>
-                            <td class="px-4 py-3 text-sm">
-                                <Badge :color="emp.status === 'active' ? '#22c55e' : '#f59e0b'">
-                                    {{ t(`status.${emp.status}`) }}
-                                </Badge>
+                            <td class="px-4 py-3 text-sm text-slate-600">
+                                <span v-if="emp.email">{{ emp.email }}</span>
+                                <span v-else class="text-slate-300">—</span>
                             </td>
                             <td class="px-4 py-3 text-right">
                                 <button
@@ -173,6 +207,7 @@ const rows = computed(() => props.employees.data);
             :show="showModal"
             :employee="editing"
             :units="allUnits"
+            :managers="managers"
             :departments="departments"
             :statuses="statuses"
             @close="closeModal"

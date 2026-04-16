@@ -16,15 +16,17 @@ export interface Unit {
 export interface Employee {
     id: number;
     unit_id: string;
+    manager_id: number | null;
     name: string | null;
     position: string;
     department: string;
     email: string | null;
     telegram: string | null;
-    status: 'active' | 'vacancy';
+    status: 'active' | 'vacancy' | 'fired';
     created_at: string;
     updated_at: string;
     unit?: Unit;
+    manager?: Employee;
 }
 
 export type IdeaStatus =
