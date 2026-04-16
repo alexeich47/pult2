@@ -1,12 +1,16 @@
 <script setup lang="ts">
 import { Head } from '@inertiajs/vue3';
+import { ref } from 'vue';
 import AppLayout from '../Layouts/AppLayout.vue';
+import TicketFormModal from '../Components/Pult/TicketFormModal.vue';
 import { useTranslations } from '../Composables/useTranslations';
 
 const { t } = useTranslations();
 
+type TicketId = 'dayoff' | 'server' | 'domain' | 'payment';
+
 interface Ticket {
-    id: 'dayoff' | 'server' | 'domain' | 'payment';
+    id: TicketId;
     color: string;
 }
 
@@ -16,6 +20,21 @@ const TICKETS: Ticket[] = [
     { id: 'domain', color: '#f59e0b' },
     { id: 'payment', color: '#ec4899' },
 ];
+
+const showModal = ref(false);
+const activeTicket = ref<TicketId | null>(null);
+const activeColor = ref('#6b7280');
+
+function openTicket(ticket: Ticket) {
+    activeTicket.value = ticket.id;
+    activeColor.value = ticket.color;
+    showModal.value = true;
+}
+
+function closeModal() {
+    showModal.value = false;
+    activeTicket.value = null;
+}
 </script>
 
 <template>
@@ -42,6 +61,7 @@ const TICKETS: Ticket[] = [
                     :key="ticket.id"
                     class="cursor-pointer rounded-lg border border-slate-200 bg-white p-5 transition-all hover:-translate-y-0.5 hover:border-[var(--tc)] hover:shadow-lg"
                     :style="{ '--tc': ticket.color }"
+                    @click="openTicket(ticket)"
                 >
                     <div
                         class="mb-3 inline-flex h-9 w-9 items-center justify-center rounded-md text-white"
@@ -62,5 +82,12 @@ const TICKETS: Ticket[] = [
                 </div>
             </div>
         </div>
+
+        <TicketFormModal
+            :show="showModal"
+            :ticket-id="activeTicket"
+            :ticket-color="activeColor"
+            @close="closeModal"
+        />
     </AppLayout>
 </template>
