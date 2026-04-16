@@ -10,6 +10,7 @@ use App\Http\Controllers\MeetingController;
 use App\Http\Controllers\OkrController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RiskEntryController;
+use App\Http\Controllers\RndProjectController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\StructureController;
 use App\Http\Controllers\UnitDashboardController;
@@ -109,6 +110,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/meetings', [MeetingController::class, 'store'])->name('meetings.store');
     Route::put('/meetings/{meeting}', [MeetingController::class, 'update'])->name('meetings.update');
     Route::delete('/meetings/{meeting}', [MeetingController::class, 'destroy'])->name('meetings.destroy');
+
+    Route::post('/rnd/bulk-delete', [RndProjectController::class, 'bulkDestroy'])->name('rnd.bulkDestroy');
+    Route::get('/rnd', [RndProjectController::class, 'index'])->name('rnd.index');
+    Route::post('/rnd', [RndProjectController::class, 'store'])->name('rnd.store');
+    Route::put('/rnd/{rndProject}', [RndProjectController::class, 'update'])->name('rnd.update');
+    Route::delete('/rnd/{rndProject}', [RndProjectController::class, 'destroy'])->name('rnd.destroy');
 
     // Reference content (static, i18n-driven)
     Route::get('/archive', ArchiveController::class)->name('archive.index');

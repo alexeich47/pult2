@@ -169,4 +169,20 @@ final class PultEnums
     {
         return ['scheduled', 'completed', 'cancelled'];
     }
+
+    /**
+     * @return array<int, string>
+     */
+    public static function rndStatuses(): array
+    {
+        return ['idea', 'research', 'testing', 'pilot', 'scaling', 'paused', 'killed', 'completed'];
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    public static function rndPriorities(): array
+    {
+        return ['critical', 'high', 'medium', 'low'];
+    }
 }

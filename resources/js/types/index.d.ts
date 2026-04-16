@@ -143,6 +143,29 @@ export interface OkrEntry {
     children?: OkrEntry[];
 }
 
+export type RndStatus = 'idea' | 'research' | 'testing' | 'pilot' | 'scaling' | 'paused' | 'killed' | 'completed';
+export type RndPriority = 'critical' | 'high' | 'medium' | 'low';
+
+export interface RndProject {
+    id: number;
+    unit_id: string | null;
+    title: string;
+    description: string | null;
+    owner_id: number;
+    priority: RndPriority;
+    status: RndStatus;
+    budget: string | null;
+    currency: string;
+    deadline: string | null;
+    success_criteria: string;
+    kill_criteria: string;
+    started_at: string | null;
+    created_at: string;
+    updated_at: string;
+    unit?: Unit;
+    owner?: Employee;
+}
+
 export type MeetingType = 'standup' | 'weekly' | 'monthly' | 'one_on_one' | 'retro' | 'planning' | 'other';
 export type MeetingStatus = 'scheduled' | 'completed' | 'cancelled';
 
