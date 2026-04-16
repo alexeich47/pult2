@@ -23,10 +23,10 @@ watch(
 </script>
 
 <template>
-    <div class="flex min-h-screen bg-slate-50 text-slate-900 transition-colors dark:bg-slate-950 dark:text-slate-100">
+    <div class="flex h-screen bg-slate-50 text-slate-900 transition-colors dark:bg-slate-950 dark:text-slate-100">
         <Sidebar />
 
-        <main class="flex-1 overflow-x-hidden">
+        <main class="flex-1 overflow-y-auto">
             <!-- Flash -->
             <div
                 v-if="flash.success"
