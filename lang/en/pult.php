@@ -58,6 +58,15 @@ return [
         ],
     ],
 
+    'header' => [
+        'ticket_btn' => 'Ticket',
+    ],
+
+    'tickets_page' => [
+        'title' => 'Tickets',
+        'sub' => 'Create requests for quick task resolution',
+    ],
+
     'sidebar' => [
         'section' => [
             'data' => 'Data',

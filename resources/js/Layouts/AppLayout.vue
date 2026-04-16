@@ -4,6 +4,7 @@ import { computed, watch } from 'vue';
 import type { PageProps } from '../types';
 import { useDarkMode } from '../Composables/useDarkMode';
 import Sidebar from '../Components/Pult/Sidebar.vue';
+import AppHeader from '../Components/Pult/AppHeader.vue';
 
 // Initialise dark mode class on <html> for this layout tree
 useDarkMode();
@@ -26,7 +27,9 @@ watch(
     <div class="flex h-screen bg-slate-50 text-slate-900 transition-colors dark:bg-slate-950 dark:text-slate-100">
         <Sidebar />
 
-        <main class="flex-1 overflow-y-auto">
+        <div class="flex flex-1 flex-col overflow-hidden">
+            <AppHeader />
+            <main class="flex-1 overflow-y-auto">
             <!-- Flash -->
             <div
                 v-if="flash.success"
@@ -43,5 +46,6 @@ watch(
 
             <slot />
         </main>
+        </div>
     </div>
 </template>

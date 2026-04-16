@@ -49,6 +49,7 @@ Route::post('/context/{unitId}', function (string $unitId) {
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', DashboardController::class)->name('dashboard');
+    Route::get('/tickets', fn () => Inertia::render('Tickets/Index'))->name('tickets.index');
 
     Route::get('/structure', [StructureController::class, 'index'])->name('structure.index');
     Route::post('/structure', [StructureController::class, 'store'])->name('structure.store');
