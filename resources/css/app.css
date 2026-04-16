@@ -18,8 +18,14 @@
  * utility layer specificity. The `.dark` parent selector ensures
  * they only apply when dark mode is active.
  */
+:root {
+    --tab-bg: #f8fafc;
+    --tab-active-bg: white;
+}
 :root.dark {
     color-scheme: dark;
+    --tab-bg: #1e293b;
+    --tab-active-bg: #0f172a;
 }
 
 /* Surface backgrounds */

@@ -105,12 +105,11 @@ function managerName(employee: Employee): string {
                         v-for="tb in TABS"
                         :key="tb.id"
                         type="button"
-                        :class="[
-                            'relative flex items-center gap-2 px-5 py-3 text-sm font-medium transition-colors',
-                            tab === tb.id
-                                ? 'bg-white text-slate-900'
-                                : 'bg-slate-50 text-slate-500 hover:bg-slate-100 hover:text-slate-700',
-                        ]"
+                        class="relative flex items-center gap-2 px-5 py-3 text-sm font-medium transition-colors"
+                        :style="{
+                            backgroundColor: tab === tb.id ? 'var(--tab-active-bg, white)' : 'var(--tab-bg, #f8fafc)',
+                            color: tab === tb.id ? tb.color : '#94a3b8',
+                        }"
                         @click="switchTab(tb.id)"
                     >
                         <span
@@ -119,12 +118,11 @@ function managerName(employee: Employee): string {
                         ></span>
                         {{ t(`personnel_tabs.${tb.id}`) }}
                         <span
-                            :class="[
-                                'rounded-full px-1.5 py-0.5 text-[10px] font-semibold',
-                                tab === tb.id
-                                    ? 'bg-slate-200 text-slate-700'
-                                    : 'bg-slate-200/60 text-slate-500',
-                            ]"
+                            class="rounded-full px-1.5 py-0.5 text-[10px] font-semibold"
+                            :style="{
+                                backgroundColor: tab === tb.id ? tb.color + '22' : 'rgba(148,163,184,0.15)',
+                                color: tab === tb.id ? tb.color : '#94a3b8',
+                            }"
                         >
                             {{ counts[tb.id] }}
                         </span>

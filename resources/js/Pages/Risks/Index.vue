@@ -87,12 +87,11 @@ function formatDate(iso: string): string {
                         v-for="type in types"
                         :key="type"
                         type="button"
-                        :class="[
-                            'relative flex items-center gap-2 px-5 py-3 text-sm font-medium transition-colors',
-                            activeTab === type
-                                ? 'bg-white text-slate-900'
-                                : 'bg-slate-50 text-slate-500 hover:bg-slate-100 hover:text-slate-700',
-                        ]"
+                        class="relative flex items-center gap-2 px-5 py-3 text-sm font-medium transition-colors"
+                        :style="{
+                            backgroundColor: activeTab === type ? 'var(--tab-active-bg, white)' : 'var(--tab-bg, #f8fafc)',
+                            color: activeTab === type ? TYPE_COLORS[type] : '#94a3b8',
+                        }"
                         @click="activeTab = type"
                     >
                         <!-- Color dot -->
@@ -103,12 +102,11 @@ function formatDate(iso: string): string {
                         {{ t(`risks.log.${type}.title`) }}
                         <!-- Count badge -->
                         <span
-                            :class="[
-                                'rounded-full px-1.5 py-0.5 text-[10px] font-semibold',
-                                activeTab === type
-                                    ? 'bg-slate-200 text-slate-700'
-                                    : 'bg-slate-200/60 text-slate-500',
-                            ]"
+                            class="rounded-full px-1.5 py-0.5 text-[10px] font-semibold"
+                            :style="{
+                                backgroundColor: activeTab === type ? TYPE_COLORS[type] + '22' : 'rgba(148,163,184,0.15)',
+                                color: activeTab === type ? TYPE_COLORS[type] : '#94a3b8',
+                            }"
                         >
                             {{ entriesByType[type].length }}
                         </span>
