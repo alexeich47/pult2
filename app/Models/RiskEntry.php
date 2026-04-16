@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
+use Database\Factories\RiskEntryFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
@@ -17,7 +19,8 @@ use Spatie\Activitylog\Traits\LogsActivity;
 ])]
 class RiskEntry extends Model
 {
-    use LogsActivity;
+    /** @use HasFactory<RiskEntryFactory> */
+    use HasFactory, LogsActivity;
 
     /**
      * Prefix letter used in display_id per type.

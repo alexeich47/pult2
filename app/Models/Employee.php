@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
+use Database\Factories\EmployeeFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Spatie\Activitylog\LogOptions;
@@ -19,7 +21,8 @@ use Spatie\Activitylog\Traits\LogsActivity;
 ])]
 class Employee extends Model
 {
-    use LogsActivity;
+    /** @use HasFactory<EmployeeFactory> */
+    use HasFactory, LogsActivity;
 
     public function getActivitylogOptions(): LogOptions
     {
