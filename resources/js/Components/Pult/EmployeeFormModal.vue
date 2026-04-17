@@ -3,6 +3,7 @@ import { useForm } from '@inertiajs/vue3';
 import { computed, watch } from 'vue';
 import type { Employee, Unit } from '../../types';
 import { useTranslations } from '../../Composables/useTranslations';
+import SearchableSelect from './SearchableSelect.vue';
 
 interface Props {
     show: boolean;
@@ -104,14 +105,10 @@ const isVacancy = computed(() => form.status === 'vacancy');
                         <label class="mb-1 block text-xs font-medium text-slate-700">
                             {{ t('modal.field.status') }}
                         </label>
-                        <select
+                        <SearchableSelect
                             v-model="form.status"
-                            class="w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-                        >
-                            <option v-for="s in statuses" :key="s" :value="s">
-                                {{ t(`status.${s}`) }}
-                            </option>
-                        </select>
+                            :options="statuses.map(s => ({ value: s, label: t(`status.${s}`) }))"
+                        />
                     </div>
 
                     <div>
@@ -151,14 +148,10 @@ const isVacancy = computed(() => form.status === 'vacancy');
                             <label class="mb-1 block text-xs font-medium text-slate-700">
                                 {{ t('modal.field.company') }} <span class="text-rose-500">*</span>
                             </label>
-                            <select
+                            <SearchableSelect
                                 v-model="form.unit_id"
-                                class="w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-                            >
-                                <option v-for="u in units" :key="u.id" :value="u.id">
-                                    {{ u.name }}
-                                </option>
-                            </select>
+                                :options="units.map(u => ({ value: u.id, label: u.name, color: u.color }))"
+                            />
                             <div v-if="form.errors.unit_id" class="mt-1 text-xs text-rose-600">
                                 {{ form.errors.unit_id }}
                             </div>
@@ -168,14 +161,10 @@ const isVacancy = computed(() => form.status === 'vacancy');
                             <label class="mb-1 block text-xs font-medium text-slate-700">
                                 {{ t('modal.field.department') }} <span class="text-rose-500">*</span>
                             </label>
-                            <select
+                            <SearchableSelect
                                 v-model="form.department"
-                                class="w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-                            >
-                                <option v-for="d in departments" :key="d" :value="d">
-                                    {{ d }}
-                                </option>
-                            </select>
+                                :options="departments.map(d => ({ value: d, label: d }))"
+                            />
                             <div v-if="form.errors.department" class="mt-1 text-xs text-rose-600">
                                 {{ form.errors.department }}
                             </div>
@@ -187,28 +176,19 @@ const isVacancy = computed(() => form.status === 'vacancy');
                             <label class="mb-1 block text-xs font-medium text-slate-700">
                                 {{ t('table.manager') }}
                             </label>
-                            <select
+                            <SearchableSelect
                                 v-model="form.manager_id"
-                                class="w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-                            >
-                                <option :value="null">—</option>
-                                <option v-for="mgr in managers" :key="mgr.id" :value="mgr.id">
-                                    {{ mgr.name }} — {{ mgr.position }}
-                                </option>
-                            </select>
+                                :options="[{ value: null, label: '—' }, ...managers.map(m => ({ value: m.id, label: `${m.name} — ${m.position}` }))]"
+                            />
                         </div>
                         <div>
                             <label class="mb-1 block text-xs font-medium text-slate-700">
                                 {{ t('work_stage.label') }}
                             </label>
-                            <select
+                            <SearchableSelect
                                 v-model="form.work_stage"
-                                class="w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-                            >
-                                <option v-for="ws in workStages" :key="ws" :value="ws">
-                                    {{ t(`work_stage.${ws}`) }}
-                                </option>
-                            </select>
+                                :options="workStages.map(ws => ({ value: ws, label: t(`work_stage.${ws}`) }))"
+                            />
                         </div>
                     </div>
 
@@ -216,19 +196,10 @@ const isVacancy = computed(() => form.status === 'vacancy');
                         <label class="mb-1 block text-xs font-medium text-slate-700">
                             {{ t('table.manager') }}
                         </label>
-                        <select
+                        <SearchableSelect
                             v-model="form.manager_id"
-                            class="w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-                        >
-                            <option :value="null">—</option>
-                            <option
-                                v-for="mgr in managers"
-                                :key="mgr.id"
-                                :value="mgr.id"
-                            >
-                                {{ mgr.name }} — {{ mgr.position }}
-                            </option>
-                        </select>
+                            :options="[{ value: null, label: '—' }, ...managers.map(m => ({ value: m.id, label: `${m.name} — ${m.position}` }))]"
+                        />
                     </div>
 
                     <div>

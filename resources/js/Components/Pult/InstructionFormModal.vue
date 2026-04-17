@@ -3,6 +3,7 @@ import { useForm } from '@inertiajs/vue3';
 import { computed, ref, watch } from 'vue';
 import type { Instruction, Unit } from '../../types';
 import { useTranslations } from '../../Composables/useTranslations';
+import SearchableSelect from './SearchableSelect.vue';
 
 interface Props {
     show: boolean;
@@ -63,6 +64,12 @@ function submit() {
         form.post('/instructions', opts);
     }
 }
+
+const typeOptions = computed(() => props.types.map(tp => ({ value: tp, label: t(`instructions.type.${tp}`) })));
+const unitOptions = computed(() => [
+    { value: null, label: t('instructions.field.holding_wide') },
+    ...props.units.map(u => ({ value: u.id, label: u.name, color: u.color })),
+]);
 </script>
 
 <template>
@@ -90,16 +97,11 @@ function submit() {
                     <div class="grid grid-cols-2 gap-3">
                         <div>
                             <label class="mb-1 block text-xs font-medium text-slate-700">{{ t('instructions.field.type') }}</label>
-                            <select v-model="form.type" class="w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500">
-                                <option v-for="tp in types" :key="tp" :value="tp">{{ t(`instructions.type.${tp}`) }}</option>
-                            </select>
+                            <SearchableSelect v-model="form.type" :options="typeOptions" />
                         </div>
                         <div>
                             <label class="mb-1 block text-xs font-medium text-slate-700">{{ t('instructions.field.company') }}</label>
-                            <select v-model="form.unit_id" class="w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500">
-                                <option :value="null">{{ t('instructions.field.holding_wide') }}</option>
-                                <option v-for="u in units" :key="u.id" :value="u.id">{{ u.name }}</option>
-                            </select>
+                            <SearchableSelect v-model="form.unit_id" :options="unitOptions" />
                         </div>
                     </div>
 

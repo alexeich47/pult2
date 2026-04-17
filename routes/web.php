@@ -2,7 +2,9 @@
 
 use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\ArchiveController;
+use App\Http\Controllers\ContractorController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\FinanceController;
 use App\Http\Controllers\IdeaController;
@@ -14,7 +16,9 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RiskEntryController;
 use App\Http\Controllers\RndProjectController;
 use App\Http\Controllers\ServiceController;
+use App\Http\Controllers\ServicePageController;
 use App\Http\Controllers\StructureController;
+use App\Http\Controllers\TaskController;
 use App\Http\Controllers\UnitDashboardController;
 use App\Models\Employee;
 use App\Models\Unit;
@@ -71,6 +75,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('/dashboard', DashboardController::class)->name('dashboard');
     Route::get('/tickets', fn () => Inertia::render('Tickets/Index'))->name('tickets.index');
+
+    Route::get('/service-pages', [ServicePageController::class, 'index'])->name('service-pages.index');
+    Route::get('/service-pages/daily/{unitSlug}', [ServicePageController::class, 'daily'])->name('service-pages.daily');
+    Route::post('/service-pages/daily/{unitSlug}', [ServicePageController::class, 'storeDaily'])->name('service-pages.daily.store');
+    Route::get('/service-pages/mvr-planning', [ServicePageController::class, 'mvrPlanning'])->name('service-pages.mvr-planning');
+    Route::post('/service-pages/mvr-planning', [ServicePageController::class, 'storeMvrPlanning'])->name('service-pages.mvr-planning.store');
+    Route::put('/service-pages/{slug}/access', [ServicePageController::class, 'updateAccess'])->name('service-pages.access.update');
 
     Route::get('/finance', [FinanceController::class, 'index'])->name('finance.index');
     Route::post('/finance', [FinanceController::class, 'store'])->name('finance.store');
@@ -146,6 +157,22 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::put('/processes/{process}', [ProcessController::class, 'update'])->name('processes.update');
     Route::delete('/processes/{process}', [ProcessController::class, 'destroy'])->name('processes.destroy');
     Route::post('/processes/bulk-delete', [ProcessController::class, 'bulkDestroy'])->name('processes.bulkDestroy');
+
+    Route::get('/tasks', [TaskController::class, 'index'])->name('tasks.index');
+    Route::post('/tasks', [TaskController::class, 'store'])->name('tasks.store');
+    Route::put('/tasks/{task}', [TaskController::class, 'update'])->name('tasks.update');
+    Route::delete('/tasks/{task}', [TaskController::class, 'destroy'])->name('tasks.destroy');
+
+    Route::get('/contractors', [ContractorController::class, 'index'])->name('contractors.index');
+    Route::post('/contractors', [ContractorController::class, 'store'])->name('contractors.store');
+    Route::put('/contractors/{contractor}', [ContractorController::class, 'update'])->name('contractors.update');
+    Route::delete('/contractors/{contractor}', [ContractorController::class, 'destroy'])->name('contractors.destroy');
+
+    Route::get('/documents', [DocumentController::class, 'index'])->name('documents.index');
+    Route::post('/documents', [DocumentController::class, 'store'])->name('documents.store');
+    Route::get('/documents/{document}', [DocumentController::class, 'show'])->name('documents.show');
+    Route::put('/documents/{document}', [DocumentController::class, 'update'])->name('documents.update');
+    Route::delete('/documents/{document}', [DocumentController::class, 'destroy'])->name('documents.destroy');
 
     Route::post('/rnd/bulk-delete', [RndProjectController::class, 'bulkDestroy'])->name('rnd.bulkDestroy');
     Route::get('/rnd', [RndProjectController::class, 'index'])->name('rnd.index');

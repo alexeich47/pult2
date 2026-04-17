@@ -2,6 +2,7 @@
 import { Head, router, useForm } from '@inertiajs/vue3';
 import { computed, ref } from 'vue';
 import AppLayout from '../../Layouts/AppLayout.vue';
+import SearchableSelect from '../../Components/Pult/SearchableSelect.vue';
 import { useTranslations } from '../../Composables/useTranslations';
 import type { Employee, Unit } from '../../types';
 
@@ -488,14 +489,14 @@ const STAGE_COLORS: Record<string, string> = {
                             <label class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">
                                 {{ t('structure.field.unit_type') }}
                             </label>
-                            <select
+                            <SearchableSelect
                                 v-model="form.unit_type"
-                                class="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm dark:border-slate-600 dark:bg-slate-700 dark:text-white"
-                            >
-                                <option :value="null">--</option>
-                                <option value="revenue">{{ t('structure.type.revenue') }}</option>
-                                <option value="service">{{ t('structure.type.service') }}</option>
-                            </select>
+                                :options="[
+                                    { value: null, label: '—' },
+                                    { value: 'revenue', label: t('structure.type.revenue') },
+                                    { value: 'service', label: t('structure.type.service') },
+                                ]"
+                            />
                         </div>
 
                         <!-- Parent -->
@@ -503,15 +504,10 @@ const STAGE_COLORS: Record<string, string> = {
                             <label class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">
                                 {{ t('structure.field.parent') }}
                             </label>
-                            <select
+                            <SearchableSelect
                                 v-model="form.parent_id"
-                                class="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm dark:border-slate-600 dark:bg-slate-700 dark:text-white"
-                            >
-                                <option :value="null">--</option>
-                                <option v-for="u in parentOptions" :key="u.id" :value="u.id">
-                                    {{ u.name }}
-                                </option>
-                            </select>
+                                :options="[{ value: null, label: '—' }, ...parentOptions.map(u => ({ value: u.id, label: u.name, color: u.color }))]"
+                            />
                         </div>
 
                         <!-- Color -->
@@ -534,15 +530,10 @@ const STAGE_COLORS: Record<string, string> = {
                             <label class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">
                                 {{ t('structure.field.head') }}
                             </label>
-                            <select
+                            <SearchableSelect
                                 v-model="form.head_id"
-                                class="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm dark:border-slate-600 dark:bg-slate-700 dark:text-white"
-                            >
-                                <option :value="null">--</option>
-                                <option v-for="emp in employees" :key="emp.id" :value="emp.id">
-                                    {{ emp.name }} ({{ emp.position }})
-                                </option>
-                            </select>
+                                :options="[{ value: null, label: '—' }, ...employees.map(e => ({ value: e.id, label: `${e.name} (${e.position})` }))]"
+                            />
                             <p v-if="form.errors.head_id" class="mt-1 text-xs text-red-500">{{ form.errors.head_id }}</p>
                         </div>
 
@@ -551,15 +542,10 @@ const STAGE_COLORS: Record<string, string> = {
                             <label class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">
                                 {{ t('structure.field.deputy') }}
                             </label>
-                            <select
+                            <SearchableSelect
                                 v-model="form.deputy_id"
-                                class="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm dark:border-slate-600 dark:bg-slate-700 dark:text-white"
-                            >
-                                <option :value="null">--</option>
-                                <option v-for="emp in employees" :key="emp.id" :value="emp.id">
-                                    {{ emp.name }} ({{ emp.position }})
-                                </option>
-                            </select>
+                                :options="[{ value: null, label: '—' }, ...employees.map(e => ({ value: e.id, label: `${e.name} (${e.position})` }))]"
+                            />
                             <p v-if="form.errors.deputy_id" class="mt-1 text-xs text-red-500">{{ form.errors.deputy_id }}</p>
                         </div>
 
@@ -595,15 +581,10 @@ const STAGE_COLORS: Record<string, string> = {
                             <label class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">
                                 {{ t('structure.field.stage') }}
                             </label>
-                            <select
+                            <SearchableSelect
                                 v-model="form.stage"
-                                class="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm dark:border-slate-600 dark:bg-slate-700 dark:text-white"
-                            >
-                                <option :value="null">--</option>
-                                <option v-for="s in stages" :key="s" :value="s">
-                                    {{ t(`structure.stage.${s}`) }}
-                                </option>
-                            </select>
+                                :options="[{ value: null, label: '—' }, ...stages.map(s => ({ value: s, label: t(`structure.stage.${s}`) }))]"
+                            />
                             <p v-if="form.errors.stage" class="mt-1 text-xs text-red-500">{{ form.errors.stage }}</p>
                         </div>
 

@@ -62,6 +62,30 @@ function formatDate(iso: string): string {
     const d = new Date(iso);
     return d.toLocaleDateString(undefined, { day: '2-digit', month: '2-digit', year: 'numeric' });
 }
+
+const THRICE_DIMS: Array<{ key: `score_${string}`; letter: string; label: string; hint: string }> = [
+    { key: 'score_time', letter: 'T', label: 'Time', hint: 'Скорость получения результата. Быстро = 10' },
+    { key: 'score_headcount', letter: 'H', label: 'Headcount', hint: 'Требуемые ресурсы. Меньше людей = выше балл' },
+    { key: 'score_reach', letter: 'R', label: 'Reach', hint: 'Сколько пользователей/объёма затронет' },
+    { key: 'score_impact', letter: 'I', label: 'Impact', hint: 'Влияние на ключевые метрики/деньги' },
+    { key: 'score_confidence', letter: 'C', label: 'Confidence', hint: 'Уверенность в результате' },
+    { key: 'score_effort', letter: 'E', label: 'Effort', hint: 'Сложность / объём работ. Проще = выше балл' },
+];
+
+function thriceTierCls(score: number | null): string {
+    if (score === null) return 'bg-slate-100 text-slate-500';
+    if (score >= 45) return 'bg-emerald-100 text-emerald-800';
+    if (score >= 30) return 'bg-lime-100 text-lime-800';
+    if (score >= 18) return 'bg-amber-100 text-amber-800';
+    return 'bg-rose-100 text-rose-800';
+}
+function thriceTierLabel(score: number | null): string {
+    if (score === null) return 'не оценена';
+    if (score >= 45) return 'делаем в первую очередь';
+    if (score >= 30) return 'делаем';
+    if (score >= 18) return 'под вопросом';
+    return 'откладываем';
+}
 </script>
 
 <template>
@@ -114,6 +138,47 @@ function formatDate(iso: string): string {
                         <p class="whitespace-pre-wrap text-sm leading-relaxed text-slate-700">
                             {{ idea.impact }}
                         </p>
+                    </section>
+
+                    <!-- THRICE scoring breakdown -->
+                    <section v-if="idea.thrice_score !== null || idea.score_time !== null">
+                        <div class="mb-2 flex items-center justify-between">
+                            <h2 class="text-xs font-semibold uppercase tracking-wider text-slate-500">
+                                Оценка THRICE
+                            </h2>
+                            <span
+                                class="rounded-full px-3 py-1 text-sm font-bold"
+                                :class="thriceTierCls(idea.thrice_score)"
+                                :title="thriceTierLabel(idea.thrice_score)"
+                            >
+                                {{ idea.thrice_score ?? '—' }} / 60 · {{ thriceTierLabel(idea.thrice_score) }}
+                            </span>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2 sm:grid-cols-3">
+                            <div
+                                v-for="d in THRICE_DIMS"
+                                :key="d.key"
+                                class="rounded-md border border-slate-200 bg-slate-50/60 p-2.5"
+                                :title="d.hint"
+                            >
+                                <div class="mb-1 flex items-baseline justify-between">
+                                    <span class="text-[11px] font-medium text-slate-700">
+                                        <span class="font-mono text-indigo-500">{{ d.letter }}</span>
+                                        <span class="ml-1">{{ d.label }}</span>
+                                    </span>
+                                    <span class="text-sm font-semibold text-slate-800">
+                                        {{ (idea as Idea & Record<string, unknown>)[d.key] ?? '—' }}
+                                    </span>
+                                </div>
+                                <div class="h-1.5 overflow-hidden rounded-full bg-slate-200">
+                                    <div
+                                        class="h-full rounded-full bg-indigo-500"
+                                        :style="{ width: (((idea as Idea & Record<string, unknown>)[d.key] as number | null) ?? 0) * 10 + '%' }"
+                                    ></div>
+                                </div>
+                                <div class="mt-1 line-clamp-1 text-[10px] text-slate-400">{{ d.hint }}</div>
+                            </div>
+                        </div>
                     </section>
                 </div>
 

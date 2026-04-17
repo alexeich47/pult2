@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, watch, computed, reactive } from 'vue';
 import { useTranslations } from '../../Composables/useTranslations';
+import SearchableSelect from './SearchableSelect.vue';
 
 interface FieldDef {
     id: string;
@@ -76,6 +77,10 @@ const titleKey = computed(() => `ticket.${props.ticketId}.title`);
 function optionLabel(field: FieldDef, opt: string): string {
     if (field.id === 'period') return t(opt);
     return opt;
+}
+
+function fieldSelectOptions(field: FieldDef): { value: string; label: string }[] {
+    return (field.options ?? []).map(opt => ({ value: opt, label: optionLabel(field, opt) }));
 }
 
 watch(
@@ -180,17 +185,12 @@ const inputClass = 'w-full rounded-md border border-slate-300 bg-white px-3 py-2
                                 :class="[inputClass, errors[field.id] ? 'border-rose-400' : '']"
                                 @input="errors[field.id] = false"
                             />
-                            <select
+                            <SearchableSelect
                                 v-else-if="field.type === 'select'"
-                                :id="'tf-' + field.id"
-                                v-model="formData[field.id]"
-                                :class="[inputClass, errors[field.id] ? 'border-rose-400' : '']"
-                                @change="errors[field.id] = false"
-                            >
-                                <option v-for="opt in field.options" :key="opt" :value="opt">
-                                    {{ optionLabel(field, opt) }}
-                                </option>
-                            </select>
+                                :model-value="formData[field.id]"
+                                :options="fieldSelectOptions(field)"
+                                @update:model-value="(v) => { formData[field.id] = String(v ?? ''); errors[field.id] = false; }"
+                            />
                             <input
                                 v-else
                                 :id="'tf-' + field.id"

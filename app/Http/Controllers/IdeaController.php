@@ -44,6 +44,9 @@ class IdeaController extends Controller
             'priority',
             'created_at',
             AllowedSort::field('id'),
+            AllowedSort::callback('thrice_score', function ($q, bool $descending): void {
+                $q->orderByRaw('(COALESCE(score_time,0) + COALESCE(score_headcount,0) + COALESCE(score_reach,0) + COALESCE(score_impact,0) + COALESCE(score_confidence,0) + COALESCE(score_effort,0)) '.($descending ? 'desc' : 'asc'));
+            }),
         );
         $queryBuilder->defaultSort('-created_at');
 

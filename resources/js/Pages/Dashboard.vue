@@ -29,15 +29,15 @@ interface ActivityEntry {
     created_at: string;
 }
 
-interface MvrDataPoint {
-    month: number;
-    target: number | string;
-    actual: number | string;
+interface MvrDailyPoint {
+    date: string;
+    plan: number | string;
+    fact: number | string;
 }
 
 interface Props {
     stats: Stats;
-    mvr: MvrDataPoint[];
+    mvr: MvrDailyPoint[];
     recentActivity: ActivityEntry[];
 }
 

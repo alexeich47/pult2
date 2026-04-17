@@ -60,6 +60,7 @@ return [
 
     'header' => [
         'ticket_btn' => 'Ticket',
+        'service_pages_btn' => 'Service pages',
     ],
 
     'tickets_page' => [
@@ -67,10 +68,60 @@ return [
         'sub' => 'Create requests for quick task resolution',
     ],
 
+    'service_pages' => [
+        'title' => 'Service pages',
+        'sub' => 'Operational data-entry forms and narrow-purpose interfaces',
+        'col' => ['page' => 'Page', 'description' => 'Description', 'access' => 'Who has access'],
+        'open' => 'Open',
+        'no_access' => 'No access',
+        'empty' => 'No service pages',
+        'no_one_assigned' => 'No one assigned',
+        'daily' => [
+            'page_sub_prefix' => 'Submit',
+            'page_sub_suffix' => 'revenue for the previous day',
+            'prompt_prefix' => 'Enter the amount',
+            'prompt_for' => 'earned on',
+            'date' => 'Date',
+            'plan' => 'Plan',
+            'fact' => 'Actual',
+            'deviation' => 'Deviation',
+            'save' => 'Save',
+            'recent' => 'Recent entries',
+            'no_recent' => 'No entries yet',
+            'flash_saved' => 'Entry saved',
+        ],
+        'holding_view' => 'Holding (sum of all companies)',
+        'access' => [
+            'edit_btn' => 'Edit access',
+            'modal_title' => 'Who can access this page',
+            'filter_placeholder' => 'Search by name, position, or email…',
+            'selected' => 'selected',
+            'no_results' => 'No matches',
+            'cancel' => 'Cancel',
+            'save' => 'Save',
+            'flash_saved' => 'Access updated',
+        ],
+        'mvr_planning' => [
+            'title' => 'MVR Planning',
+            'sub' => 'Monthly MVR plan for all companies for the year',
+            'col_unit' => 'Company',
+            'save_all' => 'Save plan',
+            'saved' => 'Saved',
+            'flash_saved' => 'Saved :n entries',
+        ],
+    ],
+
     'sidebar' => [
         'section' => [
             'data' => 'Data',
             'companies' => 'Units',
+        ],
+        'group' => [
+            'docs' => 'Documentation',
+            'personnel' => 'Personnel',
+            'metrics' => 'Metrics, data & goals',
+            'tasks' => 'Tasks & matters',
+            'money' => 'Money',
         ],
     ],
 
@@ -79,7 +130,7 @@ return [
         'dashboard' => 'Dashboard',
         'finance' => 'Finance',
         'structure' => 'Structure',
-        'personnel' => 'Personnel',
+        'personnel' => 'Employees',
         'hiring' => 'Hiring',
         'strategy' => 'Strategy & Vision',
         'ideas' => 'Ideas & Insights',
@@ -91,6 +142,9 @@ return [
         'rnd' => 'R&D Projects',
         'risks' => 'Risks, Issues, Workarounds',
         'processes' => 'Processes',
+        'documents' => 'Documents',
+        'contractors' => 'Contractors',
+        'tasks' => 'Tasks',
     ],
 
     'home' => [
@@ -111,8 +165,11 @@ return [
         'sub' => 'Financial data and metrics for the holding',
         'mvr_title' => 'Minimum Viable Revenue (MVR)',
         'mvr_sub' => 'Target and actual revenue by month',
-        'tab' => ['chart' => 'Chart', 'data' => 'Data', 'plan' => 'Plan'],
-        'col' => ['month' => 'Month', 'target' => 'Target', 'actual' => 'Actual', 'diff' => 'Difference', 'days' => 'Days'],
+        'tab' => ['chart' => 'Chart', 'data' => 'Data', 'plan' => 'Plan', 'deviation' => 'Deviation'],
+        'deviation_title' => 'Monthly deviation from plan',
+        'deviation_sub' => 'Plan vs Actual by month. Red — underperformance, green — overperformance.',
+        'deviation_no_data' => 'No data',
+        'col' => ['month' => 'Month', 'target' => 'Target', 'actual' => 'Actual', 'diff' => 'Difference', 'days' => 'Days', 'unit' => 'Company'],
         'daily_reference' => 'Daily MVR breakdown',
         'daily_target' => 'Per day',
         'day' => 'day',
@@ -408,6 +465,7 @@ return [
             'status' => 'Status',
             'author' => 'Author',
             'priority' => 'Priority',
+            'score' => 'Score (priority)',
             'created' => 'Created',
         ],
         'status' => [

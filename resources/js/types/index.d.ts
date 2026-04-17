@@ -4,6 +4,7 @@ export interface User {
     email: string;
     email_verified_at?: string;
     roles?: string[];
+    employee_id?: number | null;
 }
 
 export interface Unit {
@@ -67,6 +68,13 @@ export interface Idea {
     title: string;
     description: string;
     impact: string;
+    score_time: number | null;
+    score_headcount: number | null;
+    score_reach: number | null;
+    score_impact: number | null;
+    score_confidence: number | null;
+    score_effort: number | null;
+    thrice_score: number | null;
     created_at: string;
     updated_at: string;
     unit?: Unit;

@@ -4,10 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Employee;
 use App\Models\Idea;
-use App\Models\MvrEntry;
+use App\Models\MvrDailyEntry;
 use App\Models\RiskEntry;
 use App\Models\Service;
 use App\Support\UnitContextScope;
+use Illuminate\Support\Carbon;
 use Inertia\Inertia;
 use Inertia\Response;
 use Spatie\Activitylog\Models\Activity;
@@ -50,11 +51,12 @@ class DashboardController extends Controller
             2,
         );
 
-        $mvr = MvrEntry::query()
-            ->whereNull('unit_id')
-            ->where('year', now()->year)
-            ->orderBy('month')
-            ->get(['month', 'target', 'actual']);
+        $startOfMonth = Carbon::now()->startOfMonth();
+        $endOfMonth = Carbon::now()->endOfMonth();
+        $mvr = MvrDailyEntry::query()
+            ->whereBetween('date', [$startOfMonth, $endOfMonth])
+            ->orderBy('date')
+            ->get(['date', 'plan', 'fact']);
 
         return Inertia::render('Dashboard', [
             'mvr' => $mvr,

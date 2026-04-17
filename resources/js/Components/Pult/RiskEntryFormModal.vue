@@ -3,6 +3,7 @@ import { useForm } from '@inertiajs/vue3';
 import { computed, watch } from 'vue';
 import type { Employee, RiskEntry, RiskType } from '../../types';
 import { useTranslations } from '../../Composables/useTranslations';
+import SearchableSelect from './SearchableSelect.vue';
 
 interface Props {
     show: boolean;
@@ -80,6 +81,16 @@ function submit() {
         form.post('/risks', opts);
     }
 }
+
+const typeOptions = computed(() => props.types.map(tp => ({ value: tp, label: t(`risks.log.${tp}.title`) })));
+const ownerOptions = computed(() => [
+    { value: '', label: '—' },
+    ...props.employees.map(emp => ({
+        value: emp.name ?? emp.position,
+        label: `${emp.name ?? emp.position} — ${emp.position}`,
+    })),
+]);
+const statusOptions = computed(() => availableStatuses.value.map(s => ({ value: s, label: t(`risks.status.${s}`) })));
 </script>
 
 <template>
@@ -99,13 +110,7 @@ function submit() {
                     <div class="grid grid-cols-2 gap-3">
                         <div>
                             <label class="mb-1 block text-xs font-medium text-slate-700">{{ t('risks.field.type') }}</label>
-                            <select
-                                v-model="form.type"
-                                :disabled="isEdit"
-                                class="w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 disabled:bg-slate-100"
-                            >
-                                <option v-for="tp in types" :key="tp" :value="tp">{{ t(`risks.log.${tp}.title`) }}</option>
-                            </select>
+                            <SearchableSelect v-model="form.type" :options="typeOptions" :disabled="isEdit" />
                         </div>
                         <div>
                             <label class="mb-1 block text-xs font-medium text-slate-700">{{ t('risks.col.date') }}</label>
@@ -131,29 +136,12 @@ function submit() {
                     <div class="grid grid-cols-2 gap-3">
                         <div>
                             <label class="mb-1 block text-xs font-medium text-slate-700">{{ t('risks.col.owner') }} <span class="text-rose-500">*</span></label>
-                            <select
-                                v-model="form.owner_name"
-                                class="w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-                            >
-                                <option value="">—</option>
-                                <option
-                                    v-for="emp in employees"
-                                    :key="emp.id"
-                                    :value="emp.name ?? emp.position"
-                                >
-                                    {{ emp.name ?? emp.position }} — {{ emp.position }}
-                                </option>
-                            </select>
+                            <SearchableSelect v-model="form.owner_name" :options="ownerOptions" />
                             <div v-if="form.errors.owner_name" class="mt-1 text-xs text-rose-600">{{ form.errors.owner_name }}</div>
                         </div>
                         <div>
                             <label class="mb-1 block text-xs font-medium text-slate-700">{{ t('risks.col.status') }}</label>
-                            <select
-                                v-model="form.status"
-                                class="w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-                            >
-                                <option v-for="s in availableStatuses" :key="s" :value="s">{{ t(`risks.status.${s}`) }}</option>
-                            </select>
+                            <SearchableSelect v-model="form.status" :options="statusOptions" />
                         </div>
                     </div>
 

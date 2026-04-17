@@ -8,7 +8,7 @@ use Illuminate\Database\Seeder;
 class MvrDailySeeder extends Seeder
 {
     /**
-     * Real PlayDuck MVR daily data.
+     * PlayDuck MVR daily data (from user-provided screenshots).
      * Plan = План/день ($), Fact = Факт/день ($).
      */
     public function run(): void
@@ -52,20 +52,19 @@ class MvrDailySeeder extends Seeder
             ['2026-03-29', 10000, 8726],
             ['2026-03-30', 10000, 10690],
             ['2026-03-31', 10000, 9277],
-            // April 2026 — fact ещё не известен
-            ['2026-04-01', 11551, 0],
-            ['2026-04-02', 14163, 0],
-            ['2026-04-03', 12346, 0],
-            ['2026-04-04', 15118, 0],
-            ['2026-04-05', 10741, 0],
+            // April 2026
+            ['2026-04-01', 10000, 11551],
+            ['2026-04-02', 10000, 14163],
+            ['2026-04-03', 10000, 12346],
+            ['2026-04-04', 10000, 15118],
+            ['2026-04-05', 10000, 10741],
         ];
 
         foreach ($rows as [$date, $plan, $fact]) {
-            MvrDailyEntry::create([
-                'date' => $date,
-                'plan' => $plan,
-                'fact' => $fact,
-            ]);
+            MvrDailyEntry::updateOrCreate(
+                ['date' => $date, 'unit_id' => 'playduck'],
+                ['plan' => $plan, 'fact' => $fact],
+            );
         }
     }
 }

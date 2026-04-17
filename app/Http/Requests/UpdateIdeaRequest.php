@@ -26,6 +26,12 @@ class UpdateIdeaRequest extends FormRequest
             'title' => ['required', 'string', 'max:255'],
             'description' => ['required', 'string', 'max:5000'],
             'impact' => ['required', 'string', 'max:5000'],
+            'score_time' => ['nullable', 'integer', 'min:1', 'max:10'],
+            'score_headcount' => ['nullable', 'integer', 'min:1', 'max:10'],
+            'score_reach' => ['nullable', 'integer', 'min:1', 'max:10'],
+            'score_impact' => ['nullable', 'integer', 'min:1', 'max:10'],
+            'score_confidence' => ['nullable', 'integer', 'min:1', 'max:10'],
+            'score_effort' => ['nullable', 'integer', 'min:1', 'max:10'],
         ];
     }
 }

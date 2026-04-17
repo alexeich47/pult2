@@ -3,6 +3,7 @@ import { useForm } from '@inertiajs/vue3';
 import { computed, watch } from 'vue';
 import type { Employee, RndPriority, RndProject, RndStatus, Unit } from '../../types';
 import { useTranslations } from '../../Composables/useTranslations';
+import SearchableSelect from './SearchableSelect.vue';
 
 interface Props {
     show: boolean;
@@ -75,6 +76,15 @@ function submit() {
         form.post('/rnd', opts);
     }
 }
+
+const unitOptions = computed(() => [
+    { value: null, label: '—' },
+    ...props.units.map(u => ({ value: u.id, label: u.name, color: u.color })),
+]);
+const ownerOptions = computed(() => props.employees.map(e => ({ value: e.id, label: e.name ?? e.position })));
+const priorityOptions = computed(() => props.priorities.map(p => ({ value: p, label: t(`rnd.priority.${p}`) })));
+const statusOptions = computed(() => props.statuses.map(s => ({ value: s, label: t(`rnd.status.${s}`) })));
+const currencyOptions = computed(() => props.currencies.map(c => ({ value: c, label: c })));
 </script>
 
 <template>
@@ -108,16 +118,11 @@ function submit() {
                     <div class="grid grid-cols-2 gap-3">
                         <div>
                             <label class="mb-1 block text-xs font-medium text-slate-700">{{ t('rnd.field.unit') }}</label>
-                            <select v-model="form.unit_id" class="w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500">
-                                <option :value="null">—</option>
-                                <option v-for="u in units" :key="u.id" :value="u.id">{{ u.name }}</option>
-                            </select>
+                            <SearchableSelect v-model="form.unit_id" :options="unitOptions" />
                         </div>
                         <div>
                             <label class="mb-1 block text-xs font-medium text-slate-700">{{ t('rnd.field.owner') }} <span class="text-rose-500">*</span></label>
-                            <select v-model="form.owner_id" class="w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500">
-                                <option v-for="e in employees" :key="e.id" :value="e.id">{{ e.name ?? e.position }}</option>
-                            </select>
+                            <SearchableSelect v-model="form.owner_id" :options="ownerOptions" />
                             <div v-if="form.errors.owner_id" class="mt-1 text-xs text-rose-600">{{ form.errors.owner_id }}</div>
                         </div>
                     </div>
@@ -126,15 +131,11 @@ function submit() {
                     <div class="grid grid-cols-2 gap-3">
                         <div>
                             <label class="mb-1 block text-xs font-medium text-slate-700">{{ t('rnd.field.priority') }}</label>
-                            <select v-model="form.priority" class="w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500">
-                                <option v-for="p in priorities" :key="p" :value="p">{{ t(`rnd.priority.${p}`) }}</option>
-                            </select>
+                            <SearchableSelect v-model="form.priority" :options="priorityOptions" />
                         </div>
                         <div>
                             <label class="mb-1 block text-xs font-medium text-slate-700">{{ t('rnd.field.status') }}</label>
-                            <select v-model="form.status" class="w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500">
-                                <option v-for="s in statuses" :key="s" :value="s">{{ t(`rnd.status.${s}`) }}</option>
-                            </select>
+                            <SearchableSelect v-model="form.status" :options="statusOptions" />
                         </div>
                     </div>
 
@@ -147,9 +148,7 @@ function submit() {
                         </div>
                         <div>
                             <label class="mb-1 block text-xs font-medium text-slate-700">{{ t('rnd.field.currency') }}</label>
-                            <select v-model="form.currency" class="w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500">
-                                <option v-for="c in currencies" :key="c" :value="c">{{ c }}</option>
-                            </select>
+                            <SearchableSelect v-model="form.currency" :options="currencyOptions" />
                         </div>
                     </div>
 

@@ -7,6 +7,7 @@ import ConfirmDialog from '../../Components/Pult/ConfirmDialog.vue';
 import IdeaFormModal from '../../Components/Pult/IdeaFormModal.vue';
 import InlineSelect from '../../Components/Pult/InlineSelect.vue';
 import Pagination from '../../Components/Pult/Pagination.vue';
+import SearchableSelect from '../../Components/Pult/SearchableSelect.vue';
 import { useTranslations } from '../../Composables/useTranslations';
 import type { Employee, Idea, IdeaPriority, IdeaStatus, Paginated, Unit } from '../../types';
 
@@ -62,11 +63,19 @@ const SORTABLE_COLS: { id: string; labelKey: string }[] = [
     { id: 'display_id', labelKey: 'ideas.col.id' },
     { id: 'unit_id', labelKey: 'ideas.col.company' },
     { id: 'title', labelKey: 'ideas.col.idea' },
+    { id: 'thrice_score', labelKey: 'ideas.col.score' },
     { id: 'status', labelKey: 'ideas.col.status' },
     { id: 'author_id', labelKey: 'ideas.col.author' },
-    { id: 'priority', labelKey: 'ideas.col.priority' },
     { id: 'created_at', labelKey: 'ideas.col.created' },
 ];
+
+function thriceBadge(score: number | null | undefined): { text: string; cls: string } {
+    if (score === null || score === undefined) return { text: '—', cls: 'bg-slate-100 text-slate-400' };
+    if (score >= 45) return { text: String(score), cls: 'bg-emerald-100 text-emerald-800' };
+    if (score >= 30) return { text: String(score), cls: 'bg-lime-100 text-lime-800' };
+    if (score >= 18) return { text: String(score), cls: 'bg-amber-100 text-amber-800' };
+    return { text: String(score), cls: 'bg-rose-100 text-rose-800' };
+}
 
 const pendingColType = computed(() => FILTER_COLS.find((c) => c.id === pendingCol.value)?.type ?? 'text');
 
@@ -175,13 +184,29 @@ function confirmBulkDelete() {
 
 // ── Form modal ─────────────────────────────────────────────────────
 const showModal = ref(false);
+const editingIdea = ref<Idea | null>(null);
 
 function openCreate() {
+    editingIdea.value = null;
+    showModal.value = true;
+}
+
+function openEdit(idea: Idea) {
+    editingIdea.value = idea;
     showModal.value = true;
 }
 
 function closeModal() {
     showModal.value = false;
+    editingIdea.value = null;
+}
+
+// ── Single-row delete ──────────────────────────────────────────────
+const deletingIdea = ref<Idea | null>(null);
+function doDelete() {
+    const idea = deletingIdea.value;
+    if (!idea) return;
+    router.delete(`/ideas/${idea.display_id}`, { preserveScroll: true, onFinish: () => { deletingIdea.value = null; } });
 }
 
 function inlinePatch(idea: Idea, field: string, value: string | number) {
@@ -192,6 +217,25 @@ const unitOptions = computed(() => props.allUnits.map((u) => ({ value: u.id, lab
 const statusOptions = computed(() => props.statuses.map((s) => ({ value: s, label: t(`ideas.status.${s}`), color: STATUS_COLORS[s] })));
 const priorityOptions = computed(() => props.priorities.map((p) => ({ value: p, label: t(`ideas.priority.${p}`), color: PRIORITY_COLORS[p] })));
 const authorOptions = computed(() => props.authors.map((a) => ({ value: a.id, label: a.name ?? a.position })));
+
+// Filter panel option arrays — values are strings to match pendingValue
+const filterColOptions = computed(() => FILTER_COLS.map((c) => ({ value: c.id, label: t(c.labelKey) })));
+const filterUnitOptions = computed(() => [
+    { value: '', label: '—' },
+    ...props.allUnits.map((u) => ({ value: u.id, label: u.name, color: u.color })),
+]);
+const filterStatusOptions = computed(() => [
+    { value: '', label: '—' },
+    ...props.statuses.map((s) => ({ value: s, label: t(`ideas.status.${s}`), color: STATUS_COLORS[s] })),
+]);
+const filterPriorityOptions = computed(() => [
+    { value: '', label: '—' },
+    ...props.priorities.map((p) => ({ value: p, label: t(`ideas.priority.${p}`), color: PRIORITY_COLORS[p] })),
+]);
+const filterAuthorOptions = computed(() => [
+    { value: '', label: '—' },
+    ...props.authors.map((a) => ({ value: String(a.id), label: a.name ?? `[${t('table.vacancy')}] ${a.position}` })),
+]);
 
 function unitFor(idea: Idea): Unit | undefined {
     return idea.unit ?? props.allUnits.find((u) => u.id === idea.unit_id);
@@ -273,13 +317,12 @@ function formatDate(iso: string): string {
             >
                 <div class="flex flex-col gap-1">
                     <span class="text-[11px] font-semibold uppercase text-slate-500">Column</span>
-                    <select
-                        v-model="pendingCol"
-                        class="rounded-md border border-slate-300 px-2 py-1 text-sm"
-                        @change="pendingValue = ''"
-                    >
-                        <option v-for="c in FILTER_COLS" :key="c.id" :value="c.id">{{ t(c.labelKey) }}</option>
-                    </select>
+                    <SearchableSelect
+                        :model-value="pendingCol"
+                        :options="filterColOptions"
+                        size="sm"
+                        @update:model-value="(v) => { pendingCol = v as FilterCol; pendingValue = ''; }"
+                    />
                 </div>
 
                 <div class="flex flex-1 flex-col gap-1">
@@ -293,40 +336,34 @@ function formatDate(iso: string): string {
                         placeholder="..."
                         class="rounded-md border border-slate-300 px-2 py-1 text-sm"
                     />
-                    <select
+                    <SearchableSelect
                         v-else-if="pendingCol === 'unit_id'"
-                        v-model="pendingValue"
-                        class="rounded-md border border-slate-300 px-2 py-1 text-sm"
-                    >
-                        <option value="">—</option>
-                        <option v-for="u in allUnits" :key="u.id" :value="u.id">{{ u.name }}</option>
-                    </select>
-                    <select
+                        :model-value="pendingValue"
+                        :options="filterUnitOptions"
+                        size="sm"
+                        @update:model-value="(v) => pendingValue = String(v ?? '')"
+                    />
+                    <SearchableSelect
                         v-else-if="pendingCol === 'status'"
-                        v-model="pendingValue"
-                        class="rounded-md border border-slate-300 px-2 py-1 text-sm"
-                    >
-                        <option value="">—</option>
-                        <option v-for="s in statuses" :key="s" :value="s">{{ t(`ideas.status.${s}`) }}</option>
-                    </select>
-                    <select
+                        :model-value="pendingValue"
+                        :options="filterStatusOptions"
+                        size="sm"
+                        @update:model-value="(v) => pendingValue = String(v ?? '')"
+                    />
+                    <SearchableSelect
                         v-else-if="pendingCol === 'priority'"
-                        v-model="pendingValue"
-                        class="rounded-md border border-slate-300 px-2 py-1 text-sm"
-                    >
-                        <option value="">—</option>
-                        <option v-for="p in priorities" :key="p" :value="p">{{ t(`ideas.priority.${p}`) }}</option>
-                    </select>
-                    <select
+                        :model-value="pendingValue"
+                        :options="filterPriorityOptions"
+                        size="sm"
+                        @update:model-value="(v) => pendingValue = String(v ?? '')"
+                    />
+                    <SearchableSelect
                         v-else-if="pendingCol === 'author_id'"
-                        v-model="pendingValue"
-                        class="rounded-md border border-slate-300 px-2 py-1 text-sm"
-                    >
-                        <option value="">—</option>
-                        <option v-for="a in authors" :key="a.id" :value="String(a.id)">
-                            {{ a.name ?? `[${t('table.vacancy')}] ${a.position}` }}
-                        </option>
-                    </select>
+                        :model-value="pendingValue"
+                        :options="filterAuthorOptions"
+                        size="sm"
+                        @update:model-value="(v) => pendingValue = String(v ?? '')"
+                    />
                 </div>
 
                 <button
@@ -402,11 +439,12 @@ function formatDate(iso: string): string {
                                     {{ sortDir(col.id) === 'asc' ? '↑' : '↓' }}
                                 </span>
                             </th>
+                            <th class="w-24 px-4 py-3"></th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-200">
                         <tr v-if="ideas.data.length === 0">
-                            <td :colspan="can.delete ? 8 : 7" class="px-4 py-12 text-center">
+                            <td :colspan="can.delete ? 9 : 8" class="px-4 py-12 text-center">
                                 <div class="text-4xl">💡</div>
                                 <div class="mt-2 text-sm text-slate-500">{{ t('ideas.empty') }}</div>
                             </td>
@@ -441,6 +479,11 @@ function formatDate(iso: string): string {
                                     {{ idea.title }}
                                 </Link>
                             </td>
+                            <td class="px-4 py-3 text-sm">
+                                <span class="inline-flex min-w-[2.75rem] items-center justify-center rounded-full px-2 py-0.5 text-xs font-semibold" :class="thriceBadge(idea.thrice_score).cls" :title="'THRICE: ' + thriceBadge(idea.thrice_score).text + ' / 60'">
+                                    {{ thriceBadge(idea.thrice_score).text }}
+                                </span>
+                            </td>
                             <td class="px-4 py-3 text-sm" @click.stop>
                                 <InlineSelect
                                     :model-value="idea.status"
@@ -455,14 +498,17 @@ function formatDate(iso: string): string {
                                     @update:model-value="(v: string | number) => inlinePatch(idea, 'author_id', v)"
                                 />
                             </td>
-                            <td class="px-4 py-3 text-sm" @click.stop>
-                                <InlineSelect
-                                    :model-value="idea.priority"
-                                    :options="priorityOptions"
-                                    @update:model-value="(v: string | number) => inlinePatch(idea, 'priority', v)"
-                                />
-                            </td>
                             <td class="px-4 py-3 text-xs text-slate-500">{{ formatDate(idea.created_at) }}</td>
+                            <td class="px-4 py-3 text-right" @click.stop>
+                                <div class="flex items-center justify-end gap-3">
+                                    <button v-if="can.create" class="text-slate-400 hover:text-indigo-600" title="Редактировать" @click="openEdit(idea)">
+                                        <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>
+                                    </button>
+                                    <button v-if="can.delete" class="text-slate-400 hover:text-rose-600" title="Удалить" @click="deletingIdea = idea">
+                                        <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                                    </button>
+                                </div>
+                            </td>
                         </tr>
                     </tbody>
                 </table>
@@ -477,12 +523,22 @@ function formatDate(iso: string): string {
 
         <IdeaFormModal
             :show="showModal"
-            :idea="null"
+            :idea="editingIdea"
             :units="allUnits"
             :authors="authors"
             :statuses="statuses"
             :priorities="priorities"
             @close="closeModal"
+        />
+
+        <ConfirmDialog
+            :show="deletingIdea !== null"
+            :title="t('ideas.btn.delete')"
+            :message="deletingIdea?.title ?? ''"
+            :confirm-label="t('ideas.btn.delete')"
+            variant="danger"
+            @confirm="doDelete"
+            @cancel="deletingIdea = null"
         />
 
         <ConfirmDialog

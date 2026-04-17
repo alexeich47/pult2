@@ -3,6 +3,7 @@ import { router } from '@inertiajs/vue3';
 import { computed, reactive, watch } from 'vue';
 import type { OkrEntry, Unit } from '../../types';
 import { useTranslations } from '../../Composables/useTranslations';
+import SearchableSelect from './SearchableSelect.vue';
 
 interface Props {
     show: boolean;
@@ -89,6 +90,13 @@ function submit() {
         router.post('/okr', data, opts);
     }
 }
+
+const typeOptions = computed(() => props.types.map(tp => ({ value: tp, label: t(`okr.type.${tp}`) })));
+const unitOptions = computed(() => [
+    { value: null, label: t('okr.field.holding_wide') },
+    ...props.units.map(u => ({ value: u.id, label: u.name, color: u.color })),
+]);
+const statusOptions = computed(() => props.statuses.map(s => ({ value: s, label: t(`okr.status.${s}`) })));
 </script>
 
 <template>
@@ -116,16 +124,11 @@ function submit() {
                     <div class="grid grid-cols-2 gap-3">
                         <div>
                             <label class="mb-1 block text-xs font-medium text-slate-700">{{ t('okr.field.type') }}</label>
-                            <select v-model="form.type" class="w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500">
-                                <option v-for="tp in types" :key="tp" :value="tp">{{ t(`okr.type.${tp}`) }}</option>
-                            </select>
+                            <SearchableSelect v-model="form.type" :options="typeOptions" />
                         </div>
                         <div>
                             <label class="mb-1 block text-xs font-medium text-slate-700">{{ t('okr.field.company') }}</label>
-                            <select v-model="form.unit_id" class="w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500">
-                                <option :value="null">{{ t('okr.field.holding_wide') }}</option>
-                                <option v-for="u in units" :key="u.id" :value="u.id">{{ u.name }}</option>
-                            </select>
+                            <SearchableSelect v-model="form.unit_id" :options="unitOptions" />
                         </div>
                     </div>
 
@@ -141,9 +144,7 @@ function submit() {
                         </div>
                         <div>
                             <label class="mb-1 block text-xs font-medium text-slate-700">{{ t('okr.field.status') }}</label>
-                            <select v-model="form.status" class="w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500">
-                                <option v-for="s in statuses" :key="s" :value="s">{{ t(`okr.status.${s}`) }}</option>
-                            </select>
+                            <SearchableSelect v-model="form.status" :options="statusOptions" />
                         </div>
                     </div>
 

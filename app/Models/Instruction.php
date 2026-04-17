@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Support\HasVersioning;
 use Database\Factories\InstructionFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -17,11 +18,12 @@ use Spatie\Activitylog\Traits\LogsActivity;
     'content',
     'checklist_items',
     'created_by',
+    'version',
 ])]
 class Instruction extends Model
 {
     /** @use HasFactory<InstructionFactory> */
-    use HasFactory, LogsActivity;
+    use HasFactory, HasVersioning, LogsActivity;
 
     /**
      * @return array<string, string>
@@ -36,7 +38,7 @@ class Instruction extends Model
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
-            ->logOnly(['unit_id', 'title', 'type', 'content', 'checklist_items', 'created_by'])
+            ->logOnly(['unit_id', 'title', 'type', 'content', 'checklist_items', 'created_by', 'version'])
             ->logOnlyDirty()
             ->dontSubmitEmptyLogs()
             ->useLogName('instruction');

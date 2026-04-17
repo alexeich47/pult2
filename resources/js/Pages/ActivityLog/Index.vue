@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { Head, router } from '@inertiajs/vue3';
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import AppLayout from '../../Layouts/AppLayout.vue';
 import Pagination from '../../Components/Pult/Pagination.vue';
+import SearchableSelect from '../../Components/Pult/SearchableSelect.vue';
 import { useTranslations } from '../../Composables/useTranslations';
 import type { Paginated } from '../../types';
 
@@ -103,6 +104,15 @@ function formatValue(val: unknown): string {
     if (typeof val === 'string') return val;
     return JSON.stringify(val);
 }
+
+const userFilterOptions = computed(() => [
+    { value: '', label: t('activity_log.filter.all_users') },
+    ...props.users.map(u => ({ value: String(u.id), label: u.name })),
+]);
+const logNameFilterOptions = computed(() => [
+    { value: '', label: t('activity_log.filter.all_types') },
+    ...props.logNames.map(name => ({ value: name, label: `${LOG_ICONS[name] ?? ''} ${name}`.trim() })),
+]);
 </script>
 
 <template>
@@ -135,25 +145,21 @@ function formatValue(val: unknown): string {
                 </div>
                 <div class="flex flex-col gap-1">
                     <label class="text-xs font-medium text-slate-500 dark:text-slate-400">{{ t('activity_log.filter.user') }}</label>
-                    <select
-                        v-model="filterForm.user_id"
-                        class="rounded-md border border-slate-300 bg-white px-2.5 py-1.5 text-sm text-slate-700 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-200"
-                    >
-                        <option value="">{{ t('activity_log.filter.all_users') }}</option>
-                        <option v-for="user in users" :key="user.id" :value="user.id">{{ user.name }}</option>
-                    </select>
+                    <SearchableSelect
+                        :model-value="filterForm.user_id"
+                        :options="userFilterOptions"
+                        size="sm"
+                        @update:model-value="(v) => filterForm.user_id = String(v ?? '')"
+                    />
                 </div>
                 <div class="flex flex-col gap-1">
                     <label class="text-xs font-medium text-slate-500 dark:text-slate-400">{{ t('activity_log.filter.entity_type') }}</label>
-                    <select
-                        v-model="filterForm.log_name"
-                        class="rounded-md border border-slate-300 bg-white px-2.5 py-1.5 text-sm text-slate-700 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-200"
-                    >
-                        <option value="">{{ t('activity_log.filter.all_types') }}</option>
-                        <option v-for="name in logNames" :key="name" :value="name">
-                            {{ LOG_ICONS[name] ?? '' }} {{ name }}
-                        </option>
-                    </select>
+                    <SearchableSelect
+                        :model-value="filterForm.log_name"
+                        :options="logNameFilterOptions"
+                        size="sm"
+                        @update:model-value="(v) => filterForm.log_name = String(v ?? '')"
+                    />
                 </div>
                 <div class="flex items-end gap-2">
                     <button

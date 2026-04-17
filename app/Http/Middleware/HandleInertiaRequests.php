@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Employee;
 use App\Models\Unit;
 use App\Support\PultEnums;
 use Illuminate\Http\Request;
@@ -40,6 +41,11 @@ class HandleInertiaRequests extends Middleware
                     'name' => $user->name,
                     'email' => $user->email,
                     'roles' => $user->getRoleNames()->all(),
+                    // The Employee record bound to this User — used to default author/assignee/owner
+                    // selectors to the current user. Prefer explicit FK (users.employee_id),
+                    // fall back to matching by email for users that haven't been linked yet.
+                    'employee_id' => $user->employee_id
+                        ?? Employee::query()->where('email', $user->email)->value('id'),
                 ] : null,
             ],
             'units' => fn () => $request->user()

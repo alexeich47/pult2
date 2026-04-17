@@ -1,36 +1,21 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
-import { usePage } from '@inertiajs/vue3';
-import type { PageProps } from '../../types';
 
-interface MvrDataPoint {
-    month: number;
-    target: number | string;
-    actual: number | string;
-    dailyTarget?: number;
+interface MvrDailyPoint {
+    date: string;
+    plan: number | string;
+    fact: number | string;
 }
 
 const props = defineProps<{
-    data: MvrDataPoint[];
-    dailyGoal?: number;
-    currentMonth?: number;
+    data: MvrDailyPoint[];
 }>();
 
-const page = usePage<PageProps>();
-
-const MONTH_NAMES: Record<string, string[]> = {
-    ru: ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'],
-    uk: ['Січ', 'Лют', 'Бер', 'Кві', 'Тра', 'Чер', 'Лип', 'Сер', 'Вер', 'Жов', 'Лис', 'Гру'],
-    en: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-};
-
-const monthNames = computed(() => MONTH_NAMES[page.props.locale] ?? MONTH_NAMES.en);
-
 // Chart dimensions
-const W = 700;
+const W = 800;
 const H = 320;
 const PAD_LEFT = 60;
-const PAD_RIGHT = 20;
+const PAD_RIGHT = 70;
 const PAD_TOP = 20;
 const PAD_BOTTOM = 40;
 const chartW = W - PAD_LEFT - PAD_RIGHT;
@@ -38,15 +23,15 @@ const chartH = H - PAD_TOP - PAD_BOTTOM;
 
 const parsed = computed(() =>
     props.data.map((d) => ({
-        month: d.month,
-        target: Number(d.target),
-        actual: Number(d.actual),
+        date: d.date,
+        plan: Number(d.plan),
+        fact: Number(d.fact),
     })),
 );
 
 const maxVal = computed(() => {
-    const vals = parsed.value.flatMap((d) => [d.target, d.actual].filter((v) => v > 0));
-    return vals.length > 0 ? Math.max(...vals) * 1.1 : 100;
+    const vals = parsed.value.flatMap((d) => [d.plan, d.fact].filter((v) => v > 0));
+    return vals.length > 0 ? Math.max(...vals) * 1.15 : 100;
 });
 
 function x(index: number): number {
@@ -58,42 +43,22 @@ function y(value: number): number {
     return PAD_TOP + chartH - (value / maxVal.value) * chartH;
 }
 
-// Daily goal red reference line
-const goalY = computed(() => {
-    if (!props.dailyGoal || props.dailyGoal <= 0) return null;
-    // Scale: dailyGoal is per day, but chart shows monthly totals.
-    // To make it meaningful on monthly chart: show as horizontal line at the dailyGoal * 30 level (≈ monthly)
-    // Actually the user wants dailyGoal displayed — show it as an annotation, not a line at monthly scale
-    return null; // We'll draw it differently — as a label annotation
-});
-
-// For the goal line, convert dailyGoal to monthly equivalent to place on same scale
-const monthlyGoalEquivalent = computed(() => {
-    if (!props.dailyGoal) return 0;
-    // Use current month's days or 30 as default
-    return props.dailyGoal * 30;
-});
-
-const goalLineYPos = computed(() => {
-    if (!props.dailyGoal || monthlyGoalEquivalent.value <= 0) return -1;
-    return y(monthlyGoalEquivalent.value);
-});
-
-const targetPoints = computed(() =>
-    parsed.value.map((d, i) => `${x(i)},${y(d.target)}`).join(' '),
+const planPoints = computed(() =>
+    parsed.value.map((d, i) => `${x(i)},${y(d.plan)}`).join(' '),
 );
 
-const actualPoints = computed(() => {
-    const pts = parsed.value.filter((d) => d.actual > 0);
-    return pts.map((d, i) => {
-        const idx = parsed.value.indexOf(d);
-        return `${x(idx)},${y(d.actual)}`;
-    }).join(' ');
+const factPoints = computed(() => {
+    const pts = parsed.value
+        .map((d, i) => ({ d, i }))
+        .filter(({ d }) => d.fact > 0);
+    return pts.map(({ d, i }) => `${x(i)},${y(d.fact)}`).join(' ');
 });
 
 const yTicks = computed(() => {
     const max = maxVal.value;
-    const step = Math.ceil(max / 5 / 10000) * 10000;
+    const rawStep = max / 5;
+    const magnitude = Math.pow(10, Math.floor(Math.log10(rawStep)));
+    const step = Math.ceil(rawStep / magnitude) * magnitude;
     const ticks: number[] = [];
     for (let v = 0; v <= max; v += step) {
         ticks.push(v);
@@ -106,16 +71,40 @@ function formatK(v: number): string {
     return `$${v}`;
 }
 
-// Tooltip
-const tooltip = ref<{ x: number; y: number; month: string; target: string; actual: string } | null>(null);
+function formatDayLabel(iso: string): string {
+    const d = new Date(iso);
+    return `${d.getDate()}.${String(d.getMonth() + 1).padStart(2, '0')}`;
+}
 
-function showTooltip(d: { month: number; target: number; actual: number }, idx: number) {
+const xLabelEvery = computed(() => {
+    const n = parsed.value.length;
+    if (n <= 14) return 1;
+    if (n <= 31) return 2;
+    if (n <= 62) return 5;
+    return Math.ceil(n / 12);
+});
+
+// Plan annotation — current month's plan value, anchored at right end of plan line.
+const planLabel = computed(() => {
+    if (parsed.value.length === 0) return null;
+    const last = parsed.value[parsed.value.length - 1];
+    return {
+        x: x(parsed.value.length - 1),
+        y: y(last.plan),
+        text: `$${last.plan.toLocaleString()}`,
+    };
+});
+
+// Tooltip
+const tooltip = ref<{ x: number; y: number; date: string; plan: string; fact: string } | null>(null);
+
+function showTooltip(d: { date: string; plan: number; fact: number }, idx: number) {
     tooltip.value = {
         x: x(idx),
-        y: Math.min(y(d.target), y(d.actual)) - 10,
-        month: monthNames.value[d.month - 1],
-        target: `$${d.target.toLocaleString()}`,
-        actual: d.actual > 0 ? `$${d.actual.toLocaleString()}` : '---',
+        y: Math.min(y(d.plan), d.fact > 0 ? y(d.fact) : y(d.plan)) - 10,
+        date: formatDayLabel(d.date),
+        plan: `$${d.plan.toLocaleString()}`,
+        fact: d.fact > 0 ? `$${d.fact.toLocaleString()}` : '---',
     };
 }
 
@@ -125,8 +114,11 @@ function hideTooltip() {
 </script>
 
 <template>
-    <div class="w-full overflow-x-auto">
-        <svg :viewBox="`0 0 ${W} ${H}`" class="w-full max-w-[700px]" preserveAspectRatio="xMidYMid meet">
+    <div v-if="parsed.length === 0" class="py-12 text-center text-sm text-slate-400">
+        No daily data
+    </div>
+    <div v-else class="w-full overflow-x-auto">
+        <svg :viewBox="`0 0 ${W} ${H}`" class="w-full max-w-full" preserveAspectRatio="xMidYMid meet">
             <!-- Y-axis grid lines -->
             <line
                 v-for="tick in yTicks"
@@ -150,81 +142,71 @@ function hideTooltip() {
                 {{ formatK(tick) }}
             </text>
 
-            <!-- Daily goal reference line (red) -->
-            <g v-if="dailyGoal && dailyGoal > 0 && goalLineYPos > 0">
-                <line
-                    :x1="PAD_LEFT"
-                    :y1="goalLineYPos"
-                    :x2="PAD_LEFT + chartW"
-                    :y2="goalLineYPos"
-                    stroke="#ef4444"
-                    stroke-width="1.5"
-                    stroke-dasharray="4 3"
-                    opacity="0.7"
-                />
-                <text
-                    :x="PAD_LEFT + chartW + 4"
-                    :y="goalLineYPos + 4"
-                    class="fill-red-500 text-[9px] font-semibold"
-                >
-                    ${{ Math.round(dailyGoal).toLocaleString() }}/д
-                </text>
-            </g>
-
-            <!-- Target line (dashed) -->
+            <!-- Plan line (dashed red) -->
             <polyline
                 v-if="parsed.length > 0"
-                :points="targetPoints"
+                :points="planPoints"
                 fill="none"
-                stroke="#94a3b8"
+                stroke="#ef4444"
                 stroke-width="2"
                 stroke-dasharray="6 4"
             />
-            <!-- Actual line (solid) -->
+            <!-- Plan value label at right end -->
+            <text
+                v-if="planLabel"
+                :x="planLabel.x + 8"
+                :y="planLabel.y + 4"
+                class="fill-red-500 text-[11px] font-semibold"
+            >
+                {{ planLabel.text }}
+            </text>
+            <!-- Fact line (solid indigo) -->
             <polyline
-                v-if="actualPoints"
-                :points="actualPoints"
+                v-if="factPoints"
+                :points="factPoints"
                 fill="none"
                 stroke="#6366f1"
                 stroke-width="2.5"
                 stroke-linejoin="round"
             />
 
-            <!-- Target dots -->
+            <!-- Plan dots -->
             <circle
                 v-for="(d, i) in parsed"
-                :key="'t' + i"
+                :key="'p' + i"
                 :cx="x(i)"
-                :cy="y(d.target)"
-                r="3.5"
-                fill="#94a3b8"
+                :cy="y(d.plan)"
+                r="2.5"
+                fill="#ef4444"
                 class="cursor-pointer"
                 @mouseenter="showTooltip(d, i)"
                 @mouseleave="hideTooltip"
             />
-            <!-- Actual dots -->
+            <!-- Fact dots -->
             <circle
-                v-for="(d, i) in parsed.filter((p) => p.actual > 0)"
-                :key="'a' + i"
-                :cx="x(parsed.indexOf(d))"
-                :cy="y(d.actual)"
-                r="4"
+                v-for="(d, i) in parsed"
+                v-show="d.fact > 0"
+                :key="'f' + i"
+                :cx="x(i)"
+                :cy="y(d.fact)"
+                r="3"
                 fill="#6366f1"
                 class="cursor-pointer"
-                @mouseenter="showTooltip(d, parsed.indexOf(d))"
+                @mouseenter="showTooltip(d, i)"
                 @mouseleave="hideTooltip"
             />
 
-            <!-- X-axis month labels -->
+            <!-- X-axis day labels -->
             <text
                 v-for="(d, i) in parsed"
-                :key="'m' + i"
+                v-show="i % xLabelEvery === 0"
+                :key="'x' + i"
                 :x="x(i)"
                 :y="H - 8"
                 text-anchor="middle"
-                class="fill-slate-500 text-[11px]"
+                class="fill-slate-500 text-[10px]"
             >
-                {{ monthNames[d.month - 1] }}
+                {{ formatDayLabel(d.date) }}
             </text>
 
             <!-- Tooltip -->
@@ -239,13 +221,13 @@ function hideTooltip() {
                     opacity="0.95"
                 />
                 <text :x="tooltip.x" :y="tooltip.y - 34" text-anchor="middle" class="fill-white text-[11px] font-semibold">
-                    {{ tooltip.month }}
+                    {{ tooltip.date }}
                 </text>
-                <text :x="tooltip.x" :y="tooltip.y - 20" text-anchor="middle" class="fill-slate-300 text-[10px]">
-                    Plan: {{ tooltip.target }}
+                <text :x="tooltip.x" :y="tooltip.y - 20" text-anchor="middle" class="fill-indigo-300 text-[10px]">
+                    Факт: {{ tooltip.fact }}
                 </text>
-                <text :x="tooltip.x" :y="tooltip.y - 8" text-anchor="middle" class="fill-indigo-300 text-[10px]">
-                    Fact: {{ tooltip.actual }}
+                <text :x="tooltip.x" :y="tooltip.y - 8" text-anchor="middle" class="fill-red-300 text-[10px]">
+                    План: {{ tooltip.plan }}
                 </text>
             </g>
         </svg>
@@ -253,12 +235,12 @@ function hideTooltip() {
         <!-- Legend -->
         <div class="mt-2 flex items-center gap-5 text-xs text-slate-500">
             <span class="flex items-center gap-1.5">
-                <span class="inline-block h-0.5 w-5 border-t-2 border-dashed border-slate-400"></span>
-                Target
+                <span class="inline-block h-0.5 w-5 bg-indigo-500"></span>
+                Факт
             </span>
             <span class="flex items-center gap-1.5">
-                <span class="inline-block h-0.5 w-5 bg-indigo-500"></span>
-                Actual
+                <span class="inline-block h-0.5 w-5 border-t-2 border-dashed border-red-500"></span>
+                План
             </span>
         </div>
     </div>

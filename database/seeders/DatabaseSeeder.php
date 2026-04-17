@@ -30,6 +30,7 @@ class DatabaseSeeder extends Seeder
             ProcessSeeder::class,
             MvrEntrySeeder::class,
             MvrDailySeeder::class,
+            ServicePageAccessSeeder::class,
         ]);
 
         $admin = User::factory()->create([

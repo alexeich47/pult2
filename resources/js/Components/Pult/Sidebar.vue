@@ -16,25 +16,88 @@ interface NavItem {
     id: string;
     key: string;
     href: string | null; // null = placeholder (not yet implemented)
+    emoji?: string;
+    highlight?: boolean; // render with special emphasis (bigger, uppercase, emoji instead of dot)
 }
 
+interface NavGroup {
+    id: string;
+    key: string;          // i18n key for the group label
+    emoji?: string;
+    items: NavItem[];
+}
+
+// Items that aren't inside a group render flat at the top of the nav list.
 const NAV_ITEMS: NavItem[] = [
-    { id: 'dashboard', key: 'nav.dashboard', href: '/dashboard' },
-    { id: 'finance', key: 'nav.finance', href: '/finance' },
-    { id: 'structure', key: 'nav.structure', href: '/structure' },
-    { id: 'personnel', key: 'nav.personnel', href: '/personnel' },
-    { id: 'hiring', key: 'nav.hiring', href: '/hiring' },
-    { id: 'strategy', key: 'nav.strategy', href: '/strategy' },
-    { id: 'ideas', key: 'nav.ideas', href: '/ideas' },
-    { id: 'rnd', key: 'nav.rnd', href: '/rnd' },
-    { id: 'instructions', key: 'nav.instructions', href: '/instructions' },
-    { id: 'okr', key: 'nav.okr', href: '/okr' },
-    { id: 'sla', key: 'nav.sla', href: '/sla' },
-    { id: 'services', key: 'nav.services', href: '/services' },
-    { id: 'meetings', key: 'nav.meetings', href: '/meetings' },
-    { id: 'risks', key: 'nav.risks', href: '/risks' },
-    { id: 'processes', key: 'nav.processes', href: '/processes' },
+    { id: 'dashboard', key: 'nav.dashboard', href: '/dashboard', emoji: '📊', highlight: true },
 ];
+
+const NAV_GROUPS: NavGroup[] = [
+    {
+        id: 'tasks',
+        key: 'sidebar.group.tasks',
+        emoji: '✅',
+        items: [
+            { id: 'tasks', key: 'nav.tasks', href: '/tasks' },
+            { id: 'ideas', key: 'nav.ideas', href: '/ideas' },
+            { id: 'risks', key: 'nav.risks', href: '/risks' },
+        ],
+    },
+    {
+        id: 'money',
+        key: 'sidebar.group.money',
+        emoji: '💰',
+        items: [
+            { id: 'finance', key: 'nav.finance', href: '/finance' },
+            { id: 'rnd', key: 'nav.rnd', href: '/rnd' },
+        ],
+    },
+    {
+        id: 'docs',
+        key: 'sidebar.group.docs',
+        emoji: '📚',
+        items: [
+            { id: 'documents', key: 'nav.documents', href: '/documents' },
+            { id: 'strategy', key: 'nav.strategy', href: '/strategy' },
+            { id: 'instructions', key: 'nav.instructions', href: '/instructions' },
+            { id: 'processes', key: 'nav.processes', href: '/processes' },
+        ],
+    },
+    {
+        id: 'personnel',
+        key: 'sidebar.group.personnel',
+        emoji: '👥',
+        items: [
+            { id: 'structure', key: 'nav.structure', href: '/structure' },
+            { id: 'personnel', key: 'nav.personnel', href: '/personnel' },
+            { id: 'contractors', key: 'nav.contractors', href: '/contractors' },
+            { id: 'hiring', key: 'nav.hiring', href: '/hiring' },
+            { id: 'meetings', key: 'nav.meetings', href: '/meetings' },
+            { id: 'services', key: 'nav.services', href: '/services' },
+        ],
+    },
+    {
+        id: 'metrics',
+        key: 'sidebar.group.metrics',
+        emoji: '📈',
+        items: [
+            { id: 'okr', key: 'nav.okr', href: '/okr' },
+            { id: 'sla', key: 'nav.sla', href: '/sla' },
+        ],
+    },
+];
+
+// Persist expanded/collapsed per group in localStorage.
+const COLLAPSE_KEY = 'pult.sidebar.groups.collapsed';
+function loadCollapsed(): Record<string, boolean> {
+    if (typeof window === 'undefined') return {};
+    try { return JSON.parse(window.localStorage.getItem(COLLAPSE_KEY) ?? '{}'); } catch { return {}; }
+}
+const collapsed = ref<Record<string, boolean>>(loadCollapsed());
+function toggleGroup(id: string) {
+    collapsed.value = { ...collapsed.value, [id]: !collapsed.value[id] };
+    try { window.localStorage.setItem(COLLAPSE_KEY, JSON.stringify(collapsed.value)); } catch { /* quota/ssr */ }
+}
 
 const currentPath = computed(() => {
     if (typeof window === 'undefined') return '';
@@ -120,7 +183,20 @@ function switchContext(event: Event) {
             </div>
             <template v-for="item in NAV_ITEMS" :key="item.id">
                 <Link
-                    v-if="item.href"
+                    v-if="item.href && item.highlight"
+                    :href="item.href"
+                    :class="[
+                        'mb-1 flex items-center gap-2.5 rounded-md px-2.5 py-1.5 text-sm font-bold uppercase tracking-wider transition-colors',
+                        isActive(item.href)
+                            ? 'bg-indigo-500/20 text-white ring-1 ring-indigo-500/40'
+                            : 'bg-slate-800/40 text-slate-100 hover:bg-slate-800 hover:text-white',
+                    ]"
+                >
+                    <span class="text-base leading-none">{{ item.emoji }}</span>
+                    {{ t(item.key) }}
+                </Link>
+                <Link
+                    v-else-if="item.href"
                     :href="item.href"
                     :class="[
                         'flex items-center gap-2 rounded-md px-2.5 py-1 text-[13px] transition-colors',
@@ -142,6 +218,43 @@ function switchContext(event: Event) {
                     <span class="ml-auto text-[10px] uppercase text-slate-600">wip</span>
                 </div>
             </template>
+
+            <!-- Collapsible groups -->
+            <div v-for="group in NAV_GROUPS" :key="group.id" class="mt-3">
+                <button
+                    type="button"
+                    class="group flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm font-bold uppercase tracking-wider text-slate-200 transition-colors hover:bg-slate-800/60 hover:text-white"
+                    @click="toggleGroup(group.id)"
+                >
+                    <span v-if="group.emoji" class="text-base leading-none">{{ group.emoji }}</span>
+                    <svg
+                        class="h-3.5 w-3.5 transition-transform text-slate-400"
+                        :class="collapsed[group.id] ? '-rotate-90' : ''"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                    >
+                        <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
+                    </svg>
+                    {{ t(group.key) }}
+                </button>
+                <div v-show="!collapsed[group.id]" class="mt-0.5 flex flex-col gap-0.5">
+                    <template v-for="item in group.items" :key="item.id">
+                        <Link
+                            v-if="item.href"
+                            :href="item.href"
+                            :class="[
+                                'flex items-center gap-2 rounded-md px-2.5 py-1 pl-6 text-[13px] transition-colors',
+                                isActive(item.href)
+                                    ? 'bg-indigo-500/15 text-indigo-200'
+                                    : 'text-slate-300 hover:bg-slate-800/60 hover:text-white',
+                            ]"
+                        >
+                            <span class="inline-block h-1.5 w-1.5 rounded-full bg-current opacity-60" />
+                            {{ t(item.key) }}
+                        </Link>
+                    </template>
+                </div>
+            </div>
         </div>
 
         <div class="mx-3 my-2 h-px bg-slate-800" />

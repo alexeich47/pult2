@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Support\HasVersioning;
 use Database\Factories\ProcessFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -15,21 +16,23 @@ use Spatie\Activitylog\Traits\LogsActivity;
     'title',
     'description',
     'owner_id',
+    'created_by',
     'category',
     'maturity',
     'document_url',
     'tool',
     'sort_order',
+    'version',
 ])]
 class Process extends Model
 {
     /** @use HasFactory<ProcessFactory> */
-    use HasFactory, LogsActivity;
+    use HasFactory, HasVersioning, LogsActivity;
 
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
-            ->logOnly(['unit_id', 'title', 'description', 'owner_id', 'category', 'maturity', 'document_url', 'tool', 'sort_order'])
+            ->logOnly(['unit_id', 'title', 'description', 'owner_id', 'created_by', 'category', 'maturity', 'document_url', 'tool', 'sort_order', 'version'])
             ->logOnlyDirty()
             ->dontSubmitEmptyLogs()
             ->useLogName('process');
@@ -54,5 +57,13 @@ class Process extends Model
     public function owner(): BelongsTo
     {
         return $this->belongsTo(Employee::class, 'owner_id');
+    }
+
+    /**
+     * @return BelongsTo<User, $this>
+     */
+    public function creator(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'created_by');
     }
 }
