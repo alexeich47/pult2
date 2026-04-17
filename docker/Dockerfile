@@ -17,13 +17,16 @@ COPY public ./public
 RUN npm run build
 
 # ─── Stage 3: runtime (php-fpm) ──────────────────────────────────────
-FROM php:8.3-fpm-alpine AS runtime
+# Use Debian-slim base instead of Alpine — mature apt packages for PHP
+# extensions, no musl-compilation surprises, widely used for Laravel.
+FROM php:8.3-fpm-bookworm AS runtime
 
-# mlocati/docker-php-extension-installer — battle-tested helper that figures out
-# the right apk dev-packages for each extension and cleans them up afterwards.
+# mlocati/docker-php-extension-installer — battle-tested helper that resolves
+# apt-get dev deps for each extension and cleans them up afterwards.
 ADD --chmod=0755 https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
 
-RUN apk add --no-cache nginx supervisor tzdata curl git \
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends nginx supervisor tzdata curl git ca-certificates \
     && install-php-extensions \
         pdo_sqlite \
         intl \
@@ -31,7 +34,9 @@ RUN apk add --no-cache nginx supervisor tzdata curl git \
         bcmath \
         pcntl \
         gd \
-        opcache
+        opcache \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
 # Pre-tuned opcache + php-fpm pool for prod
 COPY docker/php/opcache.ini /usr/local/etc/php/conf.d/opcache.ini
