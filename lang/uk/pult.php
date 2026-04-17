@@ -111,19 +111,14 @@ return [
         'sub' => 'Фінансові дані та метрики холдингу',
         'mvr_title' => 'Minimum Viable Revenue (MVR)',
         'mvr_sub' => 'Цільовий та фактичний дохід по місяцях',
-        'col' => [
-            'month' => 'Місяць',
-            'target' => 'План',
-            'actual' => 'Факт',
-            'diff' => 'Різниця',
-        ],
+        'tab' => ['chart' => 'Графік', 'data' => 'Дані', 'plan' => 'План'],
+        'col' => ['month' => 'Місяць', 'target' => 'План', 'actual' => 'Факт', 'diff' => 'Різниця', 'days' => 'Днів'],
+        'daily_reference' => 'Денна розбивка MVR',
+        'daily_target' => 'На день',
+        'day' => 'день',
         'add_entry' => 'Додати запис',
         'year' => 'Рік',
-        'flash' => [
-            'created' => 'Запис додано',
-            'updated' => 'Запис оновлено',
-            'deleted' => 'Запис видалено',
-        ],
+        'flash' => ['created' => 'Запис додано', 'updated' => 'Запис оновлено', 'deleted' => 'Запис видалено'],
     ],
 
     'unit_dashboard' => [

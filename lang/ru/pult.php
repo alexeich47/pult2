@@ -111,12 +111,21 @@ return [
         'sub' => 'Финансовые данные и метрики холдинга',
         'mvr_title' => 'Minimum Viable Revenue (MVR)',
         'mvr_sub' => 'Целевой и фактический доход по месяцам',
+        'tab' => [
+            'chart' => 'График',
+            'data' => 'Данные',
+            'plan' => 'План',
+        ],
         'col' => [
             'month' => 'Месяц',
             'target' => 'План',
             'actual' => 'Факт',
             'diff' => 'Разница',
+            'days' => 'Дней',
         ],
+        'daily_reference' => 'Дневная разбивка MVR',
+        'daily_target' => 'В день',
+        'day' => 'день',
         'add_entry' => 'Добавить запись',
         'year' => 'Год',
         'flash' => [

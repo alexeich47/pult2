@@ -111,19 +111,14 @@ return [
         'sub' => 'Financial data and metrics for the holding',
         'mvr_title' => 'Minimum Viable Revenue (MVR)',
         'mvr_sub' => 'Target and actual revenue by month',
-        'col' => [
-            'month' => 'Month',
-            'target' => 'Target',
-            'actual' => 'Actual',
-            'diff' => 'Difference',
-        ],
+        'tab' => ['chart' => 'Chart', 'data' => 'Data', 'plan' => 'Plan'],
+        'col' => ['month' => 'Month', 'target' => 'Target', 'actual' => 'Actual', 'diff' => 'Difference', 'days' => 'Days'],
+        'daily_reference' => 'Daily MVR breakdown',
+        'daily_target' => 'Per day',
+        'day' => 'day',
         'add_entry' => 'Add entry',
         'year' => 'Year',
-        'flash' => [
-            'created' => 'Entry added',
-            'updated' => 'Entry updated',
-            'deleted' => 'Entry deleted',
-        ],
+        'flash' => ['created' => 'Entry added', 'updated' => 'Entry updated', 'deleted' => 'Entry deleted'],
     ],
 
     'unit_dashboard' => [

@@ -7,6 +7,7 @@ interface MvrDataPoint {
     month: number;
     target: number | string;
     actual: number | string;
+    dailyTarget?: number;
 }
 
 const props = defineProps<{
