@@ -76,6 +76,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/finance', [FinanceController::class, 'store'])->name('finance.store');
     Route::put('/finance/{mvrEntry}', [FinanceController::class, 'update'])->name('finance.update');
     Route::delete('/finance/{mvrEntry}', [FinanceController::class, 'destroy'])->name('finance.destroy');
+    Route::post('/finance/daily', [FinanceController::class, 'storeDaily'])->name('finance.storeDaily');
+    Route::put('/finance/daily/{mvrDailyEntry}', [FinanceController::class, 'updateDaily'])->name('finance.updateDaily');
 
     Route::get('/structure', [StructureController::class, 'index'])->name('structure.index');
     Route::post('/structure', [StructureController::class, 'store'])->name('structure.store');

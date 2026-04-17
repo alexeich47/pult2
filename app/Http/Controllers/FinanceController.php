@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\MvrDailyEntry;
 use App\Models\MvrEntry;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -16,16 +18,36 @@ class FinanceController extends Controller
         Gate::authorize('viewAny', MvrEntry::class);
 
         $year = (int) $request->query('year', (string) now()->year);
+        $month = (int) $request->query('month', (string) now()->month);
 
+        // Monthly plan entries
         $entries = MvrEntry::query()
             ->whereNull('unit_id')
             ->where('year', $year)
             ->orderBy('month')
             ->get();
 
+        // Daily entries for selected month
+        $startOfMonth = Carbon::createFromDate($year, $month, 1)->startOfMonth();
+        $endOfMonth = $startOfMonth->copy()->endOfMonth();
+
+        $dailyEntries = MvrDailyEntry::query()
+            ->whereBetween('date', [$startOfMonth, $endOfMonth])
+            ->orderBy('date')
+            ->get();
+
+        // Monthly target for the daily goal reference line
+        $currentMonthPlan = $entries->firstWhere('month', $month);
+        $daysInMonth = $startOfMonth->daysInMonth;
+        $dailyGoal = $currentMonthPlan ? round((float) $currentMonthPlan->target / $daysInMonth, 2) : 0;
+
         return Inertia::render('Finance/Index', [
             'entries' => $entries,
+            'dailyEntries' => $dailyEntries,
             'year' => $year,
+            'month' => $month,
+            'dailyGoal' => $dailyGoal,
+            'daysInMonth' => $daysInMonth,
             'can' => [
                 'create' => $request->user()?->can('create', MvrEntry::class),
                 'delete' => $request->user()?->can('delete', new MvrEntry),
@@ -67,9 +89,41 @@ class FinanceController extends Controller
     public function destroy(MvrEntry $mvrEntry): RedirectResponse
     {
         Gate::authorize('delete', $mvrEntry);
-
         $mvrEntry->delete();
 
         return back()->with('flash.success', __('pult.finance.flash.deleted'));
+    }
+
+    // Daily entry CRUD
+    public function storeDaily(Request $request): RedirectResponse
+    {
+        Gate::authorize('create', MvrEntry::class);
+
+        $validated = $request->validate([
+            'date' => ['required', 'date'],
+            'plan' => ['required', 'numeric', 'min:0'],
+            'fact' => ['required', 'numeric', 'min:0'],
+        ]);
+
+        MvrDailyEntry::updateOrCreate(
+            ['date' => $validated['date']],
+            $validated,
+        );
+
+        return back()->with('flash.success', __('pult.finance.flash.updated'));
+    }
+
+    public function updateDaily(Request $request, MvrDailyEntry $mvrDailyEntry): RedirectResponse
+    {
+        Gate::authorize('update', MvrEntry::first() ?? new MvrEntry);
+
+        $validated = $request->validate([
+            'plan' => ['required', 'numeric', 'min:0'],
+            'fact' => ['required', 'numeric', 'min:0'],
+        ]);
+
+        $mvrDailyEntry->update($validated);
+
+        return back()->with('flash.success', __('pult.finance.flash.updated'));
     }
 }

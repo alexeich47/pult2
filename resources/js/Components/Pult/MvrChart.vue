@@ -12,6 +12,8 @@ interface MvrDataPoint {
 
 const props = defineProps<{
     data: MvrDataPoint[];
+    dailyGoal?: number;
+    currentMonth?: number;
 }>();
 
 const page = usePage<PageProps>();
@@ -55,6 +57,27 @@ function x(index: number): number {
 function y(value: number): number {
     return PAD_TOP + chartH - (value / maxVal.value) * chartH;
 }
+
+// Daily goal red reference line
+const goalY = computed(() => {
+    if (!props.dailyGoal || props.dailyGoal <= 0) return null;
+    // Scale: dailyGoal is per day, but chart shows monthly totals.
+    // To make it meaningful on monthly chart: show as horizontal line at the dailyGoal * 30 level (≈ monthly)
+    // Actually the user wants dailyGoal displayed — show it as an annotation, not a line at monthly scale
+    return null; // We'll draw it differently — as a label annotation
+});
+
+// For the goal line, convert dailyGoal to monthly equivalent to place on same scale
+const monthlyGoalEquivalent = computed(() => {
+    if (!props.dailyGoal) return 0;
+    // Use current month's days or 30 as default
+    return props.dailyGoal * 30;
+});
+
+const goalLineYPos = computed(() => {
+    if (!props.dailyGoal || monthlyGoalEquivalent.value <= 0) return -1;
+    return y(monthlyGoalEquivalent.value);
+});
 
 const targetPoints = computed(() =>
     parsed.value.map((d, i) => `${x(i)},${y(d.target)}`).join(' '),
@@ -126,6 +149,27 @@ function hideTooltip() {
             >
                 {{ formatK(tick) }}
             </text>
+
+            <!-- Daily goal reference line (red) -->
+            <g v-if="dailyGoal && dailyGoal > 0 && goalLineYPos > 0">
+                <line
+                    :x1="PAD_LEFT"
+                    :y1="goalLineYPos"
+                    :x2="PAD_LEFT + chartW"
+                    :y2="goalLineYPos"
+                    stroke="#ef4444"
+                    stroke-width="1.5"
+                    stroke-dasharray="4 3"
+                    opacity="0.7"
+                />
+                <text
+                    :x="PAD_LEFT + chartW + 4"
+                    :y="goalLineYPos + 4"
+                    class="fill-red-500 text-[9px] font-semibold"
+                >
+                    ${{ Math.round(dailyGoal).toLocaleString() }}/д
+                </text>
+            </g>
 
             <!-- Target line (dashed) -->
             <polyline

@@ -218,6 +218,14 @@ export interface Meeting {
     creator?: User;
 }
 
+export interface MvrDailyEntry {
+    id: number;
+    date: string;
+    plan: string;
+    fact: string;
+    currency: string;
+}
+
 export interface MvrEntry {
     id: number;
     unit_id: string | null;
