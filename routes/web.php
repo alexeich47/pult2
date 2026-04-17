@@ -4,6 +4,7 @@ use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\ArchiveController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\FinanceController;
 use App\Http\Controllers\IdeaController;
 use App\Http\Controllers\InstructionController;
 use App\Http\Controllers\MeetingController;
@@ -20,6 +21,7 @@ use App\Models\Unit;
 use App\Support\PultEnums;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use Spatie\Activitylog\Models\Activity;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -48,8 +50,32 @@ Route::post('/context/{unitId}', function (string $unitId) {
 })->middleware('auth')->name('context.switch');
 
 Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/home', function () {
+        $recentActivity = Activity::query()
+            ->with('subject')
+            ->latest()
+            ->limit(5)
+            ->get()
+            ->map(fn (Activity $a) => [
+                'id' => $a->id,
+                'description' => $a->description,
+                'log_name' => $a->log_name,
+                'subject_type' => class_basename($a->subject_type ?? ''),
+                'created_at' => $a->created_at?->toISOString(),
+            ]);
+
+        return Inertia::render('Home', [
+            'recentActivity' => $recentActivity,
+        ]);
+    })->name('home');
+
     Route::get('/dashboard', DashboardController::class)->name('dashboard');
     Route::get('/tickets', fn () => Inertia::render('Tickets/Index'))->name('tickets.index');
+
+    Route::get('/finance', [FinanceController::class, 'index'])->name('finance.index');
+    Route::post('/finance', [FinanceController::class, 'store'])->name('finance.store');
+    Route::put('/finance/{mvrEntry}', [FinanceController::class, 'update'])->name('finance.update');
+    Route::delete('/finance/{mvrEntry}', [FinanceController::class, 'destroy'])->name('finance.destroy');
 
     Route::get('/structure', [StructureController::class, 'index'])->name('structure.index');
     Route::post('/structure', [StructureController::class, 'store'])->name('structure.store');

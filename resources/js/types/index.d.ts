@@ -218,6 +218,19 @@ export interface Meeting {
     creator?: User;
 }
 
+export interface MvrEntry {
+    id: number;
+    unit_id: string | null;
+    year: number;
+    month: number;
+    target: string;
+    actual: string;
+    currency: string;
+    created_at: string;
+    updated_at: string;
+    unit?: Unit;
+}
+
 export type Translations = Record<string, unknown>;
 
 export interface PaginationLink {

@@ -75,7 +75,9 @@ return [
     ],
 
     'nav' => [
+        'home' => 'Home',
         'dashboard' => 'Dashboard',
+        'finance' => 'Finance',
         'structure' => 'Structure',
         'personnel' => 'Personnel',
         'hiring' => 'Hiring',
@@ -95,6 +97,33 @@ return [
         'greeting' => 'Welcome to Pult',
         'sub' => 'Holding control panel: quick actions and overview',
         'tickets_label' => 'Quick requests',
+    ],
+
+    'home_page' => [
+        'title' => 'Welcome to Pult',
+        'sub' => 'Unified control panel for Swift Punk holding',
+        'quick_links' => 'Quick Links',
+        'recent_activity' => 'Recent Activity',
+    ],
+
+    'finance' => [
+        'title' => 'Finance',
+        'sub' => 'Financial data and metrics for the holding',
+        'mvr_title' => 'Minimum Viable Revenue (MVR)',
+        'mvr_sub' => 'Target and actual revenue by month',
+        'col' => [
+            'month' => 'Month',
+            'target' => 'Target',
+            'actual' => 'Actual',
+            'diff' => 'Difference',
+        ],
+        'add_entry' => 'Add entry',
+        'year' => 'Year',
+        'flash' => [
+            'created' => 'Entry added',
+            'updated' => 'Entry updated',
+            'deleted' => 'Entry deleted',
+        ],
     ],
 
     'unit_dashboard' => [
@@ -176,6 +205,8 @@ return [
         'risks' => ['title' => 'Risks', 'open' => 'Open', 'total' => 'Total entries'],
         'services' => ['title' => 'Services', 'active' => 'Active', 'mrr' => 'MRR'],
         'activity_empty' => 'No activity yet',
+        'mvr_title' => 'Minimum Viable Revenue (MVR)',
+        'mvr_sub' => 'Target vs actual revenue',
     ],
 
     'ticket' => [

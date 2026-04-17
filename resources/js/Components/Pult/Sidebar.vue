@@ -20,6 +20,7 @@ interface NavItem {
 
 const NAV_ITEMS: NavItem[] = [
     { id: 'dashboard', key: 'nav.dashboard', href: '/dashboard' },
+    { id: 'finance', key: 'nav.finance', href: '/finance' },
     { id: 'structure', key: 'nav.structure', href: '/structure' },
     { id: 'personnel', key: 'nav.personnel', href: '/personnel' },
     { id: 'hiring', key: 'nav.hiring', href: '/hiring' },
@@ -69,7 +70,7 @@ function switchContext(event: Event) {
     <aside class="flex h-screen w-64 shrink-0 flex-col border-r border-slate-800 bg-slate-900 text-slate-200">
         <!-- Logo (fixed top) -->
         <Link
-            href="/dashboard"
+            href="/home"
             class="flex shrink-0 items-center gap-3 border-b border-slate-800 px-5 py-4 hover:bg-slate-800/50"
         >
             <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-indigo-500 font-bold text-white">

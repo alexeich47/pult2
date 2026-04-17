@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Head, Link } from '@inertiajs/vue3';
 import AppLayout from '../Layouts/AppLayout.vue';
+import MvrChart from '../Components/Pult/MvrChart.vue';
 import { useTranslations } from '../Composables/useTranslations';
 
 interface Stats {
@@ -28,8 +29,15 @@ interface ActivityEntry {
     created_at: string;
 }
 
+interface MvrDataPoint {
+    month: number;
+    target: number | string;
+    actual: number | string;
+}
+
 interface Props {
     stats: Stats;
+    mvr: MvrDataPoint[];
     recentActivity: ActivityEntry[];
 }
 
@@ -134,6 +142,17 @@ function activityIcon(logName: string): string {
                         <span>{{ t('dashboard.services.active') }}: {{ stats.services.active }}</span>
                     </div>
                 </Link>
+            </div>
+
+            <!-- MVR Chart -->
+            <div v-if="mvr && mvr.length > 0" class="mb-8">
+                <div class="mb-3 text-xs font-semibold uppercase tracking-wider text-slate-500">
+                    {{ t('dashboard.mvr_title') }}
+                </div>
+                <div class="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+                    <p class="mb-4 text-sm text-slate-500">{{ t('dashboard.mvr_sub') }}</p>
+                    <MvrChart :data="mvr" />
+                </div>
             </div>
 
             <!-- Recent Activity -->

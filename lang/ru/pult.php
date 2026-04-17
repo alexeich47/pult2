@@ -75,7 +75,9 @@ return [
     ],
 
     'nav' => [
+        'home' => 'Главная',
         'dashboard' => 'Дашборд',
+        'finance' => 'Финансы',
         'structure' => 'Структура',
         'personnel' => 'Персонал холдинга',
         'hiring' => 'Найм',
@@ -95,6 +97,33 @@ return [
         'greeting' => 'Добро пожаловать в Pult',
         'sub' => 'Рабочая панель холдинга: быстрые действия и обзор',
         'tickets_label' => 'Быстрые запросы',
+    ],
+
+    'home_page' => [
+        'title' => 'Добро пожаловать в Pult',
+        'sub' => 'Единая панель управления холдингом Swift Punk',
+        'quick_links' => 'Быстрые ссылки',
+        'recent_activity' => 'Последние действия',
+    ],
+
+    'finance' => [
+        'title' => 'Финансы',
+        'sub' => 'Финансовые данные и метрики холдинга',
+        'mvr_title' => 'Minimum Viable Revenue (MVR)',
+        'mvr_sub' => 'Целевой и фактический доход по месяцам',
+        'col' => [
+            'month' => 'Месяц',
+            'target' => 'План',
+            'actual' => 'Факт',
+            'diff' => 'Разница',
+        ],
+        'add_entry' => 'Добавить запись',
+        'year' => 'Год',
+        'flash' => [
+            'created' => 'Запись добавлена',
+            'updated' => 'Запись обновлена',
+            'deleted' => 'Запись удалена',
+        ],
     ],
 
     'unit_dashboard' => [
@@ -176,6 +205,8 @@ return [
         'risks' => ['title' => 'Риски', 'open' => 'Открытых', 'total' => 'Всего записей'],
         'services' => ['title' => 'Сервисы', 'active' => 'Активных', 'mrr' => 'MRR'],
         'activity_empty' => 'Пока нет действий',
+        'mvr_title' => 'Minimum Viable Revenue (MVR)',
+        'mvr_sub' => 'Целевой и фактический доход',
     ],
 
     'ticket' => [

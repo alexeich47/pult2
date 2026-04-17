@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Employee;
 use App\Models\Idea;
+use App\Models\MvrEntry;
 use App\Models\RiskEntry;
 use App\Models\Service;
 use App\Support\UnitContextScope;
@@ -49,7 +50,14 @@ class DashboardController extends Controller
             2,
         );
 
+        $mvr = MvrEntry::query()
+            ->whereNull('unit_id')
+            ->where('year', now()->year)
+            ->orderBy('month')
+            ->get(['month', 'target', 'actual']);
+
         return Inertia::render('Dashboard', [
+            'mvr' => $mvr,
             'stats' => [
                 'personnel' => [
                     'total' => $personnelTotal,
