@@ -8,11 +8,18 @@ Target: `pult.swiftpunk.com`, running on `188.137.224.173` alongside `club.swift
 Internet → host nginx (443) → localhost:8818 → pult_app (nginx + php-fpm)
                                              → pult_queue
                                              → pult_scheduler
+
+GitHub push to main
+       ↓
+GitHub Actions builds image
+       ↓
+ghcr.io/alexeich47/pult:latest   ← docker compose pull   (on server)
 ```
 
 - Each app is isolated in its own Docker project (named volumes, no shared network with other projects).
 - Pult uses **SQLite** on a named volume (`pult_db`). First boot creates an empty DB, runs migrations, and runs `db:seed` — producing a working system with admin user + reference data. Subsequent boots keep whatever is on the volume.
 - Host nginx reverse-proxies `pult.swiftpunk.com` → `127.0.0.1:8818` with Let's Encrypt TLS. Same pattern as `club.swiftpunk.com`.
+- **Image build happens on GitHub Actions**, not on the server — the VPS has limited disk and a local build would push it over capacity. The server only pulls the ready-made image.
 
 ## One-time server setup
 
@@ -20,35 +27,27 @@ Internet → host nginx (443) → localhost:8818 → pult_app (nginx + php-fpm)
 
 Set `pult.swiftpunk.com` → **A `188.137.224.173`**, **DNS only** (grey cloud, not proxied). Let's Encrypt's HTTP-01 challenge needs a direct path to the origin. Same as `club.swiftpunk.com`.
 
-### 2. Clone the repo
+### 2. Clone the repo + configure env
 
 ```bash
 mkdir -p /var/projects
 cd /var/projects
 git clone https://github.com/alexeich47/pult2.git pult
 cd pult
-```
-
-### 3. Configure environment
-
-```bash
 cp .env.production.example .env
-docker run --rm -v "$PWD:/app" -w /app composer:2 composer install --no-dev --no-scripts --no-autoloader
-docker run --rm -v "$PWD:/app" -w /app php:8.3-cli php artisan key:generate --show >> .env
-# Then edit .env so APP_KEY is the generated value (replace the empty line).
-nano .env
-```
-
-Or the simpler one-shot:
-```bash
 APP_KEY="base64:$(openssl rand -base64 32)"
 sed -i "s|^APP_KEY=.*|APP_KEY=${APP_KEY}|" .env
 ```
 
-### 4. Build + start containers
+### 3. Wait for CI to build the image
+
+First push to `main` triggers `.github/workflows/docker-build.yml` which builds the image and pushes to `ghcr.io/alexeich47/pult:latest`. Track progress at https://github.com/alexeich47/pult2/actions — usually completes in ~5-10 minutes.
+
+### 4. Pull + start containers
 
 ```bash
-docker compose -f docker-compose.production.yml up -d --build
+docker compose -f docker-compose.production.yml pull
+docker compose -f docker-compose.production.yml up -d
 ```
 
 First boot runs migrations and warms config/route/view caches via `docker/entrypoint.sh`.
@@ -105,10 +104,13 @@ docker logs pult_app --tail 40
 
 ### Deploy a new version
 
+Every push to `main` triggers a fresh image build on CI. On the server:
+
 ```bash
 cd /var/projects/pult
-git pull origin main
-docker compose -f docker-compose.production.yml up -d --build
+git pull origin main   # keeps docker-compose / .env.example in sync with repo
+docker compose -f docker-compose.production.yml pull
+docker compose -f docker-compose.production.yml up -d
 # Migrations run automatically via entrypoint; no manual step.
 ```
 
@@ -136,11 +138,11 @@ docker cp pult_app:/tmp/backup.sqlite /var/backups/pult-$(date +%F).sqlite
 
 ### Rollback
 
+Each CI build is also tagged with `sha-<short>` (e.g. `ghcr.io/alexeich47/pult:sha-9c11ba5`). To roll back, edit `docker-compose.production.yml` and change the `image:` tag, then:
+
 ```bash
-cd /var/projects/pult
-git log --oneline -10
-git checkout <previous-commit>
-docker compose -f docker-compose.production.yml up -d --build
+docker compose -f docker-compose.production.yml pull
+docker compose -f docker-compose.production.yml up -d
 ```
 
 ## What is NOT touched by this deploy

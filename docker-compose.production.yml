@@ -4,12 +4,15 @@ name: pult
 # Exposes port 8818 on the host; the host-level nginx reverse proxy
 # (/etc/nginx/sites-available/pult.swiftpunk.com) terminates TLS and
 # forwards here. All services share the same image.
+#
+# The image is built by GitHub Actions (.github/workflows/docker-build.yml)
+# on every push to main and pushed to ghcr.io. Deploying is just:
+#   docker compose -f docker-compose.production.yml pull
+#   docker compose -f docker-compose.production.yml up -d
+# No building happens on the server.
 
 x-app-common: &app-common
-  image: pult:local
-  build:
-    context: .
-    dockerfile: docker/Dockerfile
+  image: ghcr.io/alexeich47/pult:latest
   env_file: .env
   restart: unless-stopped
   volumes:
