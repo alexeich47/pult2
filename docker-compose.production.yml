@@ -1,0 +1,55 @@
+name: pult
+
+# Production compose file for pult.swiftpunk.com.
+# Exposes port 8818 on the host; the host-level nginx reverse proxy
+# (/etc/nginx/sites-available/pult.swiftpunk.com) terminates TLS and
+# forwards here. All services share the same image.
+
+x-app-common: &app-common
+  image: pult:local
+  build:
+    context: .
+    dockerfile: docker/Dockerfile
+  env_file: .env
+  restart: unless-stopped
+  volumes:
+    - pult_storage:/app/storage
+    - pult_db:/app/storage/db
+  environment:
+    - DB_CONNECTION=sqlite
+    - DB_DATABASE=/app/storage/db/database.sqlite
+  logging:
+    driver: "json-file"
+    options:
+      max-size: "50M"
+      max-file: "3"
+
+services:
+  app:
+    <<: *app-common
+    container_name: pult_app
+    ports:
+      - "127.0.0.1:8818:80"
+
+  queue:
+    <<: *app-common
+    container_name: pult_queue
+    ports: []
+    command: ["php", "artisan", "queue:work", "--sleep=3", "--tries=3", "--timeout=120"]
+    # Override entrypoint steps that duplicate migrations; app service already ran them.
+    entrypoint: ["/bin/sh", "-c", "exec \"$$@\"", "--"]
+    depends_on:
+      - app
+
+  scheduler:
+    <<: *app-common
+    container_name: pult_scheduler
+    ports: []
+    command: ["php", "artisan", "schedule:work"]
+    entrypoint: ["/bin/sh", "-c", "exec \"$$@\"", "--"]
+    depends_on:
+      - app
+
+volumes:
+  pult_storage:
+  pult_db:
