@@ -109,8 +109,8 @@ function changeMonth(d: number) {
 // Chart data — daily plan/fact for the selected month
 const chartData = computed(() => props.dailyEntries.map(d => ({ date: d.date, plan: Number(d.plan), fact: Number(d.fact) })));
 
-function formatDiff(t: string, a: string): string { const tv = Number(t); const av = Number(a); if (av === 0) return '---'; const d = av - tv; return `${d >= 0 ? '+' : ''}$${d.toLocaleString()}`; }
-function diffClass(t: string, a: string): string { if (Number(a) === 0) return 'text-slate-400'; return Number(a) - Number(t) >= 0 ? 'text-emerald-600' : 'text-rose-600'; }
+function formatDiff(t: string | number, a: string | number): string { const tv = Number(t); const av = Number(a); if (av === 0) return '---'; const d = av - tv; return `${d >= 0 ? '+' : ''}$${d.toLocaleString()}`; }
+function diffClass(t: string | number, a: string | number): string { if (Number(a) === 0) return 'text-slate-400'; return Number(a) - Number(t) >= 0 ? 'text-emerald-600' : 'text-rose-600'; }
 
 function formatDay(iso: string): string { return new Date(iso).getDate().toString(); }
 function weekday(iso: string): string {
