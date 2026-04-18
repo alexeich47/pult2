@@ -14,6 +14,8 @@ RUN npm ci
 COPY resources ./resources
 COPY vite.config.js tsconfig.json ./
 COPY public ./public
+# tsconfig path `ziggy-js` → `./vendor/tightenco/ziggy`; need composer deps for vue-tsc.
+COPY --from=composer-deps /app/vendor ./vendor
 RUN npm run build
 
 # ─── Stage 3: runtime (php-fpm) ──────────────────────────────────────
